@@ -30,15 +30,21 @@ class TranscriptMapper @Inject()(localDateTimeService: LocalDateTimeService) {
   private def transcriptPick = JsPath() \ 'transcripts
   private def isoPath = JsPath() \ 'iso
   def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int): JsResult[JsValue] = {
+
     transcript.transform(isoPath.json.pick) match {
       case JsSuccess(JsString(datetime), _) =>
         val dt = LocalDateTime.parse(datetime, DateTimeFormatter.ISO_DATE_TIME)
-        JsSuccess(Json.obj(
-          "auditSource" -> "digital-engagement-platform",
-          "auditType" -> "EngagementTranscript",
-          "eventId" -> s"Transcript-$engagementId-$index",
-          "generatedAt" -> dt
-        ))
+        Json.obj().transform(
+          __.json.update((JsPath() \ 'auditSource).json.put(Json.toJson("digital-engagement-platform"))) andThen
+            __.json.update((JsPath() \ 'auditType).json.put(Json.toJson("EngagementTranscript"))) andThen
+            __.json.update((JsPath() \ 'eventId).json.put(Json.toJson(s"Transcript-$engagementId-$index"))) andThen
+            __.json.update((JsPath() \ 'generatedAt).json.put(Json.toJson(dt))) andThen
+            __.json.update((JsPath() \ 'detail).json.put(transcript)) andThen
+            (JsPath() \ 'detail \ 'iso).json.prune andThen
+            (JsPath() \ 'detail \ 'timestamp).json.prune andThen
+            __.json.update((JsPath() \ 'detail \ 'engagementID).json.put(Json.toJson(engagementId))) andThen
+            __.json.update((JsPath() \ 'detail \ 'transcriptIndex).json.put(Json.toJson(index)))
+        )
     }
   }
 
@@ -75,17 +81,17 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |    "auditSource": "digital-engagement-platform",
           |    "auditType": "EngagementTranscript",
           |    "eventId": "Transcript-187286680131967188-42",
-          |    "generatedAt": "2020-09-30T13:23:38"
+          |    "generatedAt": "2020-09-30T13:23:38",
+          |    "detail": {
+          |        "engagementID": "187286680131967188",
+          |        "transcriptIndex": 42,
+          |        "type": "automaton.started",
+          |        "senderId": "900020",
+          |        "senderName": "businessRule"
+          |    }
           | }
           |""".stripMargin
 
-        //          |    "detail": {
-        //          |        "engagementID": "187286680131967188",
-        //          |        "transcriptIndex": 42,
-        //          |        "type": "automaton.started",
-        //          |        "senderId": "900020",
-        //          |        "senderName": "businessRule"
-        //          |    }
 
       )
     }
