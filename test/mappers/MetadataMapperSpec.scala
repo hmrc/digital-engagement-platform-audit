@@ -18,29 +18,10 @@ package mappers
 
 import java.time.LocalDateTime
 
-import javax.inject.Inject
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 import services.LocalDateTimeService
-
-class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
-  private val engagementIDPick = (JsPath() \ 'engagementID).json.pick
-
-  def mapEngagement(engagement: JsValue): JsResult[JsValue] = {
-    engagement.transform(engagementIDPick) match {
-      case JsSuccess(JsString(engagementId), _) =>
-        JsSuccess(Json.obj(
-          "auditSource" -> "digital-engagement-platform",
-          "auditType" -> "EngagementMetadata",
-          "eventId" -> s"Metadata-$engagementId",
-          "generatedAt" -> dateTimeService.now,
-          "detail" -> engagement
-        ))
-      case e: JsResult[JsValue] => e
-    }
-  }
-}
 
 class MetadataMapperSpec extends AnyWordSpec with Matchers {
   private val currentDateTime = LocalDateTime.of(1999, 3, 14, 13, 33)
