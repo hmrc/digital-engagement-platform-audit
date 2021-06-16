@@ -21,22 +21,23 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json.{JsPath, JsResult, JsString, JsSuccess, JsValue, Json}
+import play.api.libs.json._
 import services.LocalDateTimeService
 
 class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
   private val engagementIDPick = (JsPath() \ 'engagementID).json.pick
 
-  def mapEngagement(engagement: JsValue): JsSuccess[JsValue] = {
+  def mapEngagement(engagement: JsValue): JsResult[JsValue] = {
     engagement.transform(engagementIDPick) match {
       case JsSuccess(JsString(engagementId), _) =>
         JsSuccess(Json.obj(
           "auditSource" -> "digital-engagement-platform",
           "auditType" -> "EngagementMetadata",
-          "eventId" -> s"Metadata-${engagementId}",
+          "eventId" -> s"Metadata-$engagementId",
           "generatedAt" -> dateTimeService.now,
           "detail" -> engagement
         ))
+      case e: JsResult[JsValue] => e
     }
   }
 }
@@ -47,8 +48,8 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers {
     override def now: LocalDateTime = currentDateTime
   }
 
-  "something" should {
-    "work with no engagements" in {
+  "mapEngagement" should {
+    "work with standard engagement" in {
       val input =
         """
           |{
@@ -221,6 +222,11 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers {
         "generatedAt" -> "1999-03-14T13:33:00",
         "detail" -> jsInput
       )
+    }
+    "fail if engagement value is missing engagement" in {
+      val mapper = new MetadataMapper(LocalDateTimeServiceStub)
+      val result = mapper.mapEngagement(Json.obj())
+      result.isError mustBe true
     }
   }
 }
