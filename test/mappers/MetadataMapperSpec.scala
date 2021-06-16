@@ -16,11 +16,15 @@
 
 package mappers
 
+import java.time.LocalDateTime
+
+import javax.inject.Inject
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsPath, JsResult, JsString, JsSuccess, JsValue, Json}
+import services.LocalDateTimeService
 
-class MetadataMapper {
+class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
   private val engagementIDPick = (JsPath() \ 'engagementID).json.pick
   def mapEngagement(engagement: JsValue): JsSuccess[JsValue] = {
     engagement.transform(engagementIDPick) match {
@@ -28,13 +32,19 @@ class MetadataMapper {
         JsSuccess(Json.obj(
           "auditSource" -> "digital-engagement-platform",
           "auditType" -> "EngagementMetadata",
-          "eventId" -> s"Metadata-${engagementId}"
+          "eventId" -> s"Metadata-${engagementId}",
+          "generatedAt" -> dateTimeService.now
         ))
     }
   }
 }
 
 class MetadataMapperSpec extends AnyWordSpec with Matchers {
+  private val currentDateTime = LocalDateTime.of(1999, 3, 14, 13, 33)
+  private object LocalDateTimeServiceStub extends LocalDateTimeService {
+    override def now: LocalDateTime = currentDateTime
+  }
+
   "something" should {
     "work with no engagements" in {
       val input =
@@ -199,13 +209,14 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers {
           |""".stripMargin
 
       val jsInput = Json.parse(input)
-      val mapper = new MetadataMapper
+      val mapper = new MetadataMapper(LocalDateTimeServiceStub)
       val result = mapper.mapEngagement(jsInput)
       result.isSuccess mustBe true
       result.get mustBe Json.obj(
         "auditSource" -> "digital-engagement-platform",
         "auditType" -> "EngagementMetadata",
-        "eventId" -> "Metadata-187286680131967188"
+        "eventId" -> "Metadata-187286680131967188",
+        "generatedAt" -> "1999-03-14T13:33:00"
       )
     }
   }
