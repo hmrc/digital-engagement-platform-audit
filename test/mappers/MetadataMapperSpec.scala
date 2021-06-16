@@ -26,6 +26,7 @@ import services.LocalDateTimeService
 
 class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
   private val engagementIDPick = (JsPath() \ 'engagementID).json.pick
+
   def mapEngagement(engagement: JsValue): JsSuccess[JsValue] = {
     engagement.transform(engagementIDPick) match {
       case JsSuccess(JsString(engagementId), _) =>
@@ -33,7 +34,8 @@ class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
           "auditSource" -> "digital-engagement-platform",
           "auditType" -> "EngagementMetadata",
           "eventId" -> s"Metadata-${engagementId}",
-          "generatedAt" -> dateTimeService.now
+          "generatedAt" -> dateTimeService.now,
+          "detail" -> engagement
         ))
     }
   }
@@ -216,7 +218,8 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers {
         "auditSource" -> "digital-engagement-platform",
         "auditType" -> "EngagementMetadata",
         "eventId" -> "Metadata-187286680131967188",
-        "generatedAt" -> "1999-03-14T13:33:00"
+        "generatedAt" -> "1999-03-14T13:33:00",
+        "detail" -> jsInput
       )
     }
   }
