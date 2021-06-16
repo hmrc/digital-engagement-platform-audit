@@ -18,7 +18,6 @@ package mappers
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 import javax.inject.Inject
 import org.scalatest.matchers.must.Matchers
@@ -26,8 +25,10 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 import services.LocalDateTimeService
 
+import scala.collection.immutable
+
 class TranscriptMapper @Inject()(localDateTimeService: LocalDateTimeService) {
-  private def transcriptPick = JsPath() \ 'transcripts
+  private def transcriptPath = JsPath() \ 'transcript
   private def isoPath = JsPath() \ 'iso
   def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int): JsResult[JsValue] = {
 
@@ -49,7 +50,20 @@ class TranscriptMapper @Inject()(localDateTimeService: LocalDateTimeService) {
   }
 
   def mapTranscript(engagement: JsValue): JsResult[JsArray] = {
-    JsSuccess(JsArray())
+    val transcript = engagement.transform(transcriptPath.json.pick)
+    val engagementId = engagement.transform((JsPath() \ 'engagementID).json.pick)
+
+    (transcript, engagementId) match {
+      case (JsSuccess(transcripts: JsArray, _), JsSuccess(JsString(engagementId), _)) =>
+        val mappedTranscripts: IndexedSeq[JsResult[JsValue]] = transcripts.value.zipWithIndex.map {
+          case (t, index) => mapTranscriptEntry(t, engagementId, index)
+        }
+        JsSuccess(JsArray(mappedTranscripts.map {
+          case JsSuccess(v, _) => v
+          case _ => Json.obj()
+        }))
+    }
+
   }
 }
 
@@ -91,8 +105,6 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |    }
           | }
           |""".stripMargin
-
-
       )
     }
   }
@@ -111,7 +123,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
       result.isSuccess mustBe true
       result.get mustBe JsArray()
     }
-    "handle one transcript" ignore {
+    "handle one transcript" in {
       val mapper = new TranscriptMapper(LocalDateTimeServiceStub)
       val input =
         """
@@ -120,7 +132,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           | "transcript": [
           | {
           |   "type": "automaton.started",
-          |   "iso": "2021-03-02T13:23:38+00:00",
+          |   "iso": "2020-09-30T13:23:38+01:20",
           |   "timestamp": 1614691418611,
           |   "senderId": "900020",
           |   "senderName": "businessRule"
@@ -131,13 +143,23 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
 
       val result = mapper.mapTranscript(Json.parse(input))
       result.isSuccess mustBe true
-      result.get mustBe JsArray()
-      result.get(0) mustBe Json.obj(
-        "auditSource" -> "digital-engagement-platform",
-        "auditType" -> "EngagementTranscript",
-        "eventId" -> "Transcript-187286680131967188-0",
-        "generatedAt" -> "1999-03-14T13:33:00",
-      )
+      result.get mustBe a[JsArray]
+      result.get(0) mustBe Json.parse(
+        """
+          | {
+          |    "auditSource": "digital-engagement-platform",
+          |    "auditType": "EngagementTranscript",
+          |    "eventId": "Transcript-187286680131967188-0",
+          |    "generatedAt": "2020-09-30T13:23:38",
+          |    "detail": {
+          |        "engagementID": "187286680131967188",
+          |        "transcriptIndex": 0,
+          |        "type": "automaton.started",
+          |        "senderId": "900020",
+          |        "senderName": "businessRule"
+          |    }
+          | }
+          |""".stripMargin)
     }
   }
 }
