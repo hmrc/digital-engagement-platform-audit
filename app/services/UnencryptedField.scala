@@ -16,12 +16,11 @@
 
 package services
 
-import play.api.Logger
+import play.api.Logging
 
-object UnencryptedField {
+object UnencryptedField extends Logging {
   val UNDECRYPTABLE_FIELD: String = "could not decrypt value"
   private val FIELD_PREFIX: String = "ENCRYPTED-"
-  val logger: Logger = Logger(this.getClass.getSimpleName)
 
   private def decrypt(fieldName: String, value: String)(implicit decrypter: Decrypter): Option[String] = if (value.startsWith(FIELD_PREFIX)){
     decrypter.decrypt(fieldName, value.replace(FIELD_PREFIX, "")).flatMap {

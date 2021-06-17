@@ -21,12 +21,12 @@ import play.api.{Configuration, Logger}
 import uk.gov.hmrc.crypto.{Crypted, CryptoGCMWithKeysFromConfig, PlainText, Scrambled, Sha512Crypto}
 
 import scala.util.{Failure, Success, Try}
+import play.api.Logging
 
 class NuanceDecrypter @Inject()(
                          config: Configuration
-                         ) extends Decrypter {
+                         ) extends Decrypter with Logging {
 
-  val logger: Logger = Logger(this.getClass.getSimpleName)
   lazy val hashingKey: String = config.get[String]("request-body-encryption.hashing-key")
 
   lazy val crypto: CryptoGCMWithKeysFromConfig = new CryptoGCMWithKeysFromConfig("request-body-encryption", config.underlying)
