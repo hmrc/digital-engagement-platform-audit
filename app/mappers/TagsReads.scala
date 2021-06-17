@@ -18,6 +18,7 @@ package mappers
 
 import mappers.JsonUtils.{copyValue, putValue}
 import play.api.libs.json._
+import JsonUtils.doNothing
 
 object TagsReads {
   def createReads(engagement: JsValue): Reads[JsObject] = {
@@ -28,6 +29,7 @@ object TagsReads {
       copySessionId(engagement)
     ) match {
       case JsSuccess(result, _) => putValue(__ \ 'tags, result)
+      case _ => doNothing()
     }
   }
 
