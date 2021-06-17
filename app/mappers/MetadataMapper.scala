@@ -19,6 +19,7 @@ package mappers
 import javax.inject.Inject
 import play.api.libs.json._
 import services.LocalDateTimeService
+import JsonUtils._
 
 class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
   private val engagementIDPick = (JsPath() \ 'engagementID).json.pick
@@ -26,13 +27,13 @@ class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
   def mapEngagement(engagement: JsValue): JsResult[JsValue] = {
     engagement.transform(engagementIDPick) match {
       case JsSuccess(JsString(engagementId), _) =>
-        JsSuccess(Json.obj(
-          "auditSource" -> "digital-engagement-platform",
-          "auditType" -> "EngagementMetadata",
-          "eventId" -> s"Metadata-$engagementId",
-          "generatedAt" -> dateTimeService.now,
-          "detail" -> engagement
-        ))
+        Json.obj().transform(
+          putString(__ \ 'auditSource, "digital-engagement-platform") andThen
+          putString(__ \ 'auditType, "EngagementMetadata") andThen
+          putString(__ \ 'eventId, s"Metadata-$engagementId") andThen
+          putValue(__ \ 'generatedAt, Json.toJson(dateTimeService.now)) andThen
+          putValue(__ \ 'detail, Json.toJson(engagement))
+        )
       case e => e
     }
   }

@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import play.api.libs.json._
+import JsonUtils._
 
 class TranscriptMapper {
   private def transcriptPath = JsPath() \ 'transcript
@@ -42,12 +43,6 @@ class TranscriptMapper {
         )
       case e => e
     }
-  }
-
-  private def deleteValue(path: JsPath) = path.json.prune
-  private def putString(path: JsPath, value: String) = putValue(path, Json.toJson(value))
-  private def putValue(path: JsPath, value: JsValue): Reads[JsObject] = {
-    __.json.update(path.json.put(value))
   }
 
   def mapTranscript(engagement: JsValue): Seq[JsValue] = {
