@@ -46,5 +46,18 @@ class TagsReadsSpec extends AnyWordSpec with Matchers {
           | }
           |""".stripMargin)
     }
+    "extract tags with no matching values" in {
+      val jsInput = Json.obj()
+
+      val result = Json.obj().transform(TagsReads.createReads(jsInput, TestDecryptionService))
+      result.isSuccess mustBe true
+      result.get mustBe Json.parse(
+        """
+          | {
+          |   "tags": {
+          |   }
+          | }
+          |""".stripMargin)
+    }
   }
 }

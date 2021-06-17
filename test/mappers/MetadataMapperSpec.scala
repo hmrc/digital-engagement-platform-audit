@@ -22,7 +22,7 @@ import play.api.libs.json._
 import TestEngagementData.testEngagementJson
 
 class MetadataMapperSpec extends AnyWordSpec with Matchers {
-  "mapEngagement" should {
+  "mapEngagement" must {
     "work with standard engagement" in {
       val jsInput = testEngagementJson
       val mapper = new MetadataMapper

@@ -26,9 +26,8 @@ object UnencryptedField extends Logging {
     decrypter.decrypt(fieldName, value.replace(FIELD_PREFIX, "")).flatMap {
       decryptedValue =>
         decryptedValue.split("-").toList match {
-          case hashedValue :: rawValue if decrypter.verifyHash(rawValue.mkString("-"), hashedValue) => Some(rawValue.mkString("-"))
-          case _ :: _ => logger.warn(s"[decrypt] hash did not match value for field $fieldName")
-            None
+          case hashedValue :: rawValue if decrypter.verifyHash(rawValue.mkString("-"), hashedValue) =>
+            Some(rawValue.mkString("-"))
           case _ => logger.warn(s"[decrypt] invalid decrypted value for field $fieldName")
             None
         }

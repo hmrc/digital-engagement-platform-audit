@@ -16,12 +16,12 @@
 
 package services
 
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.play.PlaySpec
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
 import uk.gov.hmrc.crypto.PlainText
 
-class DecrypterSpec extends PlaySpec with ScalaFutures {
+class DecrypterSpec extends AnyWordSpec with Matchers {
   val defaultConfig = Configuration(
     "request-body-encryption.key" -> "j+RAVSn+P6IJvuApL121ofM7Uh85p9C0nJwNoa2tuc4=",
     "request-body-encryption.hashing-key" -> "xVcxKBRUhKqca953LJ9k8O2huZhIoBRUDQEbqYs3d6/TbHo1f7iTco7Ae+sS5W0u23v5HYkARIAnKCK72C5gTQ==",

@@ -17,11 +17,10 @@
 package services
 
 import javax.inject.Inject
-import play.api.{Configuration, Logger}
+import play.api.{Configuration, Logging}
 import uk.gov.hmrc.crypto.{Crypted, CryptoGCMWithKeysFromConfig, PlainText, Scrambled, Sha512Crypto}
 
 import scala.util.{Failure, Success, Try}
-import play.api.Logging
 
 class NuanceDecrypter @Inject()(
                          config: Configuration
@@ -37,11 +36,8 @@ class NuanceDecrypter @Inject()(
     crypto.decrypt(Crypted(encryptedValue)).value
   } match {
     case Success(decryptedValue) => Some(decryptedValue)
-    case Failure(exception: SecurityException) =>
-      logger.warn(s"[decrypt] failed to decrypt value for field $fieldName: ${exception.getMessage}")
-      None
     case Failure(exception) =>
-      logger.warn(s"[decrypt] failed to decrypt value for field $fieldName with unexpected exception: ${exception.getMessage}")
+      logger.warn(s"[decrypt] failed to decrypt value for field $fieldName with exception: ${exception.getMessage}")
       None
   }
 
