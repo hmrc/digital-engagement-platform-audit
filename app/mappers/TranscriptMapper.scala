@@ -30,18 +30,24 @@ class TranscriptMapper {
       case JsSuccess(JsString(datetime), _) =>
         val dt = LocalDateTime.parse(datetime, DateTimeFormatter.ISO_DATE_TIME)
         Json.obj().transform(
-          __.json.update((JsPath() \ 'auditSource).json.put(Json.toJson("digital-engagement-platform"))) andThen
-            __.json.update((JsPath() \ 'auditType).json.put(Json.toJson("EngagementTranscript"))) andThen
-            __.json.update((JsPath() \ 'eventId).json.put(Json.toJson(s"Transcript-$engagementId-$index"))) andThen
-            __.json.update((JsPath() \ 'generatedAt).json.put(Json.toJson(dt))) andThen
-            __.json.update((JsPath() \ 'detail).json.put(transcript)) andThen
-            (JsPath() \ 'detail \ 'iso).json.prune andThen
-            (JsPath() \ 'detail \ 'timestamp).json.prune andThen
-            __.json.update((JsPath() \ 'detail \ 'engagementID).json.put(Json.toJson(engagementId))) andThen
-            __.json.update((JsPath() \ 'detail \ 'transcriptIndex).json.put(Json.toJson(index)))
+          putString(JsPath() \ 'auditSource, "digital-engagement-platform") andThen
+          putString(JsPath() \ 'auditType, "EngagementTranscript") andThen
+          putString(JsPath() \ 'eventId, s"Transcript-$engagementId-$index") andThen
+          putValue(JsPath() \ 'generatedAt, Json.toJson(dt)) andThen
+          putValue(JsPath() \ 'detail, Json.toJson(transcript)) andThen
+          deleteValue(JsPath() \ 'detail \ 'iso) andThen
+          deleteValue(JsPath() \ 'detail \ 'timestamp) andThen
+          putString(JsPath() \ 'detail \ 'engagementID, engagementId) andThen
+          putValue(JsPath() \ 'detail \ 'transcriptIndex, Json.toJson(index))
         )
       case e => e
     }
+  }
+
+  private def deleteValue(path: JsPath) = path.json.prune
+  private def putString(path: JsPath, value: String) = putValue(path, Json.toJson(value))
+  private def putValue(path: JsPath, value: JsValue): Reads[JsObject] = {
+    __.json.update(path.json.put(value))
   }
 
   def mapTranscript(engagement: JsValue): Seq[JsValue] = {
