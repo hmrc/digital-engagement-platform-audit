@@ -20,43 +20,6 @@ import mappers.TestEngagementData.testEngagementJson
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
-import JsonUtils._
-
-object TagsReads {
-  def createReads(engagement: JsValue): Reads[JsObject] = {
-    Json.obj().transform(
-      copyClientIp(engagement) andThen
-      copyPath(engagement) andThen
-      copyDeviceId(engagement) andThen
-      copySessionId(engagement)
-    ) match {
-      case JsSuccess(result, _) => putValue(__ \ 'tags, result)
-    }
-  }
-
-  def copyClientIp(engagement: JsValue): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'visitorAttribute \ 'clientIp, __ \ 'clientIP) {
-      value => value(0)
-    }
-  }
-
-  def copyPath(engagement: JsValue): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'pages \ 'launchPageURL, __ \ 'path){ value => value}
-  }
-
-  def copyDeviceId(engagement: JsValue): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'visitorAttribute \ 'deviceId, __ \ 'deviceID) {
-      value => value(0)
-    }
-  }
-
-  def copySessionId(engagement: JsValue): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'visitorAttribute \ 'mdtpSessionId, __ \ "X-Session-ID") {
-      value => value(0)
-    }
-  }
-
-}
 
 class TagsReadsSpec extends AnyWordSpec with Matchers {
   "tagsMapper" should {
