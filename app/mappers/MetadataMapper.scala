@@ -16,25 +16,32 @@
 
 package mappers
 
-import javax.inject.Inject
-import play.api.libs.json._
-import services.LocalDateTimeService
-import JsonUtils._
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
-  private val engagementIDPick = (JsPath() \ 'engagementID).json.pick
+import mappers.JsonUtils._
+import play.api.libs.json._
+
+class MetadataMapper {
+  private val engagementIDPick = (__ \ 'engagementID).json.pick
+  private val endDatePick = (__ \ 'endDate \ 'iso).json.pick
 
   def mapEngagement(engagement: JsValue): JsResult[JsValue] = {
-    engagement.transform(engagementIDPick) match {
-      case JsSuccess(JsString(engagementId), _) =>
+    val engagementId = engagement.transform(engagementIDPick)
+    val endDate = engagement.transform(endDatePick)
+    (engagementId, endDate) match {
+      case (JsSuccess(JsString(engagementId), _), JsSuccess(JsString(endDate), _)) =>
+        val generatedAtDate = LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME)
+
         Json.obj().transform(
           putString(__ \ 'auditSource, "digital-engagement-platform") andThen
           putString(__ \ 'auditType, "EngagementMetadata") andThen
           putString(__ \ 'eventId, s"Metadata-$engagementId") andThen
-          putValue(__ \ 'generatedAt, Json.toJson(dateTimeService.now)) andThen
+          putValue(__ \ 'generatedAt, Json.toJson(generatedAtDate)) andThen
           putValue(__ \ 'detail, Json.toJson(engagement))
         )
-      case e => e
+      case (e: JsError, _) => e
+      case (_, e) => e
     }
   }
 }

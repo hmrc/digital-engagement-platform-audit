@@ -16,19 +16,11 @@
 
 package mappers
 
-import java.time.LocalDateTime
-
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
-import services.LocalDateTimeService
 
 class MetadataMapperSpec extends AnyWordSpec with Matchers {
-  private val currentDateTime = LocalDateTime.of(1999, 3, 14, 13, 33)
-  private object LocalDateTimeServiceStub extends LocalDateTimeService {
-    override def now: LocalDateTime = currentDateTime
-  }
-
   "mapEngagement" should {
     "work with standard engagement" in {
       val input =
@@ -193,19 +185,19 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers {
           |""".stripMargin
 
       val jsInput = Json.parse(input)
-      val mapper = new MetadataMapper(LocalDateTimeServiceStub)
+      val mapper = new MetadataMapper
       val result = mapper.mapEngagement(jsInput)
       result.isSuccess mustBe true
       result.get mustBe Json.obj(
         "auditSource" -> "digital-engagement-platform",
         "auditType" -> "EngagementMetadata",
         "eventId" -> "Metadata-187286680131967188",
-        "generatedAt" -> "1999-03-14T13:33:00",
+        "generatedAt" -> "2021-03-02T13:23:44",
         "detail" -> jsInput
       )
     }
     "fail if engagement value is missing engagement" in {
-      val mapper = new MetadataMapper(LocalDateTimeServiceStub)
+      val mapper = new MetadataMapper
       val result = mapper.mapEngagement(Json.obj())
       result.isError mustBe true
     }
