@@ -16,14 +16,22 @@
 
 package mappers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json._
+import services.NuanceIdDecryptionService
 
-class TranscriptMapperSpec extends AnyWordSpec with Matchers {
+class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
+  private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]
+  when(nuanceIdDecryptionService.decryptDeviceId(any())).thenReturn("DecryptedDeviceId")
+  when(nuanceIdDecryptionService.decryptSessionId(any())).thenReturn("DecryptedSessionId")
+
   "mapTranscriptEntry" should {
     "process a transcript" in {
-      val mapper = new TranscriptMapper
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
         """
           | {
@@ -34,28 +42,38 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |   "senderName": "businessRule"
           | }
           |""".stripMargin
-      val result = mapper.mapTranscriptEntry(Json.parse(input), "187286680131967188", 42)
+      val result = mapper.mapTranscriptEntry(
+        Json.parse(input),
+        "187286680131967188",
+        42,
+        TagsReads(TestEngagementData.testEngagementJson, nuanceIdDecryptionService))
       result.isSuccess mustBe true
       result.get mustBe Json.parse(
         """
           | {
-          |    "auditSource": "digital-engagement-platform",
-          |    "auditType": "EngagementTranscript",
-          |    "eventId": "Transcript-187286680131967188-42",
-          |    "generatedAt": "2020-09-30T13:23:38",
-          |    "detail": {
-          |        "engagementID": "187286680131967188",
-          |        "transcriptIndex": 42,
-          |        "type": "automaton.started",
-          |        "senderId": "900020",
-          |        "senderName": "businessRule"
-          |    }
+          |   "auditSource": "digital-engagement-platform",
+          |   "auditType": "EngagementTranscript",
+          |   "eventId": "Transcript-187286680131967188-42",
+          |   "generatedAt": "2020-09-30T13:23:38",
+          |   "detail": {
+          |     "engagementID": "187286680131967188",
+          |     "transcriptIndex": 42,
+          |     "type": "automaton.started",
+          |     "senderId": "900020",
+          |     "senderName": "businessRule"
+          |   },
+          |   "tags": {
+          |     "clientIP": "81.97.99.4",
+          |     "path": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+          |     "deviceID": "DecryptedDeviceId",
+          |     "X-Session-ID": "DecryptedSessionId"
+          |   }
           | }
           |""".stripMargin
       )
     }
     "return error for a transcript without an iso time" in {
-      val mapper = new TranscriptMapper
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
         """
           | {
@@ -65,13 +83,18 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |   "senderName": "businessRule"
           | }
           |""".stripMargin
-      val result = mapper.mapTranscriptEntry(Json.parse(input), "187286680131967188", 42)
+
+      val result = mapper.mapTranscriptEntry(
+        Json.parse(input),
+        "187286680131967188",
+        42,
+        TagsReads(TestEngagementData.testEngagementJson, nuanceIdDecryptionService))
       result.isError mustBe true
     }
   }
   "mapTranscript" should {
     "handle no transcript" in {
-      val mapper = new TranscriptMapper
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
         """
           |{
@@ -84,9 +107,9 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
       result mustBe Seq()
     }
     "handle one transcript" in {
-      val mapper = new TranscriptMapper
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
-        """
+        s"""
           |{
           | "engagementID": "187286680131967188",
           | "transcript": [
@@ -96,8 +119,8 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |   "timestamp": 1614691418611,
           |   "senderId": "900020",
           |   "senderName": "businessRule"
-          | }
-          | ]
+          | }],
+          | ${TestEngagementData.tagsDataNeeds}
           |}
           |""".stripMargin
 
@@ -106,23 +129,29 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
         Json.parse(
         """
           | {
-          |    "auditSource": "digital-engagement-platform",
-          |    "auditType": "EngagementTranscript",
-          |    "eventId": "Transcript-187286680131967188-0",
-          |    "generatedAt": "2020-09-30T13:23:38",
-          |    "detail": {
-          |        "engagementID": "187286680131967188",
-          |        "transcriptIndex": 0,
-          |        "type": "automaton.started",
-          |        "senderId": "900020",
-          |        "senderName": "businessRule"
-          |    }
+          |   "auditSource": "digital-engagement-platform",
+          |   "auditType": "EngagementTranscript",
+          |   "eventId": "Transcript-187286680131967188-0",
+          |   "generatedAt": "2020-09-30T13:23:38",
+          |   "detail": {
+          |     "engagementID": "187286680131967188",
+          |     "transcriptIndex": 0,
+          |     "type": "automaton.started",
+          |     "senderId": "900020",
+          |     "senderName": "businessRule"
+          |   },
+          |   "tags": {
+          |     "clientIP": "81.97.99.4",
+          |     "path": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+          |     "deviceID": "DecryptedDeviceId",
+          |     "X-Session-ID": "DecryptedSessionId"
+          |   }
           | }
           |""".stripMargin)
       )
     }
     "handle bad data" in {
-      val mapper = new TranscriptMapper
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
         """
           |{
@@ -133,9 +162,9 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
       result mustBe Seq()
     }
     "handle one transcript and one bad" in {
-      val mapper = new TranscriptMapper
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
-        """
+        s"""
           |{
           | "engagementID": "187286680131967188",
           | "transcript": [
@@ -148,7 +177,8 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |   "senderName": "businessRule"
           | },
           | {}
-          | ]
+          | ],
+          | ${TestEngagementData.tagsDataNeeds}
           |}
           |""".stripMargin
 
@@ -157,25 +187,31 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
         Json.parse(
           """
             | {
-            |    "auditSource": "digital-engagement-platform",
-            |    "auditType": "EngagementTranscript",
-            |    "eventId": "Transcript-187286680131967188-1",
-            |    "generatedAt": "2020-09-30T13:23:38",
-            |    "detail": {
-            |        "engagementID": "187286680131967188",
-            |        "transcriptIndex": 1,
-            |        "type": "automaton.started",
-            |        "senderId": "900020",
-            |        "senderName": "businessRule"
-            |    }
+            |   "auditSource": "digital-engagement-platform",
+            |   "auditType": "EngagementTranscript",
+            |   "eventId": "Transcript-187286680131967188-1",
+            |   "generatedAt": "2020-09-30T13:23:38",
+            |   "detail": {
+            |     "engagementID": "187286680131967188",
+            |     "transcriptIndex": 1,
+            |     "type": "automaton.started",
+            |     "senderId": "900020",
+            |     "senderName": "businessRule"
+            |   },
+            |   "tags": {
+            |     "clientIP": "81.97.99.4",
+            |     "path": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+            |     "deviceID": "DecryptedDeviceId",
+            |     "X-Session-ID": "DecryptedSessionId"
+            |   }
             | }
             |""".stripMargin)
       )
     }
     "create senderPID if senderID is @hmrc" in {
-      val mapper = new TranscriptMapper
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
-        """
+        s"""
           |{
           | "engagementID": "187286680131967188",
           | "transcript": [
@@ -189,7 +225,8 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |   "businessUnit": "HMRC-Training",
           |   "agentGroup": "HMRC-Training"
           | }
-          | ]
+          | ],
+          | ${TestEngagementData.tagsDataNeeds}
           |}
           |""".stripMargin
 
@@ -212,7 +249,13 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
             |     "result": "ASSIGNED",
             |     "businessUnit": "HMRC-Training",
             |     "agentGroup": "HMRC-Training"
-            |    }
+            |   },
+            |   "tags": {
+            |     "clientIP": "81.97.99.4",
+            |     "path": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+            |     "deviceID": "DecryptedDeviceId",
+            |     "X-Session-ID": "DecryptedSessionId"
+            |   }
             | }
             |""".stripMargin)
       )

@@ -21,11 +21,13 @@ import java.time.format.DateTimeFormatter
 
 import play.api.libs.json._
 import JsonUtils._
+import javax.inject.Inject
+import services.NuanceIdDecryptionService
 
-class TranscriptMapper {
+class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) {
   private def transcriptPath = JsPath() \ 'transcript
   private def isoPath = JsPath() \ 'iso
-  def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int): JsResult[JsValue] = {
+  def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tagsReads: Reads[JsObject]): JsResult[JsValue] = {
 
     transcript.transform(isoPath.json.pick) match {
       case JsSuccess(JsString(datetime), _) =>
@@ -40,7 +42,8 @@ class TranscriptMapper {
           deleteValue(JsPath() \ 'detail \ 'timestamp) andThen
           putString(JsPath() \ 'detail \ 'engagementID, engagementId) andThen
           putValue(JsPath() \ 'detail \ 'transcriptIndex, Json.toJson(index)) andThen
-          createSenderPidIfExists(transcript)
+          createSenderPidIfExists(transcript) andThen
+          tagsReads
         )
       case e => e
     }
@@ -65,11 +68,12 @@ class TranscriptMapper {
   def mapTranscript(engagement: JsValue): Seq[JsValue] = {
     val transcript = engagement.transform(transcriptPath.json.pick)
     val engagementId = engagement.transform((JsPath() \ 'engagementID).json.pick)
+    val tagsReads = TagsReads(engagement, nuanceIdDecryptionService)
 
     (transcript, engagementId) match {
       case (JsSuccess(transcripts: JsArray, _), JsSuccess(JsString(engagementId), _)) =>
         val mappedTranscripts = transcripts.value.zipWithIndex.map {
-          case (t, index) => mapTranscriptEntry(t, engagementId, index)
+          case (t, index) => mapTranscriptEntry(t, engagementId, index, tagsReads)
         }
 
         mappedTranscripts.flatMap {

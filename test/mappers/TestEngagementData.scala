@@ -19,6 +19,29 @@ package mappers
 import play.api.libs.json.{JsValue, Json}
 
 object TestEngagementData {
+  val tagsDataNeeds: String =
+    """
+      | "pages": {
+      |   "launchPageID": "-1",
+      |   "launchPageMarker": "unrecognized_page",
+      |   "launchPageURL": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest"
+      | },
+      | "visitorAttribute": {
+      |   "mdtpSessionId": [
+      |     "ENCRYPTED-UU1USedMqML7Yj3XulYIHtNkOGpmoQzXx4X20+H3OfDeoIzzVoGbsVKY1rC8Z5LqUj2YtjkwaK9qFmxgACHK4u8TrGXi8hiKjo2X8rRBoT7YflRD9pJ25E9lEBT/ih8kA5NxReUSTABOhf+fkBPioYNTW1wOM4jBFg=="
+      |   ],
+      |   "mdtpdfSessionId": [
+      |     "R0ruX1yE9Hz6gdw87YMFNnd5GbynBgVoEj3WOwehg54WrKGEryDV4OZRjaDBgy5P7Ooj5MTcq3NlkZwVuF0drAJJ"
+      |   ],
+      |   "clientIp": [
+      |     "81.97.99.4"
+      |   ],
+      |   "deviceId": [
+      |    "ENCRYPTED-7a0O8KdpAtAKQIbfo62FvLkdnvSTcYpWo++IvpAzx88DEzFJYGHRriq+w/bAwCv3wXQTZIyMtkvUrxz9pEQeflMi6gvenmBDQX8+Yl8jmVu3o48Pdbt4BzGKSE6/KMnwMsnVT/d7+qESnWbqHshXzMMvqMY+UrQMdQ=="
+      |   ]
+      | }
+      |""".stripMargin
+
   val testEngagementJson: JsValue =
     Json.parse(
       """
