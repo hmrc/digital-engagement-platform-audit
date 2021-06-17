@@ -39,10 +39,27 @@ class TranscriptMapper {
           deleteValue(JsPath() \ 'detail \ 'iso) andThen
           deleteValue(JsPath() \ 'detail \ 'timestamp) andThen
           putString(JsPath() \ 'detail \ 'engagementID, engagementId) andThen
-          putValue(JsPath() \ 'detail \ 'transcriptIndex, Json.toJson(index))
+          putValue(JsPath() \ 'detail \ 'transcriptIndex, Json.toJson(index)) andThen
+          createSenderPidIfExists(transcript)
         )
       case e => e
     }
+  }
+
+  private def createSenderPidIfExists(transcript: JsValue) : Reads[JsObject] = {
+    val senderIdPath = __ \ 'senderId
+    val senderPidPath = __ \ 'detail \ 'senderPID
+    transcript.transform(senderIdPath.json.pick) match {
+      case JsSuccess(JsString(senderId), _) if isHmrcId(senderId) =>
+        putString(senderPidPath, extractHmrcId(senderId))
+      case _ => doNothing()
+    }
+  }
+
+  def isHmrcId(id: String): Boolean = id.contains("@hmrc")
+
+  def extractHmrcId(str: String): String = {
+    str.split("@")(0)
   }
 
   def mapTranscript(engagement: JsValue): Seq[JsValue] = {

@@ -26,4 +26,6 @@ object JsonUtils {
   }
 
   def putString(path: JsPath, value: String): Reads[JsObject] = putValue(path, Json.toJson(value))
+
+  def doNothing(): Reads[JsObject] = __.json.pick[JsObject]
 }

@@ -172,5 +172,50 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
             |""".stripMargin)
       )
     }
+    "create senderPID if senderID is @hmrc" in {
+      val mapper = new TranscriptMapper
+      val input =
+        """
+          |{
+          | "engagementID": "187286680131967188",
+          | "transcript": [
+          | {
+          |   "type": "agent.requested",
+          |   "senderName": "system",
+          |   "iso": "2020-10-15T16:16:29+01:00",
+          |   "timestamp": 1602774989274,
+          |   "senderId": "6017420@hmrc",
+          |   "result": "ASSIGNED",
+          |   "businessUnit": "HMRC-Training",
+          |   "agentGroup": "HMRC-Training"
+          | }
+          | ]
+          |}
+          |""".stripMargin
+
+      val result = mapper.mapTranscript(Json.parse(input))
+      result mustBe Seq(
+        Json.parse(
+          """
+            | {
+            |   "auditSource": "digital-engagement-platform",
+            |   "auditType": "EngagementTranscript",
+            |   "eventId": "Transcript-187286680131967188-0",
+            |   "generatedAt": "2020-10-15T16:16:29",
+            |   "detail": {
+            |     "engagementID": "187286680131967188",
+            |     "transcriptIndex": 0,
+            |     "type": "agent.requested",
+            |     "senderName": "system",
+            |     "senderId": "6017420@hmrc",
+            |     "senderPID": "6017420",
+            |     "result": "ASSIGNED",
+            |     "businessUnit": "HMRC-Training",
+            |     "agentGroup": "HMRC-Training"
+            |    }
+            | }
+            |""".stripMargin)
+      )
+    }
   }
 }
