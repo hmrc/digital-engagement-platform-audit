@@ -20,13 +20,19 @@ import mappers.TestEngagementData.testEngagementJson
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
+import services.NuanceIdDecryptionService
 
 class TagsReadsSpec extends AnyWordSpec with Matchers {
+  object TestDecryptionService extends NuanceIdDecryptionService {
+    override def decryptDeviceId(deviceId: String): String = "DecryptedDeviceId"
+    override def decryptSessionId(deviceId: String): String = "DecryptedSessionId"
+  }
+
   "tagsMapper" should {
     "extract tags" in {
       val jsInput = testEngagementJson
 
-      val result = Json.obj().transform(TagsReads.createReads(jsInput))
+      val result = Json.obj().transform(TagsReads.createReads(jsInput, TestDecryptionService))
       result.isSuccess mustBe true
       result.get mustBe Json.parse(
         """
@@ -34,8 +40,8 @@ class TagsReadsSpec extends AnyWordSpec with Matchers {
           |   "tags": {
           |     "clientIP": "81.97.99.4",
           |     "path": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
-          |     "deviceID": "ENCRYPTED-7a0O8KdpAtAKQIbfo62FvLkdnvSTcYpWo++IvpAzx88DEzFJYGHRriq+w/bAwCv3wXQTZIyMtkvUrxz9pEQeflMi6gvenmBDQX8+Yl8jmVu3o48Pdbt4BzGKSE6/KMnwMsnVT/d7+qESnWbqHshXzMMvqMY+UrQMdQ==",
-          |     "X-Session-ID": "ENCRYPTED-UU1USedMqML7Yj3XulYIHtNkOGpmoQzXx4X20+H3OfDeoIzzVoGbsVKY1rC8Z5LqUj2YtjkwaK9qFmxgACHK4u8TrGXi8hiKjo2X8rRBoT7YflRD9pJ25E9lEBT/ih8kA5NxReUSTABOhf+fkBPioYNTW1wOM4jBFg=="
+          |     "deviceID": "DecryptedDeviceId",
+          |     "X-Session-ID": "DecryptedSessionId"
           |   }
           | }
           |""".stripMargin)

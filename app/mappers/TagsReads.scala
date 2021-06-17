@@ -16,17 +16,17 @@
 
 package mappers
 
-import mappers.JsonUtils.{copyValue, putValue}
+import mappers.JsonUtils.{copyValue, doNothing, putValue}
 import play.api.libs.json._
-import JsonUtils.doNothing
+import services.NuanceIdDecryptionService
 
 object TagsReads {
-  def createReads(engagement: JsValue): Reads[JsObject] = {
+  def createReads(engagement: JsValue, decryptionService: NuanceIdDecryptionService): Reads[JsObject] = {
     Json.obj().transform(
       copyClientIp(engagement) andThen
       copyPath(engagement) andThen
-      copyDeviceId(engagement) andThen
-      copySessionId(engagement)
+      copyDeviceId(engagement, decryptionService) andThen
+      copySessionId(engagement, decryptionService)
     ) match {
       case JsSuccess(result, _) => putValue(__ \ 'tags, result)
       case _ => doNothing()
@@ -43,15 +43,15 @@ object TagsReads {
     copyValue(engagement, __ \ 'pages \ 'launchPageURL, __ \ 'path){ value => value}
   }
 
-  def copyDeviceId(engagement: JsValue): Reads[JsObject] = {
+  def copyDeviceId(engagement: JsValue, decryptionService: NuanceIdDecryptionService): Reads[JsObject] = {
     copyValue(engagement, __ \ 'visitorAttribute \ 'deviceId, __ \ 'deviceID) {
-      value => value(0)
+      value => JsString(decryptionService.decryptDeviceId(value(0).as[String]))
     }
   }
 
-  def copySessionId(engagement: JsValue): Reads[JsObject] = {
+  def copySessionId(engagement: JsValue, decryptionService: NuanceIdDecryptionService): Reads[JsObject] = {
     copyValue(engagement, __ \ 'visitorAttribute \ 'mdtpSessionId, __ \ "X-Session-ID") {
-      value => value(0)
+      value => JsString(decryptionService.decryptSessionId(value(0).as[String]))
     }
   }
 }
