@@ -16,16 +16,7 @@
 
 package services
 
-import com.google.inject.ImplementedBy
-import javax.inject.Inject
-
-@ImplementedBy(classOf[NuanceIdDecryptionServiceImpl])
-trait NuanceIdDecryptionService {
-  def decryptDeviceId(deviceId: String): String
-  def decryptSessionId(sessionId: String): String
-}
-
-class NuanceIdDecryptionServiceImpl @Inject()(implicit decrypter: NuanceDecrypter) extends NuanceIdDecryptionService {
-  override def decryptDeviceId(deviceId: String): String = UnencryptedField("DeviceId", deviceId)
-  override def decryptSessionId(sessionId: String): String = UnencryptedField("SessionId", sessionId)
+trait Decrypter {
+  def decrypt(fieldName: String, encryptedValue: String): Option[String]
+  def verifyHash(plainText: String, hashedValue: String): Boolean
 }
