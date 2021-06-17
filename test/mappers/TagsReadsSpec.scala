@@ -35,45 +35,28 @@ object TagsReads {
   }
 
   def copyClientIp(engagement: JsValue): Reads[JsObject] = {
-    val clientIpPath = __ \ 'visitorAttribute \ 'clientIp
-    engagement.transform(clientIpPath.json.pick) match {
-      case JsSuccess(clientIpArray, _) => putValue(__ \ 'clientIP, clientIpArray(0))
-      case _ => doNothing()
+    copyValue(engagement, __ \ 'visitorAttribute \ 'clientIp, __ \ 'clientIP) {
+      value => value(0)
     }
   }
 
   def copyPath(engagement: JsValue): Reads[JsObject] = {
-    val launchPageUrlPath = __ \ 'pages \ 'launchPageURL
-    engagement.transform(launchPageUrlPath.json.pick) match {
-      case JsSuccess(launchPageUrl, _) => putValue(__ \ 'path, launchPageUrl)
-      case _ => doNothing()
-    }
+    copyValue(engagement, __ \ 'pages \ 'launchPageURL, __ \ 'path){ value => value}
   }
 
   def copyDeviceId(engagement: JsValue): Reads[JsObject] = {
-    val deviceIdPath = __ \ 'visitorAttribute \ 'deviceId
-    engagement.transform(deviceIdPath.json.pick) match {
-      case JsSuccess(deviceId, _) => putValue(__ \ 'deviceID, deviceId(0))
-      case _ => doNothing()
+    copyValue(engagement, __ \ 'visitorAttribute \ 'deviceId, __ \ 'deviceID) {
+      value => value(0)
     }
   }
 
   def copySessionId(engagement: JsValue): Reads[JsObject] = {
-    val sessionIdPath = __ \ 'visitorAttribute \ 'mdtpSessionId
-    engagement.transform(sessionIdPath.json.pick) match {
-      case JsSuccess(sessionId, _) => putValue(__ \ "X-Session-ID", sessionId(0))
-      case _ => doNothing()
+    copyValue(engagement, __ \ 'visitorAttribute \ 'mdtpSessionId, __ \ "X-Session-ID") {
+      value => value(0)
     }
   }
 
 }
-
-//    "tags": {
-//        "X-Session-ID": "session-fe15211e-0d70-43e5-ae80-cd5c5e214ef1",
-//        "clientIP": "197.123.44.1",
-//        "deviceID": "mdtpdi#05785340-2769-45be-b174-d8d25aa8d139#1562656337324_1PdHu1BtBEIBPBMl88ISlw==",
-//        "path": "/company-registration/corporation-tax-registration/xxx/confirmation-references"
-//      }
 
 class TagsReadsSpec extends AnyWordSpec with Matchers {
   "tagsMapper" should {
