@@ -54,6 +54,20 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |""".stripMargin
       )
     }
+    "return error for a transcript without an iso time" in {
+      val mapper = new TranscriptMapper
+      val input =
+        """
+          | {
+          |   "type": "automaton.started",
+          |   "timestamp": 1614691418611,
+          |   "senderId": "900020",
+          |   "senderName": "businessRule"
+          | }
+          |""".stripMargin
+      val result = mapper.mapTranscriptEntry(Json.parse(input), "187286680131967188", 42)
+      result.isError mustBe true
+    }
   }
   "mapTranscript" should {
     "handle no transcript" in {
@@ -67,8 +81,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |""".stripMargin
 
       val result = mapper.mapTranscript(Json.parse(input))
-      result.isSuccess mustBe true
-      result.get mustBe JsArray()
+      result mustBe Seq()
     }
     "handle one transcript" in {
       val mapper = new TranscriptMapper
@@ -89,9 +102,8 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |""".stripMargin
 
       val result = mapper.mapTranscript(Json.parse(input))
-      result.isSuccess mustBe true
-      result.get mustBe a[JsArray]
-      result.get(0) mustBe Json.parse(
+      result mustBe Seq(
+        Json.parse(
         """
           | {
           |    "auditSource": "digital-engagement-platform",
@@ -107,6 +119,58 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers {
           |    }
           | }
           |""".stripMargin)
+      )
+    }
+    "handle bad data" in {
+      val mapper = new TranscriptMapper
+      val input =
+        """
+          |{
+          |}
+          |""".stripMargin
+
+      val result = mapper.mapTranscript(Json.parse(input))
+      result mustBe Seq()
+    }
+    "handle one transcript and one bad" in {
+      val mapper = new TranscriptMapper
+      val input =
+        """
+          |{
+          | "engagementID": "187286680131967188",
+          | "transcript": [
+          | {},
+          | {
+          |   "type": "automaton.started",
+          |   "iso": "2020-09-30T13:23:38+01:20",
+          |   "timestamp": 1614691418611,
+          |   "senderId": "900020",
+          |   "senderName": "businessRule"
+          | },
+          | {}
+          | ]
+          |}
+          |""".stripMargin
+
+      val result = mapper.mapTranscript(Json.parse(input))
+      result mustBe Seq(
+        Json.parse(
+          """
+            | {
+            |    "auditSource": "digital-engagement-platform",
+            |    "auditType": "EngagementTranscript",
+            |    "eventId": "Transcript-187286680131967188-1",
+            |    "generatedAt": "2020-09-30T13:23:38",
+            |    "detail": {
+            |        "engagementID": "187286680131967188",
+            |        "transcriptIndex": 1,
+            |        "type": "automaton.started",
+            |        "senderId": "900020",
+            |        "senderName": "businessRule"
+            |    }
+            | }
+            |""".stripMargin)
+      )
     }
   }
 }

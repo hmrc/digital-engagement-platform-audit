@@ -33,7 +33,7 @@ class MetadataMapper @Inject()(dateTimeService: LocalDateTimeService) {
           "generatedAt" -> dateTimeService.now,
           "detail" -> engagement
         ))
-      case e: JsResult[JsValue] => e
+      case e => e
     }
   }
 }

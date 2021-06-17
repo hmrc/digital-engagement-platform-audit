@@ -40,23 +40,25 @@ class TranscriptMapper {
             __.json.update((JsPath() \ 'detail \ 'engagementID).json.put(Json.toJson(engagementId))) andThen
             __.json.update((JsPath() \ 'detail \ 'transcriptIndex).json.put(Json.toJson(index)))
         )
+      case e => e
     }
   }
 
-  def mapTranscript(engagement: JsValue): JsResult[JsArray] = {
+  def mapTranscript(engagement: JsValue): Seq[JsValue] = {
     val transcript = engagement.transform(transcriptPath.json.pick)
     val engagementId = engagement.transform((JsPath() \ 'engagementID).json.pick)
 
     (transcript, engagementId) match {
       case (JsSuccess(transcripts: JsArray, _), JsSuccess(JsString(engagementId), _)) =>
-        val mappedTranscripts: IndexedSeq[JsResult[JsValue]] = transcripts.value.zipWithIndex.map {
+        val mappedTranscripts = transcripts.value.zipWithIndex.map {
           case (t, index) => mapTranscriptEntry(t, engagementId, index)
         }
-        JsSuccess(JsArray(mappedTranscripts.map {
-          case JsSuccess(v, _) => v
-          case _ => Json.obj()
-        }))
-    }
 
+        mappedTranscripts.flatMap {
+          case JsSuccess(value, _) => Some(value)
+          case _ => None
+        }
+      case _ => Seq()
+    }
   }
 }
