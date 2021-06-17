@@ -21,10 +21,11 @@ import java.time.format.DateTimeFormatter
 
 import javax.inject.Inject
 import mappers.JsonUtils._
+import play.api.Logging
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
 
-class MetadataMapper @Inject()(nuanceDecryptionSevice: NuanceIdDecryptionService) {
+class MetadataMapper @Inject()(nuanceDecryptionService: NuanceIdDecryptionService) extends Logging {
   private val engagementIDPick = (__ \ 'engagementID).json.pick
   private val endDatePick = (__ \ 'endDate \ 'iso).json.pick
 
@@ -41,10 +42,14 @@ class MetadataMapper @Inject()(nuanceDecryptionSevice: NuanceIdDecryptionService
           putString(__ \ 'eventId, s"Metadata-$engagementId") andThen
           putValue(__ \ 'generatedAt, Json.toJson(generatedAtDate)) andThen
           putValue(__ \ 'detail, Json.toJson(engagement)) andThen
-          TagsReads(engagement, nuanceDecryptionSevice)
+          TagsReads(engagement, nuanceDecryptionService)
         )
-      case (e: JsError, _) => e
-      case (_, e) => e
+      case (e: JsError, _) =>
+        logger.warn(s"[MetadataMapper] Couldn't read engagement id from engagement")
+        e
+      case (_, e) =>
+        logger.warn(s"[MetadataMapper] Couldn't read end date from engagement")
+        e
     }
   }
 }

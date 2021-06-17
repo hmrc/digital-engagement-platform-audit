@@ -22,9 +22,10 @@ import java.time.format.DateTimeFormatter
 import play.api.libs.json._
 import JsonUtils._
 import javax.inject.Inject
+import play.api.Logging
 import services.NuanceIdDecryptionService
 
-class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) {
+class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
   private def transcriptPath = JsPath() \ 'transcript
   private def isoPath = JsPath() \ 'iso
   def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tagsReads: Reads[JsObject]): JsResult[JsValue] = {
@@ -45,7 +46,9 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
           createSenderPidIfExists(transcript) andThen
           tagsReads
         )
-      case e => e
+      case e =>
+        logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry")
+        e
     }
   }
 
@@ -59,9 +62,9 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
     }
   }
 
-  def isHmrcId(id: String): Boolean = id.contains("@hmrc")
+  private def isHmrcId(id: String): Boolean = id.contains("@hmrc")
 
-  def extractHmrcId(str: String): String = {
+  private def extractHmrcId(str: String): String = {
     str.split("@")(0)
   }
 
@@ -80,7 +83,9 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
           case JsSuccess(value, _) => Some(value)
           case _ => None
         }
-      case _ => Seq()
+      case _ =>
+        logger.warn(s"[TranscriptMapper] Couldn't read transcript or engagement id from engagement.")
+        Seq()
     }
   }
 }
