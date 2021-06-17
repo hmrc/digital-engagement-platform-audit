@@ -25,7 +25,7 @@ import services.NuanceIdDecryptionService
 class TagsReadsSpec extends AnyWordSpec with Matchers {
   object TestDecryptionService extends NuanceIdDecryptionService {
     override def decryptDeviceId(deviceId: String): String = "DecryptedDeviceId"
-    override def decryptSessionId(deviceId: String): String = "DecryptedSessionId"
+    override def decryptSessionId(sessionId: String): String = "DecryptedSessionId"
   }
 
   "tagsMapper" should {
