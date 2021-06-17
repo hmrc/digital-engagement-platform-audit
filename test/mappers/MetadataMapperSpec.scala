@@ -20,24 +20,42 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 import TestEngagementData.testEngagementJson
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import services.NuanceIdDecryptionService
 
-class MetadataMapperSpec extends AnyWordSpec with Matchers {
+class MetadataMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
+  private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]
+  when(nuanceIdDecryptionService.decryptDeviceId(any())).thenReturn("DecryptedDeviceId")
+  when(nuanceIdDecryptionService.decryptSessionId(any())).thenReturn("DecryptedSessionId")
+
   "mapEngagement" must {
     "work with standard engagement" in {
       val jsInput = testEngagementJson
-      val mapper = new MetadataMapper
+      val mapper = new MetadataMapper(nuanceIdDecryptionService)
       val result = mapper.mapEngagement(jsInput)
       result.isSuccess mustBe true
-      result.get mustBe Json.obj(
-        "auditSource" -> "digital-engagement-platform",
-        "auditType" -> "EngagementMetadata",
-        "eventId" -> "Metadata-187286680131967188",
-        "generatedAt" -> "2021-03-02T13:23:44",
-        "detail" -> jsInput
+      result.get mustBe Json.parse(
+        s"""
+          | {
+          |   "auditSource": "digital-engagement-platform",
+          |   "auditType": "EngagementMetadata",
+          |   "eventId": "Metadata-187286680131967188",
+          |   "generatedAt": "2021-03-02T13:23:44",
+          |   "detail": $jsInput,
+          |   "tags": {
+          |     "clientIP": "81.97.99.4",
+          |     "path": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+          |     "deviceID": "DecryptedDeviceId",
+          |     "X-Session-ID": "DecryptedSessionId"
+          |   }
+          | }
+          |""".stripMargin
       )
     }
     "fail if engagement value is missing engagement" in {
-      val mapper = new MetadataMapper
+      val mapper = new MetadataMapper(nuanceIdDecryptionService)
       val result = mapper.mapEngagement(Json.obj())
       result.isError mustBe true
     }

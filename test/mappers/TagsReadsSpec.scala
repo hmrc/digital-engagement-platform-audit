@@ -32,7 +32,7 @@ class TagsReadsSpec extends AnyWordSpec with Matchers {
     "extract tags" in {
       val jsInput = testEngagementJson
 
-      val result = Json.obj().transform(TagsReads.createReads(jsInput, TestDecryptionService))
+      val result = Json.obj().transform(TagsReads(jsInput, TestDecryptionService))
       result.isSuccess mustBe true
       result.get mustBe Json.parse(
         """
@@ -49,7 +49,7 @@ class TagsReadsSpec extends AnyWordSpec with Matchers {
     "extract tags with no matching values" in {
       val jsInput = Json.obj()
 
-      val result = Json.obj().transform(TagsReads.createReads(jsInput, TestDecryptionService))
+      val result = Json.obj().transform(TagsReads(jsInput, TestDecryptionService))
       result.isSuccess mustBe true
       result.get mustBe Json.parse(
         """

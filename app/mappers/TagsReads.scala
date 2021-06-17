@@ -21,7 +21,7 @@ import play.api.libs.json._
 import services.NuanceIdDecryptionService
 
 object TagsReads {
-  def createReads(engagement: JsValue, decryptionService: NuanceIdDecryptionService): Reads[JsObject] = {
+  def apply(engagement: JsValue, decryptionService: NuanceIdDecryptionService): Reads[JsObject] = {
     Json.obj().transform(
       copyClientIp(engagement) andThen
       copyPath(engagement) andThen

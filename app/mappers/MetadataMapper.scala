@@ -19,10 +19,12 @@ package mappers
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+import javax.inject.Inject
 import mappers.JsonUtils._
 import play.api.libs.json._
+import services.NuanceIdDecryptionService
 
-class MetadataMapper {
+class MetadataMapper @Inject()(nuanceDecryptionSevice: NuanceIdDecryptionService) {
   private val engagementIDPick = (__ \ 'engagementID).json.pick
   private val endDatePick = (__ \ 'endDate \ 'iso).json.pick
 
@@ -38,7 +40,8 @@ class MetadataMapper {
           putString(__ \ 'auditType, "EngagementMetadata") andThen
           putString(__ \ 'eventId, s"Metadata-$engagementId") andThen
           putValue(__ \ 'generatedAt, Json.toJson(generatedAtDate)) andThen
-          putValue(__ \ 'detail, Json.toJson(engagement))
+          putValue(__ \ 'detail, Json.toJson(engagement)) andThen
+          TagsReads(engagement, nuanceDecryptionSevice)
         )
       case (e: JsError, _) => e
       case (_, e) => e
