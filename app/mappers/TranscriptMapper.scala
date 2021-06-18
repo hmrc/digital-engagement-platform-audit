@@ -110,6 +110,23 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
     str.split("@")(0)
   }
 
+  def mapTranscriptEvents(engagement: JsValue): Seq[ExtendedDataEvent] = {
+    val transcript = engagement.transform(transcriptPath.json.pick)
+    val engagementId = engagement.transform((JsPath() \ 'engagementID).json.pick)
+    val tags = TagsReads.extractTags(engagement, nuanceIdDecryptionService)
+
+    (transcript, engagementId) match {
+      case (JsSuccess(transcripts: JsArray, _), JsSuccess(JsString(engagementId), _)) =>
+        val mappedTranscripts = transcripts.value.zipWithIndex.map {
+          case (t, index) => mapTranscriptEntryEvent(t, engagementId, index, tags)
+        }
+        mappedTranscripts.flatten
+      case _ =>
+        logger.warn(s"[TranscriptMapper] Couldn't read transcript or engagement id from engagement.")
+        Seq()
+    }
+  }
+
   def mapTranscript(engagement: JsValue): Seq[JsValue] = {
     val transcript = engagement.transform(transcriptPath.json.pick)
     val engagementId = engagement.transform((JsPath() \ 'engagementID).json.pick)

@@ -130,6 +130,77 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       )
     }
   }
+  "mapTranscriptEvents" should {
+    "handle no transcript" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input =
+        """
+          |{
+          | "engagementID": "187286680131967188",
+          | "transcript": []
+          |}
+          |""".stripMargin
+
+      val result = mapper.mapTranscriptEvents(Json.parse(input))
+      result mustBe Seq()
+    }
+    "handle one transcript" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input =
+        s"""
+           |{
+           | "engagementID": "187286680131967188",
+           | "transcript": [
+           | {
+           |   "type": "automaton.started",
+           |   "iso": "2020-09-30T13:23:38+01:20",
+           |   "timestamp": 1614691418611,
+           |   "senderId": "900020",
+           |   "senderName": "businessRule"
+           | }],
+           | ${TestEngagementData.tagsDataNeeds}
+           |}
+           |""".stripMargin
+
+      val result = mapper.mapTranscriptEvents(Json.parse(input))
+      result mustBe Seq(
+        ExtendedDataEvent(
+          "digital-engagement-platform",
+          "EngagementTranscript",
+          "Transcript-187286680131967188-0",
+          Map[String, String](
+            "clientIP" -> "81.97.99.4",
+            "path" -> "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+            "deviceID" -> "DecryptedDeviceId",
+            "X-Session-ID" -> "DecryptedSessionId"
+          ),
+          Json.parse(
+            """
+              |
+              | {
+              |  "engagementID": "187286680131967188",
+              |  "transcriptIndex": 0,
+              |  "type": "automaton.started",
+              |  "senderId": "900020",
+              |  "senderName": "businessRule"
+              | }
+              |""".stripMargin),
+          LocalDateTime.parse("2020-09-30T13:23:38").toInstant(ZoneOffset.UTC)
+        )
+      )
+    }
+    "handle bad data" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input =
+        """
+          |{
+          |}
+          |""".stripMargin
+
+      val result = mapper.mapTranscriptEvents(Json.parse(input))
+      result mustBe Seq()
+    }
+  }
   "mapTranscriptEntry" should {
     "process a transcript" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
