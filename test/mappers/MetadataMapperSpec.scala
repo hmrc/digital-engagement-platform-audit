@@ -33,37 +33,6 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
   when(nuanceIdDecryptionService.decryptDeviceId(any())).thenReturn("DecryptedDeviceId")
   when(nuanceIdDecryptionService.decryptSessionId(any())).thenReturn("DecryptedSessionId")
 
-  "mapEngagement" must {
-    "work with standard engagement" in {
-      val jsInput = testEngagementJson
-      val mapper = new MetadataMapper(nuanceIdDecryptionService)
-      val result = mapper.mapEngagement(jsInput)
-      result.isSuccess mustBe true
-      result.get mustBe Json.parse(
-        s"""
-          | {
-          |   "auditSource": "digital-engagement-platform",
-          |   "auditType": "EngagementMetadata",
-          |   "eventId": "Metadata-187286680131967188",
-          |   "generatedAt": "2021-03-02T13:23:44",
-          |   "detail": $jsInput,
-          |   "tags": {
-          |     "clientIP": "81.97.99.4",
-          |     "path": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
-          |     "deviceID": "DecryptedDeviceId",
-          |     "X-Session-ID": "DecryptedSessionId"
-          |   }
-          | }
-          |""".stripMargin
-      )
-    }
-    "fail if engagement value is missing engagement" in {
-      val mapper = new MetadataMapper(nuanceIdDecryptionService)
-      val result = mapper.mapEngagement(Json.obj())
-      result.isError mustBe true
-    }
-  }
-
   "mapToMetadataEvent" must {
     "create an audit event" in {
       val jsInput = testEngagementJson
