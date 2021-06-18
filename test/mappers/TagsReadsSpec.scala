@@ -28,7 +28,7 @@ class TagsReadsSpec extends AnyWordSpec with Matchers {
     override def decryptSessionId(sessionId: String): String = "DecryptedSessionId"
   }
 
-  "tagsMapper" should {
+  "tagsReads" should {
     "extract tags" in {
       val jsInput = testEngagementJson
 
@@ -58,6 +58,20 @@ class TagsReadsSpec extends AnyWordSpec with Matchers {
           |   }
           | }
           |""".stripMargin)
+    }
+  }
+  "tagsReader" should {
+    "return tags when fields are present" in {
+      TagsReads.extractTags(TestEngagementData.testEngagementJson, TestDecryptionService) mustBe
+        Map[String, String](
+          "clientIP" -> "81.97.99.4",
+          "path" -> "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+          "deviceID" -> "DecryptedDeviceId",
+          "X-Session-ID" -> "DecryptedSessionId"
+        )
+    }
+    "not return tags for missing fields" in {
+      TagsReads.extractTags(Json.obj(), TestDecryptionService) mustBe Map[String, String]()
     }
   }
 }
