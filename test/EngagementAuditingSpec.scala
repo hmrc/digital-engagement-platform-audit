@@ -20,17 +20,11 @@ import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import scala.concurrent.ExecutionContext.Implicits.global
 
-class EngagementAuditing(engagementMapper: EngagementMapper, auditConnector: AuditConnector) {
-  def processEngagement(engagement: JsValue): Any = {
-    val events = engagementMapper.mapEngagement(engagement)
-    events.foreach(event => auditConnector.sendExtendedEvent(event))
-  }
-}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class EngagementAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
   "EngagementAuditing" must {
@@ -52,6 +46,35 @@ class EngagementAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar
       verify(auditConnector).sendExtendedEvent(metadataEvent)
       verify(auditConnector).sendExtendedEvent(transcriptEvent1)
       verify(auditConnector).sendExtendedEvent(transcriptEvent2)
+    }
+    "send audit events for all engagements" in {
+      val metadataEventA = ExtendedDataEvent("metadataA", "Metadata")
+      val transcriptEventA1 = ExtendedDataEvent("transcriptA1", "Transcript1")
+      val transcriptEventA2 = ExtendedDataEvent("transcriptA2", "Transcript2")
+      val metadataEventB = ExtendedDataEvent("metadataB", "Metadata")
+      val transcriptEventB1 = ExtendedDataEvent("transcriptB1", "Transcript1")
+      val transcriptEventB2 = ExtendedDataEvent("transcriptB2", "Transcript2")
+
+      val engagementA = Json.obj("field" -> "valueA")
+      val engagementB = Json.obj("field" -> "valueB")
+
+      val engagementMapper: EngagementMapper = mock[EngagementMapper]
+      when(engagementMapper.mapEngagement(engagementA)).thenReturn(Seq(metadataEventA, transcriptEventA1, transcriptEventA2))
+      when(engagementMapper.mapEngagement(engagementB)).thenReturn(Seq(metadataEventB, transcriptEventB1, transcriptEventB2))
+
+      val auditConnector = mock[AuditConnector]
+
+      val engagements = JsArray(Seq(engagementA, engagementB))
+
+      val something = new EngagementAuditing(engagementMapper, auditConnector)
+      something.processEngagements(engagements)
+
+      verify(auditConnector).sendExtendedEvent(metadataEventA)
+      verify(auditConnector).sendExtendedEvent(transcriptEventA1)
+      verify(auditConnector).sendExtendedEvent(transcriptEventA2)
+      verify(auditConnector).sendExtendedEvent(metadataEventB)
+      verify(auditConnector).sendExtendedEvent(transcriptEventB1)
+      verify(auditConnector).sendExtendedEvent(transcriptEventB2)
     }
   }
 }
