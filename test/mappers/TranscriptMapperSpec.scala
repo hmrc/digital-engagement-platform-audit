@@ -90,7 +90,45 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         Map[String, String]())
       result mustBe None
     }
-
+    "process a transcript with an HMRC sender ID" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input =
+        """
+          | {
+          |   "type": "automaton.started",
+          |   "iso": "2020-09-30T13:23:38+01:20",
+          |   "timestamp": 1614691418611,
+          |   "senderId": "900020@hmrc",
+          |   "senderName": "businessRule"
+          | }
+          |""".stripMargin
+      val result = mapper.mapTranscriptEntryEvent(
+        Json.parse(input),
+        "187286680131967188",
+        42,
+        Map[String, String]("tag1" -> "value1", "tag2" -> "value2"))
+      result mustBe Some(
+        ExtendedDataEvent(
+          "digital-engagement-platform",
+          "EngagementTranscript",
+          "Transcript-187286680131967188-42",
+          Map[String, String]("tag1" -> "value1", "tag2" -> "value2"),
+          Json.parse(
+            """
+              |
+              | {
+              |  "engagementID": "187286680131967188",
+              |  "transcriptIndex": 42,
+              |  "type": "automaton.started",
+              |  "senderId": "900020@hmrc",
+              |  "senderPID": "900020",
+              |  "senderName": "businessRule"
+              | }
+              |""".stripMargin),
+          LocalDateTime.parse("2020-09-30T13:23:38").toInstant(ZoneOffset.UTC)
+        )
+      )
+    }
   }
   "mapTranscriptEntry" should {
     "process a transcript" in {

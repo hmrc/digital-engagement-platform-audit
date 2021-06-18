@@ -35,7 +35,8 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
       deleteValue(JsPath() \ 'iso) andThen
         deleteValue(JsPath() \ 'timestamp) andThen
         putString(JsPath() \ 'engagementID, engagementId) andThen
-        putValue(JsPath() \ 'transcriptIndex, Json.toJson(index))
+        putValue(JsPath() \ 'transcriptIndex, Json.toJson(index)) andThen
+        createSenderPidInDetailIfExists(transcript)
     ) match {
       case JsSuccess(value, _) => value
     }
@@ -80,6 +81,16 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
       case e =>
         logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry")
         e
+    }
+  }
+
+  private def createSenderPidInDetailIfExists(transcript: JsValue) : Reads[JsObject] = {
+    val senderIdPath = __ \ 'senderId
+    val senderPidPath = __ \ 'senderPID
+    transcript.transform(senderIdPath.json.pick) match {
+      case JsSuccess(JsString(senderId), _) if isHmrcId(senderId) =>
+        putString(senderPidPath, extractHmrcId(senderId))
+      case _ => doNothing()
     }
   }
 
