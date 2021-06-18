@@ -39,6 +39,9 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
         createSenderPidInDetailIfExists(transcript)
     ) match {
       case JsSuccess(value, _) => value
+      case _ =>
+        logger.warn(s"[TranscriptMapper] Couldn't process transcript entry - should never happen")
+        Json.obj()
     }
   }
 
