@@ -16,7 +16,7 @@
 
 package mappers
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
 
 import play.api.libs.json._
@@ -24,10 +24,41 @@ import JsonUtils._
 import javax.inject.Inject
 import play.api.Logging
 import services.NuanceIdDecryptionService
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
   private def transcriptPath = JsPath() \ 'transcript
   private def isoPath = JsPath() \ 'iso
+
+  private def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): JsValue = {
+    transcript.transform(
+      deleteValue(JsPath() \ 'iso) andThen
+        deleteValue(JsPath() \ 'timestamp) andThen
+        putString(JsPath() \ 'engagementID, engagementId) andThen
+        putValue(JsPath() \ 'transcriptIndex, Json.toJson(index))
+    ) match {
+      case JsSuccess(value, _) => value
+    }
+  }
+
+  def mapTranscriptEntryEvent(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String]): Option[ExtendedDataEvent] = {
+    transcript.transform(isoPath.json.pick) match {
+      case JsSuccess(JsString(datetime), _) =>
+        val dt = LocalDateTime.parse(datetime, DateTimeFormatter.ISO_DATE_TIME)
+        Some(ExtendedDataEvent(
+          "digital-engagement-platform",
+          "EngagementTranscript",
+          s"Transcript-$engagementId-$index",
+          tags,
+          mapTranscriptDetail(transcript, engagementId, index),
+          dt.toInstant(ZoneOffset.UTC)
+        ))
+      case _ =>
+        logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry")
+        None
+    }
+  }
+
   def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tagsReads: Reads[JsObject]): JsResult[JsValue] = {
 
     transcript.transform(isoPath.json.pick) match {

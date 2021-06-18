@@ -16,6 +16,8 @@
 
 package mappers
 
+import java.time.{LocalDateTime, ZoneOffset}
+
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
@@ -23,12 +25,73 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
   private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]
   when(nuanceIdDecryptionService.decryptDeviceId(any())).thenReturn("DecryptedDeviceId")
   when(nuanceIdDecryptionService.decryptSessionId(any())).thenReturn("DecryptedSessionId")
 
+  "mapTranscriptEntryEvent" should {
+    "process a transcript" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input =
+        """
+          | {
+          |   "type": "automaton.started",
+          |   "iso": "2020-09-30T13:23:38+01:20",
+          |   "timestamp": 1614691418611,
+          |   "senderId": "900020",
+          |   "senderName": "businessRule"
+          | }
+          |""".stripMargin
+      val result = mapper.mapTranscriptEntryEvent(
+        Json.parse(input),
+        "187286680131967188",
+        42,
+        Map[String, String]("tag1" -> "value1", "tag2" -> "value2"))
+      result mustBe Some(
+        ExtendedDataEvent(
+          "digital-engagement-platform",
+          "EngagementTranscript",
+          "Transcript-187286680131967188-42",
+          Map[String, String]("tag1" -> "value1", "tag2" -> "value2"),
+          Json.parse(
+            """
+              |
+              | {
+              |  "engagementID": "187286680131967188",
+              |  "transcriptIndex": 42,
+              |  "type": "automaton.started",
+              |  "senderId": "900020",
+              |  "senderName": "businessRule"
+              | }
+              |""".stripMargin),
+          LocalDateTime.parse("2020-09-30T13:23:38").toInstant(ZoneOffset.UTC)
+        )
+      )
+    }
+    "return error for a transcript without an iso time" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input =
+        """
+          | {
+          |   "type": "automaton.started",
+          |   "timestamp": 1614691418611,
+          |   "senderId": "900020",
+          |   "senderName": "businessRule"
+          | }
+          |""".stripMargin
+
+      val result = mapper.mapTranscriptEntryEvent(
+        Json.parse(input),
+        "187286680131967188",
+        42,
+        Map[String, String]())
+      result mustBe None
+    }
+
+  }
   "mapTranscriptEntry" should {
     "process a transcript" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
