@@ -49,7 +49,7 @@ object TagsReads {
       value => JsString(decryptionService.decryptSessionId(value(0).as[String]))
     }
   }
-  
+
   private def extractValue(source: JsValue, path: JsPath)(getValue: (JsValue) => JsValue): String = {
     source.transform(path.json.pick) match {
       case JsSuccess(value, _) => getValue(value).as[String]

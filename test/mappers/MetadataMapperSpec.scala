@@ -16,14 +16,17 @@
 
 package mappers
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json._
-import TestEngagementData.testEngagementJson
+import java.time.{LocalDateTime, ZoneOffset}
+
+import mappers.TestEngagementData._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json._
 import services.NuanceIdDecryptionService
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 class MetadataMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
   private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]
@@ -58,6 +61,39 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val mapper = new MetadataMapper(nuanceIdDecryptionService)
       val result = mapper.mapEngagement(Json.obj())
       result.isError mustBe true
+    }
+  }
+
+  "mapToMetadataEvent" must {
+    "create an audit event" in {
+      val jsInput = testEngagementJson
+      val mapper = new MetadataMapper(nuanceIdDecryptionService)
+      val result = mapper.mapToMetadataEvent(jsInput)
+      result mustBe Some(ExtendedDataEvent(
+        "digital-engagement-platform",
+        "EngagementMetadata",
+        "Metadata-187286680131967188",
+        Map[String, String](
+          "clientIP" -> "81.97.99.4",
+          "path" -> "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
+          "deviceID" -> "DecryptedDeviceId",
+          "X-Session-ID" -> "DecryptedSessionId"
+        ),
+        TestEngagementData.testEngagementWithoutTranscriptJson,
+        LocalDateTime.parse("2021-03-02T13:23:44").toInstant(ZoneOffset.UTC)
+      ))
+    }
+    "not create an audit event if no engagement id" in {
+      val jsInput = Json.obj()
+      val mapper = new MetadataMapper(nuanceIdDecryptionService)
+      val result = mapper.mapToMetadataEvent(jsInput)
+      result mustBe None
+    }
+    "not create an audit event if no end date" in {
+      val jsInput = Json.obj("engagementID" -> "someId")
+      val mapper = new MetadataMapper(nuanceIdDecryptionService)
+      val result = mapper.mapToMetadataEvent(jsInput)
+      result mustBe None
     }
   }
 }
