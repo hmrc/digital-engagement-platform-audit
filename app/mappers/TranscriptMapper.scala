@@ -50,7 +50,7 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
       case JsSuccess(JsString(datetime), _) =>
         mapTranscriptEntry(transcript, engagementId, index, tags, datetime)
       case _ =>
-        logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry")
+        logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry: $transcript")
         None
     }
   }

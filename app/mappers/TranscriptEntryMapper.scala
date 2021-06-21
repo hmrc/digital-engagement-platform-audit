@@ -45,8 +45,8 @@ object TranscriptEntryMapper extends Logging {
             createSenderPidInDetailIfExists(transcript)
         ) match {
           case JsSuccess(value, _) => Some(value)
-          case _ =>
-            logger.warn(s"[TranscriptMapper] Couldn't add details to transcript entry - should never happen")
+          case JsError(errors) =>
+            logger.warn(s"[TranscriptMapper] Couldn't add details to transcript entry (should never happen): $errors")
             None
         }
       case _ => None
@@ -66,10 +66,10 @@ object TranscriptEntryMapper extends Logging {
     getType(transcript) match {
       case Some(t) if (mappings.contains(t)) => Some(mappings(t)(transcript))
       case Some(t) =>
-        logger.warn(s"[TranscriptEntryMapper] Unknown entry type: $t")
+        logger.warn(s"[TranscriptEntryMapper] Unknown entry type: $transcript")
         None
       case _ =>
-        logger.warn(s"[TranscriptEntryMapper] Couldn't read type from entry")
+        logger.warn(s"[TranscriptEntryMapper] Couldn't read type from entry: $transcript")
         None
     }
   }
