@@ -24,6 +24,7 @@ import play.api.Logging
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import JsonUtils._
 
 class MetadataMapper @Inject()(nuanceDecryptionService: NuanceIdDecryptionService) extends Logging {
   private val engagementIDPick = (__ \ 'engagementID).json.pick
@@ -31,7 +32,7 @@ class MetadataMapper @Inject()(nuanceDecryptionService: NuanceIdDecryptionServic
 
   private def removeTranscript(engagement: JsValue): JsValue = {
     val transcriptPath = __ \ 'transcript
-    engagement.transform(transcriptPath.json.prune) match {
+    engagement.transform(deleteValue(transcriptPath)) match {
       case JsSuccess(value, _) => value
       case _ => engagement
     }

@@ -33,13 +33,17 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
   private def typePath = JsPath() \ 'type
   private def isoPath = JsPath() \ 'iso
 
-  def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): Option[JsValue] = {
-    val result = getType(transcript) match {
-      case AutomatonStartedEntry.eventType => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
-      case AutomatonContentSentToCustomerEntry.eventType => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
+  private def mapBasicDetails(transcript: JsValue) = {
+    getType(transcript) match {
+      case Some(AutomatonStartedEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
+      case Some(AutomatonContentSentToCustomerEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
       case _ => None
     }
-    result match {
+  }
+
+  def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): Option[JsValue] = {
+
+    mapBasicDetails(transcript) match {
       case Some(value) =>
         value.transform(
           putString(JsPath() \ 'engagementID, engagementId) andThen
@@ -55,10 +59,10 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
     }
   }
 
-  private def getType(transcript: JsValue): String = {
+  private def getType(transcript: JsValue): Option[String] = {
     transcript.transform(typePath.json.pick) match {
-      case JsSuccess(JsString(theType), _) => theType
-      case _ => ""
+      case JsSuccess(JsString(theType), _) => Some(theType)
+      case _ => None
     }
   }
 
