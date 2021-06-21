@@ -52,6 +52,13 @@ object AutomatonCustomerResponded {
   val eventType = "automaton.customerResponded"
 }
 
+case class AutomatonEnded(`type`: String)
+
+object AutomatonEnded {
+  implicit val format: Format[AutomatonEnded] = Json.format[AutomatonEnded]
+  val eventType = "automaton.ended"
+}
+
 
 case class EngagementRequestedEntry(
                                      `type`: String,

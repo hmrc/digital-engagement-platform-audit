@@ -54,6 +54,7 @@ object TranscriptEntryMapper extends Logging {
       case Some(AutomatonStartedEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
       case Some(AutomatonContentSentToCustomerEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
       case Some(AutomatonCustomerResponded.eventType) => Some(Json.toJson(transcript.as[AutomatonCustomerResponded]))
+      case Some(AutomatonEnded.eventType) => Some(Json.toJson(transcript.as[AutomatonEnded]))
       case Some(EngagementRequestedEntry.eventType) => Some(Json.toJson(transcript.as[EngagementRequestedEntry]))
       case Some(t) =>
         logger.warn(s"[TranscriptEntryMapper] Unknown entry type: $t")
