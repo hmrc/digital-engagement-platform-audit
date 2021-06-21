@@ -42,8 +42,7 @@ import scala.concurrent.ExecutionContext
 class EngagementAuditing @Inject()(engagementMapper: EngagementMapper, auditConnector: AuditConnector)
                                   (implicit ec: ExecutionContext) {
   def processEngagement(engagement: JsValue): Unit = {
-    val events = engagementMapper.mapEngagement(engagement)
-    events.foreach(event => auditConnector.sendExtendedEvent(event))
+    engagementMapper.mapEngagement(engagement).foreach(auditConnector.sendExtendedEvent(_))
   }
 
   def processEngagements(engagements: JsArray): Unit = {
