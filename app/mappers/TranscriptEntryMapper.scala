@@ -17,7 +17,7 @@
 package mappers
 
 import mappers.JsonUtils.{doNothing, putString, putValue}
-import models.transcript.{AutomatonContentSentToCustomerEntry, AutomatonStartedEntry}
+import models.transcript.{AutomatonContentSentToCustomerEntry, AutomatonStartedEntry, EngagementRequestedEntry}
 import play.api.Logging
 import play.api.libs.json._
 
@@ -53,6 +53,7 @@ object TranscriptEntryMapper extends Logging {
     getType(transcript) match {
       case Some(AutomatonStartedEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
       case Some(AutomatonContentSentToCustomerEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
+      case Some(EngagementRequestedEntry.eventType) => Some(Json.toJson(transcript.as[EngagementRequestedEntry]))
       case Some(t) =>
         logger.warn(s"[TranscriptEntryMapper] Unknown entry type: $t")
         None

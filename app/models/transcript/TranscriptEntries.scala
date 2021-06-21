@@ -38,3 +38,18 @@ object AutomatonContentSentToCustomerEntry {
   implicit val format: Format[AutomatonContentSentToCustomerEntry] = Json.format[AutomatonContentSentToCustomerEntry]
   val eventType = "automaton.contentSentToCustomer"
 }
+
+case class EngagementRequestedEntry(
+                                     `type`: String,
+                                     senderName: String,
+                                     resourceNeeded: String,
+                                     `automaton.automatonID`: Option[String],
+                                     businessUnit: String,
+                                     agentGroup: String
+
+                                )
+object EngagementRequestedEntry {
+  implicit val format: Format[EngagementRequestedEntry] = Json.format[EngagementRequestedEntry]
+  val eventType = "engagement.requested"
+}
+

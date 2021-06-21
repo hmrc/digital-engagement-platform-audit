@@ -101,5 +101,36 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
     }
+
+    "process engagement.requested" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "engagement.requested",
+                               |  "senderName": "system",
+                               |  "iso": "2020-07-06T15:47:33+01:00",
+                               |  "timestamp": 1594046853613,
+                               |  "resourceNeeded": "automaton",
+                               |  "automaton.automatonID": "2008",
+                               |  "businessUnit": "HMRC-Training",
+                               |  "agentGroup": "HMRC-Training"
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "engagement.requested",
+                                  | "senderName": "system",
+                                  | "resourceNeeded": "automaton",
+                                  | "automaton.automatonID": "2008",
+                                  | "businessUnit": "HMRC-Training",
+                                  | "agentGroup": "HMRC-Training"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+    }
+
   }
 }
