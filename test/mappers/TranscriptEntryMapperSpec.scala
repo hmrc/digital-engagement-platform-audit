@@ -22,9 +22,12 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 
 class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
+  private val testEngagementId = "187286680131967188"
+  private val testIndex = 42
+
   "mapTranscriptDetail" should {
     "process unknown entries" in {
-      TranscriptEntryMapper.mapTranscriptDetail(Json.obj(), "187286680131967188", 42) mustBe None
+      TranscriptEntryMapper.mapTranscriptDetail(Json.obj(), testEngagementId, testIndex) mustBe None
     }
 
     "process automaton.started" in {
@@ -49,7 +52,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | }
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process automaton.contentSentToCustomer" in {
@@ -79,7 +82,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | }
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process automaton.contentSentToCustomer with missing optional fields" in {
@@ -99,7 +102,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | }
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process engagement.requested" in {
@@ -129,7 +132,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |}
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process automaton.customerResponded" in {
@@ -161,7 +164,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |}
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process automaton.ended" in {
@@ -181,7 +184,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |}
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process chat.customerChatlineSent" in {
@@ -207,7 +210,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |}
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process agent.requested" in {
@@ -238,7 +241,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |}
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process chat.agentEnterChat" in {
@@ -270,7 +273,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |}
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
     "process chat.clickStream" in {
@@ -298,7 +301,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |}
                                   |""".stripMargin)
 
-      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
   }
 }
