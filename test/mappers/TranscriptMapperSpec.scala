@@ -32,6 +32,69 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
   when(nuanceIdDecryptionService.decryptDeviceId(any())).thenReturn("DecryptedDeviceId")
   when(nuanceIdDecryptionService.decryptSessionId(any())).thenReturn("DecryptedSessionId")
 
+  "mapTranscriptDetail" should {
+    "process unknown entries" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      mapper.mapTranscriptDetail(Json.obj(), "187286680131967188", 42) mustBe None
+    }
+
+    "process an AutomatonStartedEntry" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input = Json.parse("""
+          | {
+          |   "type": "automaton.started",
+          |   "iso": "2020-09-30T13:23:38+01:20",
+          |   "timestamp": 1614691418611,
+          |   "senderId": "900020",
+          |   "senderName": "businessRule",
+          |   "someOtherField": "someOtherValue"
+          | }
+          |""".stripMargin)
+
+      val expected = Json.parse("""
+          | {
+          |  "engagementID": "187286680131967188",
+          |  "transcriptIndex": 42,
+          |  "type": "automaton.started",
+          |  "senderId": "900020",
+          |  "senderName": "businessRule"
+          | }
+          |""".stripMargin)
+
+      mapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+    }
+    "process an AutomatonContentSentToCustomerEntry" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input = Json.parse("""
+                               |{
+                               |  "type": "automaton.contentSentToCustomer",
+                               |  "iso": "2020-07-06T15:47:33+01:00",
+                               |  "timestamp": 1594046853613,
+                               |  "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                               |  "custom.decisiontree.questions": [
+                               |    "Name",
+                               |    "Your question"
+                               |  ]
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  | {
+                                  |  "engagementID": "187286680131967188",
+                                  |  "transcriptIndex": 42,
+                                  |  "type": "automaton.contentSentToCustomer",
+                                  |  "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                                  |  "custom.decisiontree.questions": [
+                                  |    "Name",
+                                  |    "Your question"
+                                  |  ]
+                                  | }
+                                  |""".stripMargin)
+
+      mapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+    }
+  }
+
   "mapTranscriptEntryEvent" should {
     "process a transcript" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
@@ -42,7 +105,8 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
           |   "iso": "2020-09-30T13:23:38+01:20",
           |   "timestamp": 1614691418611,
           |   "senderId": "900020",
-          |   "senderName": "businessRule"
+          |   "senderName": "businessRule",
+          |   "someOtherField": "someOtherValue"
           | }
           |""".stripMargin
       val result = mapper.mapTranscriptEntryEvent(
@@ -58,7 +122,6 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
           Map[String, String]("tag1" -> "value1", "tag2" -> "value2"),
           Json.parse(
             """
-              |
               | {
               |  "engagementID": "187286680131967188",
               |  "transcriptIndex": 42,

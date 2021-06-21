@@ -16,32 +16,49 @@
 
 package mappers
 
-import java.time.{LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDateTime, ZoneOffset}
 
-import play.api.libs.json._
-import JsonUtils._
 import javax.inject.Inject
+import mappers.JsonUtils._
+import models.transcript.{AutomatonContentSentToCustomerEntry, AutomatonStartedEntry}
 import play.api.Logging
+import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
+
 class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
   private def transcriptPath = JsPath() \ 'transcript
+  private def typePath = JsPath() \ 'type
   private def isoPath = JsPath() \ 'iso
 
-  private def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): JsValue = {
-    transcript.transform(
-      deleteValue(JsPath() \ 'iso) andThen
-        deleteValue(JsPath() \ 'timestamp) andThen
-        putString(JsPath() \ 'engagementID, engagementId) andThen
-        putValue(JsPath() \ 'transcriptIndex, Json.toJson(index)) andThen
-        createSenderPidInDetailIfExists(transcript)
-    ) match {
-      case JsSuccess(value, _) => value
-      case _ =>
-        logger.warn(s"[TranscriptMapper] Couldn't process transcript entry - should never happen")
-        Json.obj()
+  def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): Option[JsValue] = {
+    val result = getType(transcript) match {
+      case AutomatonStartedEntry.eventType => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
+      case AutomatonContentSentToCustomerEntry.eventType => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
+      case _ => None
+    }
+    result match {
+      case Some(value) =>
+        value.transform(
+          putString(JsPath() \ 'engagementID, engagementId) andThen
+            putValue(JsPath() \ 'transcriptIndex, Json.toJson(index)) andThen
+            createSenderPidInDetailIfExists(transcript)
+        ) match {
+          case JsSuccess(value, _) => Some(value)
+          case _ =>
+            logger.warn(s"[TranscriptMapper] Couldn't add details to transcript entry - should never happen")
+            None
+        }
+      case e => e
+    }
+  }
+
+  private def getType(transcript: JsValue): String = {
+    transcript.transform(typePath.json.pick) match {
+      case JsSuccess(JsString(theType), _) => theType
+      case _ => ""
     }
   }
 
@@ -54,7 +71,7 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
           "EngagementTranscript",
           s"Transcript-$engagementId-$index",
           tags,
-          mapTranscriptDetail(transcript, engagementId, index),
+          mapTranscriptDetail(transcript, engagementId, index).get,
           dt.toInstant(ZoneOffset.UTC)
         ))
       case _ =>
