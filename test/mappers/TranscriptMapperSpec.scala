@@ -63,6 +63,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       mapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
     }
+
     "process an AutomatonContentSentToCustomerEntry" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input = Json.parse("""
@@ -134,6 +135,25 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         )
       )
     }
+
+    "return None if unknown type" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input =
+        """
+          | {
+          |   "iso": "2020-09-30T13:23:38+01:20",
+          |   "type": "wacky races"
+          | }
+          |""".stripMargin
+
+      val result = mapper.mapTranscriptEntryEvent(
+        Json.parse(input),
+        "187286680131967188",
+        42,
+        Map[String, String]())
+      result mustBe None
+    }
+
     "return error for a transcript without an iso time" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
@@ -153,6 +173,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         Map[String, String]())
       result mustBe None
     }
+
     "process a transcript with an HMRC sender ID" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
@@ -193,6 +214,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       )
     }
   }
+
   "mapTranscriptEvents" should {
     "handle no transcript" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
@@ -252,6 +274,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         )
       )
     }
+
     "handle bad data" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
@@ -263,6 +286,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result = mapper.mapTranscriptEvents(Json.parse(input))
       result mustBe Seq()
     }
+
     "handle transcripts with bad entries" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =

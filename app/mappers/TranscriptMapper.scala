@@ -33,6 +33,13 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
   private def typePath = JsPath() \ 'type
   private def isoPath = JsPath() \ 'iso
 
+  private def getType(transcript: JsValue): Option[String] = {
+    transcript.transform(typePath.json.pick) match {
+      case JsSuccess(JsString(theType), _) => Some(theType)
+      case _ => None
+    }
+  }
+
   private def mapBasicDetails(transcript: JsValue) = {
     getType(transcript) match {
       case Some(AutomatonStartedEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
@@ -59,9 +66,18 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
     }
   }
 
-  private def getType(transcript: JsValue): Option[String] = {
-    transcript.transform(typePath.json.pick) match {
-      case JsSuccess(JsString(theType), _) => Some(theType)
+  private def doMapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String], datetime: String) = {
+    mapTranscriptDetail(transcript, engagementId, index) match {
+      case Some(detail) =>
+        val dt = LocalDateTime.parse(datetime, DateTimeFormatter.ISO_DATE_TIME)
+        Some(ExtendedDataEvent(
+          "digital-engagement-platform",
+          "EngagementTranscript",
+          s"Transcript-$engagementId-$index",
+          tags,
+          detail,
+          dt.toInstant(ZoneOffset.UTC)
+        ))
       case _ => None
     }
   }
@@ -69,15 +85,7 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
   def mapTranscriptEntryEvent(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String]): Option[ExtendedDataEvent] = {
     transcript.transform(isoPath.json.pick) match {
       case JsSuccess(JsString(datetime), _) =>
-        val dt = LocalDateTime.parse(datetime, DateTimeFormatter.ISO_DATE_TIME)
-        Some(ExtendedDataEvent(
-          "digital-engagement-platform",
-          "EngagementTranscript",
-          s"Transcript-$engagementId-$index",
-          tags,
-          mapTranscriptDetail(transcript, engagementId, index).get,
-          dt.toInstant(ZoneOffset.UTC)
-        ))
+        doMapTranscriptEntry(transcript, engagementId, index, tags, datetime)
       case _ =>
         logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry")
         None
