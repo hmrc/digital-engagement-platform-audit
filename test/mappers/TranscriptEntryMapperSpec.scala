@@ -240,5 +240,37 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
     }
+
+    "process chat.agentEnterChat" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.agentEnterChat",
+                               |  "senderName": "system",
+                               |  "senderAlias": "HMRC",
+                               |  "iso": "2020-06-02T12:54:26+01:00",
+                               |  "timestamp": 1591098866433,
+                               |  "content": "Agent '12345@hmrc' enters chat (as HMRC)",
+                               |  "senderId": "12345@hmrc",
+                               |  "enterType": "TRANSFER",
+                               |  "virtualAssistantSessionID": "@9360416e-e378-2b67-c0e7-a1c2d3ad3664@c365f18e-4f53-4604-ad92-391795882fce"
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.agentEnterChat",
+                                  | "content": "Agent '12345@hmrc' enters chat (as HMRC)",
+                                  | "senderName": "system",
+                                  | "senderAlias": "HMRC",
+                                  | "senderId": "12345@hmrc",
+                                  | "senderPID": "12345",
+                                  | "enterType": "TRANSFER"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+    }
   }
 }

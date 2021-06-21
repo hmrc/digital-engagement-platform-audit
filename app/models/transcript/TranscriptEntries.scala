@@ -72,6 +72,20 @@ object AutomatonEnded {
   val eventType = "automaton.ended"
 }
 
+case class ChatAgentEnteredChatEntry(
+                                     `type`: String,
+                                     senderName: String,
+                                     senderId: String,
+                                     senderAlias: Option[String],
+                                     content: Option[String],
+                                     enterType: String
+                                   )
+
+object ChatAgentEnteredChatEntry {
+  implicit val format: Format[ChatAgentEnteredChatEntry] = Json.format[ChatAgentEnteredChatEntry]
+  val eventType = "chat.agentEnterChat"
+}
+
 case class ChatCustomerChatlineSentEntry(
                                      `type`: String,
                                      senderName: String,

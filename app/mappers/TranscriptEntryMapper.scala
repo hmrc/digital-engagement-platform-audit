@@ -23,6 +23,19 @@ import play.api.libs.json._
 
 object TranscriptEntryMapper extends Logging {
 
+  private def mapAsType[T](transcript: JsValue)(implicit r: Reads[T], w: Writes[T]) = Json.toJson(transcript.as[T])
+
+  val mappings: Map[String, (JsValue) => JsValue] = Map(
+    AgentRequestedEntry.eventType -> mapAsType[AgentRequestedEntry],
+    AutomatonStartedEntry.eventType -> mapAsType[AutomatonStartedEntry],
+    AutomatonContentSentToCustomerEntry.eventType -> mapAsType[AutomatonContentSentToCustomerEntry],
+    AutomatonCustomerResponded.eventType -> mapAsType[AutomatonCustomerResponded],
+    AutomatonEnded.eventType -> mapAsType[AutomatonEnded],
+    ChatAgentEnteredChatEntry.eventType -> mapAsType[ChatAgentEnteredChatEntry],
+    ChatCustomerChatlineSentEntry.eventType -> mapAsType[ChatCustomerChatlineSentEntry],
+    EngagementRequestedEntry.eventType -> mapAsType[EngagementRequestedEntry]
+  )
+
   def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): Option[JsValue] = {
     mapBasicDetails(transcript) match {
       case Some(value) =>
@@ -49,15 +62,9 @@ object TranscriptEntryMapper extends Logging {
     }
   }
 
-  private def mapBasicDetails(transcript: JsValue) = {
+  private def mapBasicDetails(transcript: JsValue): Option[JsValue] = {
     getType(transcript) match {
-      case Some(AgentRequestedEntry.eventType) => Some(Json.toJson(transcript.as[AgentRequestedEntry]))
-      case Some(AutomatonStartedEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
-      case Some(AutomatonContentSentToCustomerEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
-      case Some(AutomatonCustomerResponded.eventType) => Some(Json.toJson(transcript.as[AutomatonCustomerResponded]))
-      case Some(AutomatonEnded.eventType) => Some(Json.toJson(transcript.as[AutomatonEnded]))
-      case Some(ChatCustomerChatlineSentEntry.eventType) => Some(Json.toJson(transcript.as[ChatCustomerChatlineSentEntry]))
-      case Some(EngagementRequestedEntry.eventType) => Some(Json.toJson(transcript.as[EngagementRequestedEntry]))
+      case Some(t) if (mappings.contains(t)) => Some(mappings(t)(transcript))
       case Some(t) =>
         logger.warn(s"[TranscriptEntryMapper] Unknown entry type: $t")
         None
