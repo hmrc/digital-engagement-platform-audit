@@ -20,54 +20,17 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneOffset}
 
 import javax.inject.Inject
-import mappers.JsonUtils._
-import models.transcript.{AutomatonContentSentToCustomerEntry, AutomatonStartedEntry}
 import play.api.Logging
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-
 class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
   private def transcriptPath = JsPath() \ 'transcript
-  private def typePath = JsPath() \ 'type
   private def isoPath = JsPath() \ 'iso
 
-  private def getType(transcript: JsValue): Option[String] = {
-    transcript.transform(typePath.json.pick) match {
-      case JsSuccess(JsString(theType), _) => Some(theType)
-      case _ => None
-    }
-  }
-
-  private def mapBasicDetails(transcript: JsValue) = {
-    getType(transcript) match {
-      case Some(AutomatonStartedEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
-      case Some(AutomatonContentSentToCustomerEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
-      case _ => None
-    }
-  }
-
-  def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): Option[JsValue] = {
-
-    mapBasicDetails(transcript) match {
-      case Some(value) =>
-        value.transform(
-          putString(JsPath() \ 'engagementID, engagementId) andThen
-            putValue(JsPath() \ 'transcriptIndex, Json.toJson(index)) andThen
-            createSenderPidInDetailIfExists(transcript)
-        ) match {
-          case JsSuccess(value, _) => Some(value)
-          case _ =>
-            logger.warn(s"[TranscriptMapper] Couldn't add details to transcript entry - should never happen")
-            None
-        }
-      case e => e
-    }
-  }
-
-  private def doMapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String], datetime: String) = {
-    mapTranscriptDetail(transcript, engagementId, index) match {
+  private def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String], datetime: String) = {
+    TranscriptEntryMapper.mapTranscriptDetail(transcript, engagementId, index) match {
       case Some(detail) =>
         val dt = LocalDateTime.parse(datetime, DateTimeFormatter.ISO_DATE_TIME)
         Some(ExtendedDataEvent(
@@ -85,27 +48,11 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
   def mapTranscriptEntryEvent(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String]): Option[ExtendedDataEvent] = {
     transcript.transform(isoPath.json.pick) match {
       case JsSuccess(JsString(datetime), _) =>
-        doMapTranscriptEntry(transcript, engagementId, index, tags, datetime)
+        mapTranscriptEntry(transcript, engagementId, index, tags, datetime)
       case _ =>
         logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry")
         None
     }
-  }
-
-  private def createSenderPidInDetailIfExists(transcript: JsValue) : Reads[JsObject] = {
-    val senderIdPath = __ \ 'senderId
-    val senderPidPath = __ \ 'senderPID
-    transcript.transform(senderIdPath.json.pick) match {
-      case JsSuccess(JsString(senderId), _) if isHmrcId(senderId) =>
-        putString(senderPidPath, extractHmrcId(senderId))
-      case _ => doNothing()
-    }
-  }
-
-  private def isHmrcId(id: String): Boolean = id.contains("@hmrc")
-
-  private def extractHmrcId(str: String): String = {
-    str.split("@")(0)
   }
 
   def mapTranscriptEvents(engagement: JsValue): Seq[ExtendedDataEvent] = {
