@@ -38,7 +38,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       mapper.mapTranscriptDetail(Json.obj(), "187286680131967188", 42) mustBe None
     }
 
-    "process an AutomatonStartedEntry" in {
+    "process automaton.started" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input = Json.parse("""
           | {
@@ -64,7 +64,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       mapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
     }
 
-    "process an AutomatonContentSentToCustomerEntry" in {
+    "process automaton.contentSentToCustomer" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input = Json.parse("""
                                |{
@@ -89,6 +89,27 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
                                   |    "Name",
                                   |    "Your question"
                                   |  ]
+                                  | }
+                                  |""".stripMargin)
+
+      mapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+    }
+
+    "process automaton.contentSentToCustomer with missing optional fields" in {
+      val mapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val input = Json.parse("""
+                               |{
+                               |  "type": "automaton.contentSentToCustomer",
+                               |  "iso": "2020-07-06T15:47:33+01:00",
+                               |  "timestamp": 1594046853613
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  | {
+                                  |  "engagementID": "187286680131967188",
+                                  |  "transcriptIndex": 42,
+                                  |  "type": "automaton.contentSentToCustomer"
                                   | }
                                   |""".stripMargin)
 

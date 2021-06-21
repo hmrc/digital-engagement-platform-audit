@@ -30,8 +30,9 @@ object AutomatonStartedEntry {
 
 case class AutomatonContentSentToCustomerEntry(
                                                 `type`: String,
-                                                `custom.decisiontree.nodeID`: String,
-                                                `custom.decisiontree.questions`: List[String]
+                                                `custom.decisiontree.nodeID`: Option[String],
+                                                `custom.decisiontree.view`: Option[String],
+                                                `custom.decisiontree.questions`: Option[List[String]]
                                               )
 object AutomatonContentSentToCustomerEntry {
   implicit val format: Format[AutomatonContentSentToCustomerEntry] = Json.format[AutomatonContentSentToCustomerEntry]
