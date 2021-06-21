@@ -272,5 +272,33 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
     }
+
+    "process chat.clickStream" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.clickstream",
+                               |  "senderName": "system",
+                               |  "iso": "2020-06-02T13:01:20+01:00",
+                               |  "timestamp": 1591099280437,
+                               |  "pageMarker": "HMRC-O-COVID_Support",
+                               |  "historicPageMarkers": "HMRC-O-COVID_Support",
+                               |  "systemInfo": "OS: Windows 8,Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36,Browser: Chrome 83.0.4103.61"
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.clickstream",
+                                  | "senderName": "system",
+                                  | "pageMarker": "HMRC-O-COVID_Support",
+                                  | "historicPageMarkers": "HMRC-O-COVID_Support",
+                                  | "systemInfo": "OS: Windows 8,Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36,Browser: Chrome 83.0.4103.61"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, "187286680131967188", 42) mustBe Some(expected)
+    }
   }
 }

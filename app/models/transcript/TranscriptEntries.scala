@@ -86,6 +86,21 @@ object ChatAgentEnteredChatEntry {
   val eventType = "chat.agentEnterChat"
 }
 
+case class ChatClickstreamEntry(
+                                 `type`: String,
+                                 senderName: String,
+                                 pageMarker: Option[String],
+                                 historicPageMarkers: Option[String],
+                                 pageURL: Option[String],
+                                 systemInfo: Option[String],
+                                 datapass: Option[String]
+                               )
+
+object ChatClickstreamEntry {
+  implicit val format: Format[ChatClickstreamEntry] = Json.format[ChatClickstreamEntry]
+  val eventType = "chat.clickstream"
+}
+
 case class ChatCustomerChatlineSentEntry(
                                      `type`: String,
                                      senderName: String,
