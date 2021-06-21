@@ -51,6 +51,7 @@ object TranscriptEntryMapper extends Logging {
 
   private def mapBasicDetails(transcript: JsValue) = {
     getType(transcript) match {
+      case Some(AgentRequestedEntry.eventType) => Some(Json.toJson(transcript.as[AgentRequestedEntry]))
       case Some(AutomatonStartedEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonStartedEntry]))
       case Some(AutomatonContentSentToCustomerEntry.eventType) => Some(Json.toJson(transcript.as[AutomatonContentSentToCustomerEntry]))
       case Some(AutomatonCustomerResponded.eventType) => Some(Json.toJson(transcript.as[AutomatonCustomerResponded]))

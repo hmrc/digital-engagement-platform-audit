@@ -18,6 +18,19 @@ package models.transcript
 
 import play.api.libs.json.{Format, Json}
 
+case class AgentRequestedEntry(
+                                  `type`: String,
+                                  senderId: String,
+                                  senderName: String,
+                                  result: String,
+                                  businessUnit: String,
+                                  agentGroup: String
+                                )
+object AgentRequestedEntry {
+  implicit val format: Format[AgentRequestedEntry] = Json.format[AgentRequestedEntry]
+  val eventType = "agent.requested"
+}
+
 case class AutomatonStartedEntry(
                                   `type`: String,
                                   senderId: String,
@@ -69,6 +82,7 @@ object ChatCustomerChatlineSentEntry {
   implicit val format: Format[ChatCustomerChatlineSentEntry] = Json.format[ChatCustomerChatlineSentEntry]
   val eventType = "chat.customerChatlineSent"
 }
+
 case class EngagementRequestedEntry(
                                      `type`: String,
                                      senderName: String,
@@ -76,7 +90,6 @@ case class EngagementRequestedEntry(
                                      `automaton.automatonID`: Option[String],
                                      businessUnit: String,
                                      agentGroup: String
-
                                    )
 object EngagementRequestedEntry {
   implicit val format: Format[EngagementRequestedEntry] = Json.format[EngagementRequestedEntry]
