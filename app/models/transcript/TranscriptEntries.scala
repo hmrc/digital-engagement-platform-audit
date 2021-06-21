@@ -39,6 +39,20 @@ object AutomatonContentSentToCustomerEntry {
   val eventType = "automaton.contentSentToCustomer"
 }
 
+
+case class AutomatonCustomerResponded(
+                                     `type`: String,
+                                     senderName: String,
+                                     `custom.decisiontree.nodeID`: Option[String],
+                                     `custom.decisiontree.questions`: Option[List[String]]
+                                   )
+
+object AutomatonCustomerResponded {
+  implicit val format: Format[AutomatonCustomerResponded] = Json.format[AutomatonCustomerResponded]
+  val eventType = "automaton.customerResponded"
+}
+
+
 case class EngagementRequestedEntry(
                                      `type`: String,
                                      senderName: String,
@@ -47,9 +61,8 @@ case class EngagementRequestedEntry(
                                      businessUnit: String,
                                      agentGroup: String
 
-                                )
+                                   )
 object EngagementRequestedEntry {
   implicit val format: Format[EngagementRequestedEntry] = Json.format[EngagementRequestedEntry]
   val eventType = "engagement.requested"
 }
-
