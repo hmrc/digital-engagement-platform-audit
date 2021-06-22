@@ -412,13 +412,13 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
-    "process conversionFunnel.interacted" in {
+    "process chat.dispositionStarted" in {
       val input = Json.parse("""
                                |{
-                               |  "type": "conversionFunnel.interacted",
-                               |  "senderName": "system",
-                               |  "iso": "2020-10-01T16:12:17+01:00",
-                               |  "timestamp": 1601565137540
+                               |  "type": "chat.dispositionStarted",
+                               |  "iso": "2020-10-01T16:20:35+01:00",
+                               |  "timestamp": 1601565635783,
+                               |  "senderId": "12345@hmrc"
                                |}
                                |""".stripMargin)
 
@@ -426,8 +426,9 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   |{
                                   | "engagementID": "187286680131967188",
                                   | "transcriptIndex": 42,
-                                  | "type": "conversionFunnel.interacted",
-                                  | "senderName": "system"
+                                  | "type": "chat.dispositionStarted",
+                                  | "senderId": "12345@hmrc",
+                                  | "senderPID": "12345"
                                   |}
                                   |""".stripMargin)
 

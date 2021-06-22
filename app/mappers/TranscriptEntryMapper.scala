@@ -36,6 +36,7 @@ object TranscriptEntryMapper extends Logging {
     Chat_AgentEnteredChatEntry.eventType -> mapAsType[Chat_AgentEnteredChatEntry],
     Chat_ClickstreamEntry.eventType -> mapAsType[Chat_ClickstreamEntry],
     Chat_CustomerChatlineSentEntry.eventType -> mapAsType[Chat_CustomerChatlineSentEntry],
+    Chat_DispositionStarted.eventType -> mapAsType[Chat_DispositionStarted],
     Chat_OpenerDisplayed.eventType -> mapAsType[Chat_OpenerDisplayed],
     ConversionFunnel_Assisted.eventType -> mapAsType[ConversionFunnel_Assisted],
     ConversionFunnel_Interacted.eventType -> mapAsType[ConversionFunnel_Interacted],
