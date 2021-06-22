@@ -19,20 +19,26 @@ package mappers
 import auditing.EngagementAuditing
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import utils.JsonUtils._
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
-  private val auditConnector = mock[AuditConnector]
-  when(auditConnector.sendExtendedEvent(any())(any(), any())).thenReturn(Future.successful(AuditResult.Success))
+
+  def answer[T](f: InvocationOnMock => T): Answer[T] = {
+    (invocation: InvocationOnMock) => f(invocation)
+  }
 
   private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]
   when(nuanceIdDecryptionService.decryptDeviceId(any())).thenReturn("DecryptedDeviceId")
@@ -40,6 +46,17 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   "mapping" should {
     "handle full historic file" in {
+
+      val events = new ListBuffer[JsValue]()
+
+      val auditConnector = mock[AuditConnector]
+      when(auditConnector.sendExtendedEvent(any())(any(), any())).thenAnswer(answer({ invocation =>
+        implicit val format: Format[ExtendedDataEvent] = Json.format[ExtendedDataEvent]
+
+        val event: ExtendedDataEvent = invocation.getArguments.head.asInstanceOf[ExtendedDataEvent]
+        events += Json.toJson(event)
+        Future.successful(AuditResult.Success)
+      }))
 
       val metadataMapper = new MetadataMapper(nuanceIdDecryptionService)
       val transcriptMapper = new TranscriptMapper(nuanceIdDecryptionService)
@@ -53,8 +70,13 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       engagementAuditing.processEngagements(engagements)
 
       verify(auditConnector, times(971)).sendExtendedEvent(any())(any(), any())
+
+      JsArray(events) mustBe getJsonValueFromFile("HistoricSample_AuditEvents.json")
     }
+
     "handle another full historic file" in {
+      val auditConnector = mock[AuditConnector]
+      when(auditConnector.sendExtendedEvent(any())(any(), any())).thenReturn(Future.successful(AuditResult.Success))
 
       val metadataMapper = new MetadataMapper(nuanceIdDecryptionService)
       val transcriptMapper = new TranscriptMapper(nuanceIdDecryptionService)
@@ -67,7 +89,7 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       engagementAuditing.processEngagements(engagements)
 
-      verify(auditConnector, times(2989)).sendExtendedEvent(any())(any(), any())
+      verify(auditConnector, times( 2018)).sendExtendedEvent(any())(any(), any())
     }
   }
 }
