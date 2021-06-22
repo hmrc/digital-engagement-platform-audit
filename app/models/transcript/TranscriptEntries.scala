@@ -180,6 +180,19 @@ object Chat_OpenerDisplayed {
   val eventType = "chat.openerDisplayed"
 }
 
+case class Chat_StatusDisplayed(
+                                 `type`: String,
+                                 senderName: String,
+                                 senderAlias: Option[String],
+                                 content: String,
+                                 showedToCustomer: Option[Boolean]
+                               )
+
+object Chat_StatusDisplayed {
+  implicit val format: Format[Chat_StatusDisplayed] = Json.format[Chat_StatusDisplayed]
+  val eventType = "chat.statusDisplayed"
+}
+
 case class Engagement_RequestedEntry(
                                      `type`: String,
                                      senderName: String,
