@@ -115,6 +115,22 @@ object Chat_AgentEnteredChatEntry {
   val eventType = "chat.agentEnterChat"
 }
 
+case class Chat_AgentExitedEntry(
+                                      `type`: String,
+                                      senderName: String,
+                                      senderId: String,
+                                      senderAlias: Option[String],
+                                      owner: Boolean,
+                                      disposition: Option[String],
+                                      escalated: Option[Boolean],
+                                      escalatedText: Option[String]
+                                    )
+
+object Chat_AgentExitedEntry {
+  implicit val format: Format[Chat_AgentExitedEntry] = Json.format[Chat_AgentExitedEntry]
+  val eventType = "chat.agentExited"
+}
+
 case class Chat_ClickstreamEntry(
                                  `type`: String,
                                  senderName: String,
