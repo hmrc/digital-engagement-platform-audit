@@ -301,3 +301,10 @@ object ConversionFunnel_Interacted {
   val eventType = "conversionFunnel.interacted"
 }
 
+case class Queue_Abandoned(`type`: String)
+
+object Queue_Abandoned {
+  implicit val format: Format[Queue_Abandoned] = Json.format[Queue_Abandoned]
+  val eventType = "queue.abandoned"
+}
+
