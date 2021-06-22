@@ -85,6 +85,22 @@ object Chat_AgentAutoOpenerSentEntry {
   val eventType = "chat.agentAutoOpenerScriptSent"
 }
 
+case class Chat_AgentChatlineSentEntry(
+                                          `type`: String,
+                                          senderName: String,
+                                          senderId: String,
+                                          senderAlias: Option[String],
+                                          content: Option[String],
+                                          lineType: Option[String]
+                                        )
+
+object Chat_AgentChatlineSentEntry {
+  implicit val format: Format[Chat_AgentChatlineSentEntry] = Json.format[Chat_AgentChatlineSentEntry]
+  val eventType = "chat.agentChatlineSent"
+}
+
+
+
 case class Chat_AgentEnteredChatEntry(
                                      `type`: String,
                                      senderName: String,
