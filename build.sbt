@@ -2,6 +2,8 @@ import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
+lazy val IntegrationTest = config("it") extend(Test)
+
 val appName = "digital-engagement-platform-audit"
 
 val silencerVersion = "1.7.3"

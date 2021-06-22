@@ -20,7 +20,7 @@ import play.api.libs.json.{Format, Json}
 
 case class Agent_RequestedEntry(
                                   `type`: String,
-                                  senderId: String,
+                                  senderId: Option[String],
                                   senderName: String,
                                   result: String,
                                   businessUnit: String,
@@ -127,6 +127,19 @@ case class Chat_AgentExitedEntry(
 object Chat_AgentExitedEntry {
   implicit val format: Format[Chat_AgentExitedEntry] = Json.format[Chat_AgentExitedEntry]
   val eventType = "chat.agentExited"
+}
+
+case class Chat_AgentLostConnection(
+                                     `type`: String,
+                                     senderId: Option[String],
+                                     senderName: String,
+                                     senderAlias: Option[String],
+                                     content: String
+                                   )
+
+object Chat_AgentLostConnection {
+  implicit val format: Format[Chat_AgentLostConnection] = Json.format[Chat_AgentLostConnection]
+  val eventType = "chat.agentLostConnection"
 }
 
 case class Chat_ClickstreamEntry(

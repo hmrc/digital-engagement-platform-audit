@@ -680,6 +680,35 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
+    "process chat.agentLostConnection" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.agentLostConnection",
+                               |  "content": "Agent '12345@hmrc' loses connection",
+                               |  "senderName": "agent",
+                               |  "senderAlias": "HMRC",
+                               |  "iso": "2020-10-15T16:33:25+01:00",
+                               |  "timestamp": 1602776005290,
+                               |  "senderId": "12345@hmrc"
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.agentLostConnection",
+                                  | "content": "Agent '12345@hmrc' loses connection",
+                                  | "senderName": "agent",
+                                  | "senderAlias": "HMRC",
+                                  | "senderId": "12345@hmrc",
+                                  | "senderPID": "12345"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
+
     "process queue.abandoned" in {
       val input = Json.parse("""
                                |{
