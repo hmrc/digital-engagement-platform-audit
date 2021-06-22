@@ -155,6 +155,17 @@ object Chat_CustomerChatlineSentEntry {
   val eventType = "chat.customerChatlineSent"
 }
 
+case class Chat_CustomerExitedEntry(
+                                     `type`: String,
+                                     senderName: String,
+                                     content: Option[String]
+                                   )
+
+object Chat_CustomerExitedEntry {
+  implicit val format: Format[Chat_CustomerExitedEntry] = Json.format[Chat_CustomerExitedEntry]
+  val eventType = "chat.customerExited"
+}
+
 case class Chat_DispositionStarted(
                                     `type`: String,
                                     senderId: String,
