@@ -303,5 +303,31 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
+
+    "process chat.openerDisplayed" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.openerDisplayed",
+                               |  "content": "Hello, I’m HMRC’s digital assistant.<br/><br/>If you are registered to sign in to Self Assessment, I can recover your Government Gateway user ID and email it to you.  You can then use it to reset your password.<br/><br/>Do you want to continue?<br/><ul><li><a href=\"#\" data-vtz-link-type=\"Dialog\" data-vtz-jump=\"9438f60c-8792-4751-bbc5-7ee4ed9cc051\" onclick=\"inqFrame.Application.sendVALinkClicked(event)\">Yes</a></li><li><a href=\"#\" data-vtz-link-type=\"Dialog\" data-vtz-jump=\"d66545f2-c0c7-46a8-9c38-a27dd0c18e8b\" onclick=\"inqFrame.Application.sendVALinkClicked(event)\">No</a></li></ul>",
+                               |  "senderName": "opener",
+                               |  "senderAlias": "HMRC",
+                               |  "iso": "2020-07-29T11:58:04+01:00",
+                               |  "timestamp": 1596020284488
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.openerDisplayed",
+                                  | "content": "Hello, I’m HMRC’s digital assistant.<br/><br/>If you are registered to sign in to Self Assessment, I can recover your Government Gateway user ID and email it to you.  You can then use it to reset your password.<br/><br/>Do you want to continue?<br/><ul><li><a href=\"#\" data-vtz-link-type=\"Dialog\" data-vtz-jump=\"9438f60c-8792-4751-bbc5-7ee4ed9cc051\" onclick=\"inqFrame.Application.sendVALinkClicked(event)\">Yes</a></li><li><a href=\"#\" data-vtz-link-type=\"Dialog\" data-vtz-jump=\"d66545f2-c0c7-46a8-9c38-a27dd0c18e8b\" onclick=\"inqFrame.Application.sendVALinkClicked(event)\">No</a></li></ul>",
+                                  | "senderName": "opener",
+                                  | "senderAlias": "HMRC"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
   }
 }
