@@ -80,7 +80,14 @@ object TranscriptEntryMapper extends Logging {
 
   private def mapBasicDetails(transcript: JsValue): Option[JsValue] = {
     getType(transcript) match {
-      case Some(t) if (mappings.contains(t)) => Some(mappings(t)(transcript))
+      case Some(t) if (mappings.contains(t)) =>
+        try {
+          Some(mappings(t)(transcript))
+        } catch {
+          case e: Exception =>
+            logger.warn(s"Got exception ${e.getMessage()} when mapping entry: $transcript\n")
+            None
+        }
       case Some(t) =>
         logger.warn(s"[TranscriptEntryMapper] Unknown entry type: $transcript")
         None
