@@ -607,6 +607,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
+
     "process chat.queueWaitDisplayed" in {
       val input = Json.parse("""
                                |{
@@ -625,6 +626,32 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | "type": "chat.queueWaitDisplayed",
                                   | "content": "Thank you for your patience, the next available adviser will be with you shortly. You are 8 in the queue.",
                                   | "senderName": "system"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
+
+    "process chat.customerLostConnection" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.customerLostConnection",
+                               |  "content": "The customer closed the browser window",
+                               |  "senderName": "customer",
+                               |  "iso": "2020-12-02T15:23:38+00:00",
+                               |  "timestamp": 1606922618365,
+                               |  "senderAlias": "You"
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.customerLostConnection",
+                                  | "content": "The customer closed the browser window",
+                                  | "senderName": "customer",
+                                  | "senderAlias": "You"
                                   |}
                                   |""".stripMargin)
 

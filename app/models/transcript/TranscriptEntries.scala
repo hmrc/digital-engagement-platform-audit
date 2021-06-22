@@ -166,6 +166,18 @@ object Chat_CustomerExitedEntry {
   val eventType = "chat.customerExited"
 }
 
+case class Chat_CustomerLostConnection(
+                                    `type`: String,
+                                    senderName: String,
+                                    senderAlias: Option[String],
+                                    content: String
+                                  )
+
+object Chat_CustomerLostConnection {
+  implicit val format: Format[Chat_CustomerLostConnection] = Json.format[Chat_CustomerLostConnection]
+  val eventType = "chat.customerLostConnection"
+}
+
 case class Chat_DispositionStarted(
                                     `type`: String,
                                     senderId: String,
