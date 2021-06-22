@@ -189,6 +189,18 @@ object Chat_OpenerDisplayed {
   val eventType = "chat.openerDisplayed"
 }
 
+case class Chat_QueueWaitDisplayed(
+                                `type`: String,
+                                senderName: String,
+                                senderAlias: Option[String],
+                                content: String
+                              )
+
+object Chat_QueueWaitDisplayed {
+  implicit val format: Format[Chat_QueueWaitDisplayed] = Json.format[Chat_QueueWaitDisplayed]
+  val eventType = "chat.queueWaitDisplayed"
+}
+
 case class Chat_ScriptlineSentEntry(
                                         `type`: String,
                                         senderName: String,

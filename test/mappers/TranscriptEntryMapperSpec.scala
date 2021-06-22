@@ -607,5 +607,28 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
+    "process chat.queueWaitDisplayed" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.queueWaitDisplayed",
+                               |  "content": "Thank you for your patience, the next available adviser will be with you shortly. You are 8 in the queue.",
+                               |  "senderName": "system",
+                               |  "iso": "2020-12-02T15:17:38+00:00",
+                               |  "timestamp": 1606922258773
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.queueWaitDisplayed",
+                                  | "content": "Thank you for your patience, the next available adviser will be with you shortly. You are 8 in the queue.",
+                                  | "senderName": "system"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
   }
 }
