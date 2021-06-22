@@ -573,5 +573,39 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
+
+    "process chat.transferRequested" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.transferRequested",
+                               |  "senderName": "system",
+                               |  "iso": "2020-12-02T15:17:34+00:00",
+                               |  "timestamp": 1606922254028,
+                               |  "senderId": "virtualAssistant.nina",
+                               |  "result": "QUEUED",
+                               |  "businessUnit": "HMRC-Training",
+                               |  "targetBusinessUnit": "HMRC-CSG",
+                               |  "agentGroup": "HMRC-Training",
+                               |  "targetAgentGroup": "HMRC-PTO-SA"
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.transferRequested",
+                                  | "senderName": "system",
+                                  | "senderId": "virtualAssistant.nina",
+                                  | "result": "QUEUED",
+                                  | "businessUnit": "HMRC-Training",
+                                  | "targetBusinessUnit": "HMRC-CSG",
+                                  | "agentGroup": "HMRC-Training",
+                                  | "targetAgentGroup": "HMRC-PTO-SA"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
   }
 }

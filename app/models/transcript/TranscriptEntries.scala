@@ -216,6 +216,22 @@ object Chat_StatusDisplayed {
   val eventType = "chat.statusDisplayed"
 }
 
+case class Chat_TransferredRequested(
+                                      `type`: String,
+                                      senderName: String,
+                                      senderId: String,
+                                      businessUnit: String,
+                                      targetBusinessUnit: String,
+                                      result: Option[String],
+                                      newAgentID: Option[String],
+                                      agentGroup: Option[String],
+                                      targetAgentGroup: Option[String]
+                                    )
+object Chat_TransferredRequested {
+  implicit val format: Format[Chat_TransferredRequested] = Json.format[Chat_TransferredRequested]
+  val eventType = "chat.transferRequested"
+}
+
 case class Chat_VirtualAssistantSessionStarted(
                                                 `type`: String,
                                                 senderId: String,
