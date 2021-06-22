@@ -493,5 +493,31 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
+
+    "process chat.virtualAssistantSessionStarted" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.virtualAssistantSessionStarted",
+                               |  "senderName": "system",
+                               |  "iso": "2021-02-15T16:21:20+00:00",
+                               |  "timestamp": 1613406080874,
+                               |  "senderId": "virtualAssistant.nina",
+                               |  "virtualAssistantSessionID": "@30517c78-dfe8-0663-cb87-f145ecd69bf0@d20f339a-13ec-4ee9-b206-3a8f7a27661d"
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.virtualAssistantSessionStarted",
+                                  | "senderName": "system",
+                                  | "senderId": "virtualAssistant.nina",
+                                  | "virtualAssistantSessionID": "@30517c78-dfe8-0663-cb87-f145ecd69bf0@d20f339a-13ec-4ee9-b206-3a8f7a27661d"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
   }
 }

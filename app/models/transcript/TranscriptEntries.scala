@@ -101,7 +101,7 @@ object Chat_AgentChatlineSentEntry {
 
 
 
-case class Chat_AgentEnteredChatEntry(
+case class Chat_AgentEnterChatEntry(
                                      `type`: String,
                                      senderName: String,
                                      senderId: String,
@@ -110,8 +110,8 @@ case class Chat_AgentEnteredChatEntry(
                                      enterType: String
                                    )
 
-object Chat_AgentEnteredChatEntry {
-  implicit val format: Format[Chat_AgentEnteredChatEntry] = Json.format[Chat_AgentEnteredChatEntry]
+object Chat_AgentEnterChatEntry {
+  implicit val format: Format[Chat_AgentEnterChatEntry] = Json.format[Chat_AgentEnterChatEntry]
   val eventType = "chat.agentEnterChat"
 }
 
@@ -191,6 +191,18 @@ case class Chat_StatusDisplayed(
 object Chat_StatusDisplayed {
   implicit val format: Format[Chat_StatusDisplayed] = Json.format[Chat_StatusDisplayed]
   val eventType = "chat.statusDisplayed"
+}
+
+case class Chat_VirtualAssistantSessionStarted(
+                                 `type`: String,
+                                 senderId: String,
+                                 senderName: String,
+                                 virtualAssistantSessionID: String
+                               )
+
+object Chat_VirtualAssistantSessionStarted {
+  implicit val format: Format[Chat_VirtualAssistantSessionStarted] = Json.format[Chat_VirtualAssistantSessionStarted]
+  val eventType = "chat.virtualAssistantSessionStarted"
 }
 
 case class Engagement_RequestedEntry(
