@@ -389,5 +389,49 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
 
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
+
+    "process conversionFunnel.assisted" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "conversionFunnel.assisted",
+                               |  "senderName": "system",
+                               |  "iso": "2020-10-01T16:12:17+01:00",
+                               |  "timestamp": 1601565137540
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "conversionFunnel.assisted",
+                                  | "senderName": "system"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
+
+    "process conversionFunnel.interacted" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "conversionFunnel.interacted",
+                               |  "senderName": "system",
+                               |  "iso": "2020-10-01T16:12:17+01:00",
+                               |  "timestamp": 1601565137540
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "conversionFunnel.interacted",
+                                  | "senderName": "system"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
   }
 }

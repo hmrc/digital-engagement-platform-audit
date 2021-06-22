@@ -166,3 +166,24 @@ object Engagement_RequestedEntry {
   implicit val format: Format[Engagement_RequestedEntry] = Json.format[Engagement_RequestedEntry]
   val eventType = "engagement.requested"
 }
+
+case class ConversionFunnel_Assisted(
+                                      `type`: String,
+                                      senderName: String
+                                    )
+
+object ConversionFunnel_Assisted {
+  implicit val format: Format[ConversionFunnel_Assisted] = Json.format[ConversionFunnel_Assisted]
+  val eventType = "conversionFunnel.assisted"
+}
+
+case class ConversionFunnel_Interacted(
+                                        `type`: String,
+                                        senderName: String
+                                      )
+
+object ConversionFunnel_Interacted {
+  implicit val format: Format[ConversionFunnel_Interacted] = Json.format[ConversionFunnel_Interacted]
+  val eventType = "conversionFunnel.interacted"
+}
+
