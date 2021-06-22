@@ -18,7 +18,7 @@ package models.transcript
 
 import play.api.libs.json.{Format, Json}
 
-case class AgentRequestedEntry(
+case class Agent_RequestedEntry(
                                   `type`: String,
                                   senderId: String,
                                   senderName: String,
@@ -26,53 +26,53 @@ case class AgentRequestedEntry(
                                   businessUnit: String,
                                   agentGroup: String
                                 )
-object AgentRequestedEntry {
-  implicit val format: Format[AgentRequestedEntry] = Json.format[AgentRequestedEntry]
+object Agent_RequestedEntry {
+  implicit val format: Format[Agent_RequestedEntry] = Json.format[Agent_RequestedEntry]
   val eventType = "agent.requested"
 }
 
-case class AutomatonStartedEntry(
+case class Automaton_StartedEntry(
                                   `type`: String,
                                   senderId: String,
                                   senderName: String
                                 )
-object AutomatonStartedEntry {
-  implicit val format: Format[AutomatonStartedEntry] = Json.format[AutomatonStartedEntry]
+object Automaton_StartedEntry {
+  implicit val format: Format[Automaton_StartedEntry] = Json.format[Automaton_StartedEntry]
   val eventType = "automaton.started"
 }
 
-case class AutomatonContentSentToCustomerEntry(
+case class Automaton_ContentSentToCustomerEntry(
                                                 `type`: String,
                                                 `custom.decisiontree.nodeID`: Option[String],
                                                 `custom.decisiontree.view`: Option[String],
                                                 `custom.decisiontree.questions`: Option[List[String]]
                                               )
-object AutomatonContentSentToCustomerEntry {
-  implicit val format: Format[AutomatonContentSentToCustomerEntry] = Json.format[AutomatonContentSentToCustomerEntry]
+object Automaton_ContentSentToCustomerEntry {
+  implicit val format: Format[Automaton_ContentSentToCustomerEntry] = Json.format[Automaton_ContentSentToCustomerEntry]
   val eventType = "automaton.contentSentToCustomer"
 }
 
 
-case class AutomatonCustomerResponded(
+case class Automaton_CustomerResponded(
                                      `type`: String,
                                      senderName: String,
                                      `custom.decisiontree.nodeID`: Option[String],
                                      `custom.decisiontree.questions`: Option[List[String]]
                                    )
 
-object AutomatonCustomerResponded {
-  implicit val format: Format[AutomatonCustomerResponded] = Json.format[AutomatonCustomerResponded]
+object Automaton_CustomerResponded {
+  implicit val format: Format[Automaton_CustomerResponded] = Json.format[Automaton_CustomerResponded]
   val eventType = "automaton.customerResponded"
 }
 
-case class AutomatonEnded(`type`: String)
+case class Automaton_Ended(`type`: String)
 
-object AutomatonEnded {
-  implicit val format: Format[AutomatonEnded] = Json.format[AutomatonEnded]
+object Automaton_Ended {
+  implicit val format: Format[Automaton_Ended] = Json.format[Automaton_Ended]
   val eventType = "automaton.ended"
 }
 
-case class ChatAgentEnteredChatEntry(
+case class Chat_AgentEnteredChatEntry(
                                      `type`: String,
                                      senderName: String,
                                      senderId: String,
@@ -81,12 +81,12 @@ case class ChatAgentEnteredChatEntry(
                                      enterType: String
                                    )
 
-object ChatAgentEnteredChatEntry {
-  implicit val format: Format[ChatAgentEnteredChatEntry] = Json.format[ChatAgentEnteredChatEntry]
+object Chat_AgentEnteredChatEntry {
+  implicit val format: Format[Chat_AgentEnteredChatEntry] = Json.format[Chat_AgentEnteredChatEntry]
   val eventType = "chat.agentEnterChat"
 }
 
-case class ChatClickstreamEntry(
+case class Chat_ClickstreamEntry(
                                  `type`: String,
                                  senderName: String,
                                  pageMarker: Option[String],
@@ -96,36 +96,36 @@ case class ChatClickstreamEntry(
                                  datapass: Option[String]
                                )
 
-object ChatClickstreamEntry {
-  implicit val format: Format[ChatClickstreamEntry] = Json.format[ChatClickstreamEntry]
+object Chat_ClickstreamEntry {
+  implicit val format: Format[Chat_ClickstreamEntry] = Json.format[Chat_ClickstreamEntry]
   val eventType = "chat.clickstream"
 }
 
-case class ChatCustomerChatlineSentEntry(
+case class Chat_CustomerChatlineSentEntry(
                                      `type`: String,
                                      senderName: String,
                                      content: String
                                    )
 
-object ChatCustomerChatlineSentEntry {
-  implicit val format: Format[ChatCustomerChatlineSentEntry] = Json.format[ChatCustomerChatlineSentEntry]
+object Chat_CustomerChatlineSentEntry {
+  implicit val format: Format[Chat_CustomerChatlineSentEntry] = Json.format[Chat_CustomerChatlineSentEntry]
   val eventType = "chat.customerChatlineSent"
 }
 
-case class ChatOpenerDisplayed(
+case class Chat_OpenerDisplayed(
                                 `type`: String,
                                 senderName: String,
                                 senderAlias: Option[String],
                                 content: Option[String]
                               )
 
-object ChatOpenerDisplayed {
-  implicit val format: Format[ChatOpenerDisplayed] = Json.format[ChatOpenerDisplayed]
+object Chat_OpenerDisplayed {
+  implicit val format: Format[Chat_OpenerDisplayed] = Json.format[Chat_OpenerDisplayed]
   val eventType = "chat.openerDisplayed"
 }
 
 
-case class EngagementRequestedEntry(
+case class Engagement_RequestedEntry(
                                      `type`: String,
                                      senderName: String,
                                      resourceNeeded: String,
@@ -133,7 +133,7 @@ case class EngagementRequestedEntry(
                                      businessUnit: String,
                                      agentGroup: String
                                    )
-object EngagementRequestedEntry {
-  implicit val format: Format[EngagementRequestedEntry] = Json.format[EngagementRequestedEntry]
+object Engagement_RequestedEntry {
+  implicit val format: Format[Engagement_RequestedEntry] = Json.format[Engagement_RequestedEntry]
   val eventType = "engagement.requested"
 }

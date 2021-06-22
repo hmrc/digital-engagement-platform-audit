@@ -26,16 +26,16 @@ object TranscriptEntryMapper extends Logging {
   private def mapAsType[T](transcript: JsValue)(implicit r: Reads[T], w: Writes[T]) = Json.toJson(transcript.as[T])
 
   val mappings: Map[String, (JsValue) => JsValue] = Map(
-    AgentRequestedEntry.eventType -> mapAsType[AgentRequestedEntry],
-    AutomatonStartedEntry.eventType -> mapAsType[AutomatonStartedEntry],
-    AutomatonContentSentToCustomerEntry.eventType -> mapAsType[AutomatonContentSentToCustomerEntry],
-    AutomatonCustomerResponded.eventType -> mapAsType[AutomatonCustomerResponded],
-    AutomatonEnded.eventType -> mapAsType[AutomatonEnded],
-    ChatAgentEnteredChatEntry.eventType -> mapAsType[ChatAgentEnteredChatEntry],
-    ChatClickstreamEntry.eventType -> mapAsType[ChatClickstreamEntry],
-    ChatCustomerChatlineSentEntry.eventType -> mapAsType[ChatCustomerChatlineSentEntry],
-    ChatOpenerDisplayed.eventType -> mapAsType[ChatOpenerDisplayed],
-    EngagementRequestedEntry.eventType -> mapAsType[EngagementRequestedEntry]
+    Agent_RequestedEntry.eventType -> mapAsType[Agent_RequestedEntry],
+    Automaton_StartedEntry.eventType -> mapAsType[Automaton_StartedEntry],
+    Automaton_ContentSentToCustomerEntry.eventType -> mapAsType[Automaton_ContentSentToCustomerEntry],
+    Automaton_CustomerResponded.eventType -> mapAsType[Automaton_CustomerResponded],
+    Automaton_Ended.eventType -> mapAsType[Automaton_Ended],
+    Chat_AgentEnteredChatEntry.eventType -> mapAsType[Chat_AgentEnteredChatEntry],
+    Chat_ClickstreamEntry.eventType -> mapAsType[Chat_ClickstreamEntry],
+    Chat_CustomerChatlineSentEntry.eventType -> mapAsType[Chat_CustomerChatlineSentEntry],
+    Chat_OpenerDisplayed.eventType -> mapAsType[Chat_OpenerDisplayed],
+    Engagement_RequestedEntry.eventType -> mapAsType[Engagement_RequestedEntry]
   )
 
   def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): Option[JsValue] = {
