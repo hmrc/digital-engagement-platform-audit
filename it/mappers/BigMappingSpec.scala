@@ -39,7 +39,7 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
   when(nuanceIdDecryptionService.decryptSessionId(any())).thenReturn("DecryptedSessionId")
 
   "mapping" should {
-    "handle full file" in {
+    "handle full historic file" in {
 
       val metadataMapper = new MetadataMapper(nuanceIdDecryptionService)
       val transcriptMapper = new TranscriptMapper(nuanceIdDecryptionService)
@@ -53,6 +53,21 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       engagementAuditing.processEngagements(engagements)
 
       verify(auditConnector, times(971)).sendExtendedEvent(any())(any(), any())
+    }
+    "handle another full historic file" in {
+
+      val metadataMapper = new MetadataMapper(nuanceIdDecryptionService)
+      val transcriptMapper = new TranscriptMapper(nuanceIdDecryptionService)
+      val engagementMapper = new EngagementMapper(metadataMapper, transcriptMapper)
+
+      val json = getJsonValueFromFile("HistoricSampleFrom100.json")
+
+      val engagementAuditing = new EngagementAuditing(engagementMapper, auditConnector)
+      val engagements = json.transform((__ \ 'engagements).json.pick).get.as[JsArray]
+
+      engagementAuditing.processEngagements(engagements)
+
+      verify(auditConnector, times(2989)).sendExtendedEvent(any())(any(), any())
     }
   }
 }
