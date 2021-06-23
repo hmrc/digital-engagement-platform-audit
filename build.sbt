@@ -2,6 +2,8 @@ import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
+lazy val IntegrationTest = config("it") extend(Test)
+
 val appName = "digital-engagement-platform-audit"
 
 val silencerVersion = "1.7.3"
@@ -32,6 +34,16 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
+  .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(scoverageSettings)
   .settings(resolvers += Resolver.jcenterRepo)
+
+lazy val itSettings =
+  Defaults.itSettings ++ Seq(
+    unmanagedSourceDirectories := Seq(
+      baseDirectory.value / "it"
+    ),
+    unmanagedResourceDirectories := Seq(
+      baseDirectory.value / "test" / "resources"
+    )
+  )

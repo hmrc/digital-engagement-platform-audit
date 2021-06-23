@@ -14,18 +14,29 @@
  * limitations under the License.
  */
 
-package controllers
+package utils
 
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import play.api.libs.json.{JsValue, Json}
 
-@Singleton()
-class MicroserviceHelloWorldController @Inject()(cc: ControllerComponents)
-    extends BackendController(cc) {
+import scala.io.Source
 
-  def hello(): Action[AnyContent] = Action.async { _ =>
-    Future.successful(Ok("TBH - Trigger for service"))
+trait JsonUtils {
+
+  def getJsonFromFile(filename :String) :String = {
+    val source = Source.fromFile(getClass.getResource(s"/$filename").toURI.getPath)
+    val jsonString = source.mkString
+    source.close()
+    jsonString
   }
+
+  def getJsonValueFromFile(filename:String) :JsValue = {
+    Json.parse(getJsonFromFile(filename))
+  }
+
+  def getJsonValueFromString(jsonString : String ):JsValue = {
+    Json.parse(jsonString)
+  }
+
 }
+
+object JsonUtils extends JsonUtils
