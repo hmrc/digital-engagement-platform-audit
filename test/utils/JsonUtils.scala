@@ -16,6 +16,8 @@
 
 package utils
 
+import java.net.URI
+
 import play.api.libs.json.{JsValue, Json}
 
 import scala.io.Source
@@ -23,7 +25,8 @@ import scala.io.Source
 trait JsonUtils {
 
   def getJsonFromFile(filename :String) :String = {
-    val source = Source.fromFile(getClass.getResource(s"/$filename").getPath)
+    val url = getClass.getResource(s"/$filename")
+    val source = Source.fromFile(new URI(url.toString).getPath)
     val jsonString = source.mkString
     source.close()
     jsonString
