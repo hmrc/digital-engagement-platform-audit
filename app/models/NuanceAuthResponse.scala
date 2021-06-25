@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors
+package models
 
 import play.api.Logging
 import play.api.http.{HeaderNames, Status}

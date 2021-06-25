@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 import config.AppConfig
 import javax.inject.Inject
-import models.NuanceReportingResponse
+import models.{NuanceAuthInformation, NuanceReportingResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}

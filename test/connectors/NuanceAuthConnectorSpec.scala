@@ -19,6 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import models.{NuanceAuthBadRequest, NuanceAuthInformation, NuanceAuthResponse, NuanceAuthServerError, NuanceAuthUnauthorised}
 import play.api.http.{HeaderNames, Status}
 import play.api.inject.guice.GuiceApplicationBuilder
 

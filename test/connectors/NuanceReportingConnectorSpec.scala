@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, get, urlPathEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{NuanceBadRequest, NuanceServerError, NuanceUnauthorised, ValidNuanceReportingResponse}
+import models.{NuanceAuthInformation, NuanceBadRequest, NuanceServerError, NuanceUnauthorised, ValidNuanceReportingResponse}
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
