@@ -34,21 +34,19 @@ object ValidNuanceReportingResponse {
 
 object NuanceReportingResponse extends Logging {
   implicit lazy val httpReads: HttpReads[NuanceReportingResponse] =
-    new HttpReads[NuanceReportingResponse] {
-      override def read(method: String, url: String, response: HttpResponse): NuanceReportingResponse = {
-        response.status match {
-          case Status.OK =>
-            response.json.as[ValidNuanceReportingResponse]
-          case Status.BAD_REQUEST =>
-            logger.warn("[NuanceReportingResponse] Got 'bad request' response from reporting API")
-            NuanceBadRequest
-          case Status.UNAUTHORIZED =>
-            logger.warn("[NuanceReportingResponse] Got 'unauthorized' response from reporting API")
-            NuanceUnauthorised
-          case code =>
-            logger.warn(s"[NuanceReportingResponse] Got error $code from reporting API")
-            NuanceServerError
-        }
+    (method: String, url: String, response: HttpResponse) => {
+      response.status match {
+        case Status.OK =>
+          response.json.as[ValidNuanceReportingResponse]
+        case Status.BAD_REQUEST =>
+          logger.warn("[NuanceReportingResponse] Got 'bad request' response from reporting API")
+          NuanceBadRequest
+        case Status.UNAUTHORIZED =>
+          logger.warn("[NuanceReportingResponse] Got 'unauthorized' response from reporting API")
+          NuanceUnauthorised
+        case code =>
+          logger.warn(s"[NuanceReportingResponse] Got error $code from reporting API")
+          NuanceServerError
       }
     }
 }
