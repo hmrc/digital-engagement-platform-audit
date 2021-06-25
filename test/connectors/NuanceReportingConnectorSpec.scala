@@ -16,6 +16,8 @@
 
 package connectors
 
+import java.time.LocalDateTime
+
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, get, urlPathEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
@@ -41,9 +43,12 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
   def nuanceUrl: String = "/reporting"
   val testSessionId = "xxxSESSIONIDxxx"
   val testServerId = "api130"
-  val testFilter = "SomeFilter"
+  val testFilter = """endDate>="2020-04-20T00:00:10" and endDate<="2020-07-17T00:00:20""""
   val testStart = 100
   val testRows = 1234
+
+  val testStartDate = LocalDateTime.parse("2020-04-20T00:00:10")
+  val testEndDate = LocalDateTime.parse("2020-07-17T00:00:20")
 
   def stubForGet(server: WireMockServer,
                  url: String, returnStatus: Int,
@@ -90,7 +95,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.OK, expectedResult.toString)
 
-        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testFilter)
+        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testStartDate, testEndDate)
         whenReady(futureResult) {
           response => response mustBe ValidNuanceReportingResponse(500, testStart, JsArray())
         }
@@ -100,7 +105,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.BAD_REQUEST)
 
-        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testFilter)
+        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testStartDate, testEndDate)
         whenReady(futureResult) {
           result => result mustBe NuanceBadRequest
         }
@@ -110,7 +115,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.UNAUTHORIZED)
 
-        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testFilter)
+        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testStartDate, testEndDate)
         whenReady(futureResult) {
           result => result mustBe NuanceUnauthorised
         }
@@ -120,7 +125,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.INTERNAL_SERVER_ERROR)
 
-        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testFilter)
+        val futureResult = connector.getHistoricData(testStart, testRows, testCookiesHeader, testStartDate, testEndDate)
         whenReady(futureResult) {
           result => result mustBe NuanceServerError
         }

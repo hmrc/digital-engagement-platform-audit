@@ -16,6 +16,8 @@
 
 package connectors
 
+import java.time.LocalDateTime
+
 import config.AppConfig
 import javax.inject.Inject
 import models.NuanceReportingResponse
@@ -26,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NuanceReportingConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
-  def getHistoricData(start: Int, rows: Int, cookieHeader: String, filter: String = "totalConversions>=0"):
+  def getHistoricData(start: Int, rows: Int, cookieHeader: String, startDate: LocalDateTime, endDate: LocalDateTime):
     Future[NuanceReportingResponse] = {
 
     val extraHeaders = Seq(HeaderNames.COOKIE -> cookieHeader)
@@ -36,7 +38,7 @@ class NuanceReportingConnector @Inject()(http: HttpClient, config: AppConfig)(im
       url = config.nuanceReportingUrl,
       queryParams = Seq(
         "site" -> config.hmrcSiteId,
-        "filter" -> filter,
+        "filter" -> s"""endDate>="$startDate" and endDate<="$endDate"""",
         "returnFields" -> "ALL",
         "start" -> start.toString,
         "rows" -> rows.toString
