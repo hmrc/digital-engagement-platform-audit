@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, post
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.{HeaderNames, Status}
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
@@ -54,6 +53,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec
           .withStatus(returnStatus)
           .withBody(responseBody).withFixedDelay(delayResponse)
           .withHeader(HeaderNames.SET_COOKIE, "JSESSIONID=SomeNuanceCookie")
+          .withHeader(HeaderNames.SET_COOKIE, "SERVERID=api140")
       )
     )
   }
@@ -79,8 +79,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec
         val futureResult = connector.authenticate()
         whenReady(futureResult) {
           response =>
-            response.status mustBe Status.FOUND
-            response.headers(HeaderNames.SET_COOKIE) mustBe Seq("JSESSIONID=SomeNuanceCookie")
+            response mustBe SuccessfulNuanceAuthResult("JSESSIONID=SomeNuanceCookie; SERVERID=api140")
         }
       }
 
@@ -88,9 +87,18 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.BAD_REQUEST)
 
-        val futureResult: Future[HttpResponse] = connector.authenticate()
+        val futureResult: Future[NuanceAuthResponse] = connector.authenticate()
         whenReady(futureResult) {
-          result => result.status mustBe Status.BAD_REQUEST
+          result => result mustBe NuanceAuthBadRequest
+        }
+      }
+      "returns 401 UNAUTHORIZED" in {
+
+        wiremock(Status.UNAUTHORIZED)
+
+        val futureResult: Future[NuanceAuthResponse] = connector.authenticate()
+        whenReady(futureResult) {
+          result => result mustBe NuanceAuthUnauthorised
         }
       }
 
@@ -100,7 +108,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec
 
         val futureResult = connector.authenticate()
         whenReady(futureResult) {
-          result => result.status mustBe Status.INTERNAL_SERVER_ERROR
+          result => result mustBe NuanceAuthServerError
         }
       }
     }

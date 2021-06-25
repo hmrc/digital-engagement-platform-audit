@@ -18,18 +18,17 @@ package connectors
 
 import config.AppConfig
 import javax.inject.Inject
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NuanceAuthConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
-  def authenticate(): Future[HttpResponse] = {
+  def authenticate(): Future[NuanceAuthResponse] = {
 
     implicit val hc : HeaderCarrier = new HeaderCarrier
 
-    http.POSTForm[HttpResponse](
+    http.POSTForm[NuanceAuthResponse](
       config.nuanceAuthUrl,
       Map(
         "j_username" -> Seq(config.nuanceAuthName),
