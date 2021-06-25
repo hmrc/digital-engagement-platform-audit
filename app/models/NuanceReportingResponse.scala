@@ -34,7 +34,7 @@ object ValidNuanceReportingResponse {
 
 object NuanceReportingResponse extends Logging {
   implicit lazy val httpReads: HttpReads[NuanceReportingResponse] =
-    (method: String, url: String, response: HttpResponse) => {
+    (_: String, _: String, response: HttpResponse) => {
       response.status match {
         case Status.OK =>
           response.json.as[ValidNuanceReportingResponse]

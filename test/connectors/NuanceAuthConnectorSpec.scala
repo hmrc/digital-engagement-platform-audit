@@ -79,7 +79,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec
         val futureResult = connector.authenticate()
         whenReady(futureResult) {
           response =>
-            response mustBe SuccessfulNuanceAuthResult("JSESSIONID=SomeNuanceCookie; SERVERID=api140")
+            response mustBe NuanceAuthInformation("JSESSIONID=SomeNuanceCookie; SERVERID=api140")
         }
       }
 

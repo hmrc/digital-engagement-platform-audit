@@ -28,22 +28,24 @@ object NuanceAuthBadRequest extends NuanceAuthResponse
 object NuanceAuthUnauthorised extends NuanceAuthResponse
 object NuanceAuthServerError extends NuanceAuthResponse
 
-case class SuccessfulNuanceAuthResult(cookieHeader: String) extends NuanceAuthResponse
-object SuccessfulNuanceAuthResult {
-  implicit val format: Format[SuccessfulNuanceAuthResult] = Json.format[SuccessfulNuanceAuthResult]
+case class NuanceAuthInformation(cookieHeader: String) extends NuanceAuthResponse {
+  def toHeaders: Seq[(String, String)] = Seq(HeaderNames.COOKIE -> cookieHeader)
+}
+object NuanceAuthInformation {
+  implicit val format: Format[NuanceAuthInformation] = Json.format[NuanceAuthInformation]
 }
 
 object NuanceAuthResponse extends Logging {
   private val cookieHeaderEncoding = new DefaultCookieHeaderEncoding
 
   implicit lazy val httpReads: HttpReads[NuanceAuthResponse] =
-    (method: String, url: String, response: HttpResponse) => {
+    (_: String, _: String, response: HttpResponse) => {
       response.status match {
         case Status.OK | Status.FOUND =>
           val cookieHeaders: Seq[String] = response.headers(HeaderNames.SET_COOKIE)
           val cookieHeadersAsString = cookieHeaders.mkString(cookieHeaderEncoding.SetCookieHeaderSeparator)
           val cookies: Seq[Cookie] = cookieHeaderEncoding.decodeSetCookieHeader(cookieHeadersAsString)
-          SuccessfulNuanceAuthResult(cookieHeaderEncoding.encodeCookieHeader(cookies))
+          NuanceAuthInformation(cookieHeaderEncoding.encodeCookieHeader(cookies))
         case Status.BAD_REQUEST =>
           logger.warn("[NuanceAuthResponse] Got 'bad request' response from auth API")
           NuanceAuthBadRequest

@@ -21,18 +21,16 @@ import java.time.LocalDateTime
 import config.AppConfig
 import javax.inject.Inject
 import models.NuanceReportingResponse
-import play.api.http.HeaderNames
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NuanceReportingConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
-  def getHistoricData(start: Int, rows: Int, cookieHeader: String, startDate: LocalDateTime, endDate: LocalDateTime):
+  def getHistoricData(authInfo: NuanceAuthInformation, start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime):
     Future[NuanceReportingResponse] = {
 
-    val extraHeaders = Seq(HeaderNames.COOKIE -> cookieHeader)
-    implicit val hc : HeaderCarrier = new HeaderCarrier(extraHeaders = extraHeaders)
+    implicit val hc : HeaderCarrier = new HeaderCarrier(extraHeaders = authInfo.toHeaders)
 
     http.GET[NuanceReportingResponse](
       url = config.nuanceReportingUrl,
