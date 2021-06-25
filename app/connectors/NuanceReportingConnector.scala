@@ -26,10 +26,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NuanceReportingConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
-  def getHistoricData(start: Int, rows: Int, sessionId: String, filter: String = "totalConversions>=0"):
+  def getHistoricData(start: Int, rows: Int, cookieHeader: String, filter: String = "totalConversions>=0"):
     Future[NuanceReportingResponse] = {
 
-    val extraHeaders = Seq(HeaderNames.COOKIE -> s"JSESSIONID=$sessionId")
+    val extraHeaders = Seq(HeaderNames.COOKIE -> cookieHeader)
     implicit val hc : HeaderCarrier = new HeaderCarrier(extraHeaders = extraHeaders)
 
     http.GET[NuanceReportingResponse](
