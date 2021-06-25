@@ -27,6 +27,10 @@ class AppConfig @Inject()
   , servicesConfig: ServicesConfig
   ) {
 
+    val nuanceAuthUrl: String = config.get[String]("nuance.auth-url")
+    val nuanceAuthName: String = config.get[String]("nuance.auth-name")
+    val nuanceAuthPassword: String = config.get[String]("nuance.auth-password")
+
 //  val authBaseUrl: String = servicesConfig.baseUrl("auth")
 //
 //  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
