@@ -19,47 +19,26 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import config.AppConfig
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.{HeaderNames, Status}
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.http.HttpResponse
-import utils.WireMockHelper
 
 import scala.concurrent.Future
 
-class NuanceAuthConnectorSpec extends AnyWordSpec
-  with Matchers
-  with MockitoSugar
-  with WireMockHelper
-  with GuiceOneServerPerSuite
-  with ScalaFutures
-  with IntegrationPatience {
-
-  private lazy val application = applicationBuilder().build()
-
-  private def injector = application.injector
-
-  def appConfig : AppConfig = injector.instanceOf[AppConfig]
-
-  def nuanceUrl: String = "/auth-path"
-
-  def applicationBuilder(): GuiceApplicationBuilder = {
-    new GuiceApplicationBuilder()
+class NuanceAuthConnectorSpec extends BaseConnectorSpec
+{
+  override def applicationBuilder(): GuiceApplicationBuilder = {
+    super.applicationBuilder()
       .configure(
         Seq(
-          "metrics.enabled" -> false,
-          "auditing.enabled" -> false,
           "nuance.auth-url" -> s"http://localhost:${server.port()}/auth-path",
           "nuance.auth-name" -> "AuthName",
           "nuance.auth-password" -> "AuthPassword"
         ): _*
       )
   }
+
+  def nuanceUrl: String = "/auth-path"
 
   private def stubForPost(server: WireMockServer,
                   url: String,
