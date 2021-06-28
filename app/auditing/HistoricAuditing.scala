@@ -22,6 +22,7 @@ import config.AppConfig
 import connectors.NuanceReportingRequest
 import javax.inject.Inject
 import models.{NuanceReportingResponse, ValidNuanceReportingResponse}
+import play.api.Logging
 import services.NuanceReportingService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +31,7 @@ class HistoricAuditing @Inject()(
                                   reportingService: NuanceReportingService,
                                   engagementAuditing: EngagementAuditing,
                                   appConfig: AppConfig)(
-                                  implicit executionContext: ExecutionContext) {
+                                  implicit executionContext: ExecutionContext) extends Logging {
   def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[NuanceReportingResponse] = {
     val request = NuanceReportingRequest(0, appConfig.auditingChunkSize, startDate, endDate)
     reportingService.getHistoricData(request) map {
@@ -43,9 +44,10 @@ class HistoricAuditing @Inject()(
               appConfig.auditingChunkSize.min(response.numFound - start),
               startDate,
               endDate)
-            reportingService.getHistoricData(request) map {
+            reportingService.getHistoricData(request).map {
               case response: ValidNuanceReportingResponse =>
                 engagementAuditing.processEngagements(response.engagements)
+              case response => logger.warn(s"[auditDataRange] Got error getting data: $response")
             }
           }
         }
