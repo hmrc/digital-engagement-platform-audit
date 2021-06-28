@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 import connectors.NuanceReportingRequest
 import javax.inject.Inject
-import models.ValidNuanceReportingResponse
+import models.{NuanceReportingResponse, ValidNuanceReportingResponse}
 import services.NuanceReportingService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,12 +29,13 @@ class HistoricAuditing @Inject()(
                                   reportingService: NuanceReportingService,
                                   engagementAuditing: EngagementAuditing)(
                                   implicit executionContext: ExecutionContext) {
-  def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[Boolean] = {
+  def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[NuanceReportingResponse] = {
     val request = NuanceReportingRequest(0, 100, startDate, endDate)
     reportingService.getHistoricData(request) map {
       case response: ValidNuanceReportingResponse =>
         engagementAuditing.processEngagements(response.engagements)
-        true
+        response
+      case response => response
     }
   }
 }

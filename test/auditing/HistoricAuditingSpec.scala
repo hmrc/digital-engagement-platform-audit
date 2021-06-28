@@ -19,7 +19,7 @@ package auditing
 import java.time.LocalDateTime
 
 import connectors.NuanceReportingRequest
-import models.ValidNuanceReportingResponse
+import models.{NuanceBadRequest, ValidNuanceReportingResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.must.Matchers
@@ -34,18 +34,17 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
+  private val testStartDate = LocalDateTime.parse("2020-04-20T00:00:10")
+  private val testEndDate = LocalDateTime.parse("2020-07-17T00:00:20")
 
   "auditing.HistoricAuditingSpec" must {
     "read historic data and send audit events" in {
-
-      val startDate = LocalDateTime.parse("2020-04-20T00:00:10")
-      val endDate = LocalDateTime.parse("2020-07-17T00:00:20")
 
       val responseJson = JsonUtils.getJsonValueFromFile("HistoricSampleSmall.json")
       val nuanceReportingResponse = responseJson.as[ValidNuanceReportingResponse]
       nuanceReportingResponse.engagements.as[List[JsValue]].size mustBe 3
 
-      val testRequest = NuanceReportingRequest(0, 100, startDate, endDate)
+      val testRequest = NuanceReportingRequest(0, 100, testStartDate, testEndDate)
 
       val reportingService = mock[NuanceReportingService]
       when(reportingService.getHistoricData(testRequest)).thenReturn(Future.successful(nuanceReportingResponse))
@@ -53,9 +52,21 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val engagementAuditing = mock[EngagementAuditing]
       val auditing = new HistoricAuditing(reportingService, engagementAuditing)
 
-      Await.result(auditing.auditDateRange(startDate, endDate), Duration.Inf)
+      Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
 
       verify(engagementAuditing).processEngagements(any())
+    }
+    "return error for reporting failure" in {
+      val testRequest = NuanceReportingRequest(0, 100, testStartDate, testEndDate)
+
+      val reportingService = mock[NuanceReportingService]
+      when(reportingService.getHistoricData(testRequest)).thenReturn(Future.successful(NuanceBadRequest))
+
+      val engagementAuditing = mock[EngagementAuditing]
+      val auditing = new HistoricAuditing(reportingService, engagementAuditing)
+
+      val result = Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
+      result mustBe NuanceBadRequest
     }
   }
 }
