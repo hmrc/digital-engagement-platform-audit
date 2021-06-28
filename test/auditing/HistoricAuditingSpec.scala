@@ -22,11 +22,11 @@ import config.AppConfig
 import connectors.NuanceReportingRequest
 import models.{NuanceBadRequest, ValidNuanceReportingResponse}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsArray, JsValue}
 import services.NuanceReportingService
 import utils.JsonUtils
 
@@ -60,7 +60,7 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
 
-      verify(engagementAuditing).processEngagements(any())
+      verify(engagementAuditing, times(1)).processEngagements(any())
     }
     "return error for reporting failure" in {
       val testRequest = NuanceReportingRequest(0, auditingChunkSize, testStartDate, testEndDate)
@@ -78,5 +78,30 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result = Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
       result mustBe NuanceBadRequest
     }
+    "read historic data in chunks and send audit events" in {
+
+      val numFound = auditingChunkSize*2 + 30
+      val reportingService = mock[NuanceReportingService]
+      when(reportingService.getHistoricData(any()))
+        .thenReturn(Future.successful(ValidNuanceReportingResponse(numFound, auditingChunkSize*0, JsArray())))
+        .thenReturn(Future.successful(ValidNuanceReportingResponse(numFound, auditingChunkSize*1, JsArray())))
+        .thenReturn(Future.successful(ValidNuanceReportingResponse(numFound, auditingChunkSize*2, JsArray())))
+
+      val engagementAuditing = mock[EngagementAuditing]
+
+      val appConfig = mock[AppConfig]
+      when(appConfig.auditingChunkSize).thenReturn(auditingChunkSize)
+
+      val auditing = new HistoricAuditing(reportingService, engagementAuditing, appConfig)
+
+      Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
+
+      verify(reportingService).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*0, rows = auditingChunkSize, testStartDate, testEndDate))
+      verify(reportingService).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*1, rows = auditingChunkSize, testStartDate, testEndDate))
+      verify(reportingService).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*2, rows = 30, testStartDate, testEndDate))
+
+      verify(engagementAuditing, times(3)).processEngagements(any())
+    }
+
   }
 }

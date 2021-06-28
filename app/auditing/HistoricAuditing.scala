@@ -36,6 +36,19 @@ class HistoricAuditing @Inject()(
     reportingService.getHistoricData(request) map {
       case response: ValidNuanceReportingResponse =>
         engagementAuditing.processEngagements(response.engagements)
+        if (response.numFound > appConfig.auditingChunkSize) {
+          for (start <- appConfig.auditingChunkSize until response.numFound by appConfig.auditingChunkSize) {
+            val request = NuanceReportingRequest(
+              start,
+              appConfig.auditingChunkSize.min(response.numFound - start),
+              startDate,
+              endDate)
+            reportingService.getHistoricData(request) map {
+              case response: ValidNuanceReportingResponse =>
+                engagementAuditing.processEngagements(response.engagements)
+            }
+          }
+        }
         response
       case response => response
     }
