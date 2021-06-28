@@ -32,27 +32,32 @@ class HistoricAuditing @Inject()(
                                   engagementAuditing: EngagementAuditing,
                                   appConfig: AppConfig)(
                                   implicit executionContext: ExecutionContext) extends Logging {
-  def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[NuanceReportingResponse] = {
+  def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[Seq[NuanceReportingResponse]] = {
     val request = NuanceReportingRequest(0, appConfig.auditingChunkSize, startDate, endDate)
-    reportingService.getHistoricData(request) map {
+    reportingService.getHistoricData(request) flatMap {
       case response: ValidNuanceReportingResponse =>
-        engagementAuditing.processEngagements(response.engagements)
-        if (response.numFound > appConfig.auditingChunkSize) {
-          for (start <- appConfig.auditingChunkSize until response.numFound by appConfig.auditingChunkSize) {
-            val request = NuanceReportingRequest(
-              start,
-              appConfig.auditingChunkSize.min(response.numFound - start),
-              startDate,
-              endDate)
-            reportingService.getHistoricData(request).map {
-              case response: ValidNuanceReportingResponse =>
-                engagementAuditing.processEngagements(response.engagements)
-              case response => logger.warn(s"[auditDataRange] Got error getting data: $response")
-            }
-          }
-        }
-        response
-      case response => response
+          processAll(startDate, endDate, response.numFound)
+      case response => Future(Seq(response))
     }
+  }
+
+  private def processAll(startDate: LocalDateTime, endDate: LocalDateTime, numFound: Int): Future[Seq[NuanceReportingResponse]] = {
+    val starts = 0 until numFound by appConfig.auditingChunkSize
+    Future.sequence(starts.map {
+      start =>
+        val request = NuanceReportingRequest(
+          start,
+          appConfig.auditingChunkSize.min(numFound - start),
+          startDate,
+          endDate)
+
+        reportingService.getHistoricData(request).map {
+          case response: ValidNuanceReportingResponse =>
+            engagementAuditing.processEngagements(response.engagements)
+            response
+          case response => logger.warn(s"[auditDateRange] Got error getting data: $response")
+            response
+        }
+    })
   }
 }
