@@ -39,6 +39,11 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
   private val testEndDate = LocalDateTime.parse("2020-07-17T00:00:20")
   private val auditingChunkSize = 150
 
+  // Expected requests generated internally.
+  private val expectedRequest0 = NuanceReportingRequest(start = auditingChunkSize * 0, rows = auditingChunkSize, testStartDate, testEndDate)
+  private val expectedRequest1 = NuanceReportingRequest(start = auditingChunkSize * 1, rows = auditingChunkSize, testStartDate, testEndDate)
+  private val expectedRequest2 = NuanceReportingRequest(start = auditingChunkSize * 2, rows = 30, testStartDate, testEndDate)
+
   "auditing.HistoricAuditingSpec" must {
     "read historic data and send audit events" in {
 
@@ -46,7 +51,11 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val nuanceReportingResponse = responseJson.as[ValidNuanceReportingResponse]
       nuanceReportingResponse.engagements.as[List[JsValue]].size mustBe 3
 
-      val testRequest = NuanceReportingRequest(0, auditingChunkSize, testStartDate, testEndDate)
+      val expectedRequest = NuanceReportingRequest(
+        0,
+        nuanceReportingResponse.numFound,
+        testStartDate,
+        testEndDate)
 
       val reportingService = mock[NuanceReportingService]
       when(reportingService.getHistoricData(any())).thenReturn(Future.successful(nuanceReportingResponse))
@@ -59,11 +68,12 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val auditing = new HistoricAuditing(reportingService, engagementAuditing, appConfig)
 
       val result = Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
+      result mustBe Seq(new SuccessfulHistoricAuditingResult(expectedRequest))
 
-      verify(reportingService).getHistoricData(testRequest)
+      verify(reportingService).getHistoricData(expectedRequest)
       verify(engagementAuditing, times(1)).processEngagements(any())
-      result mustBe Seq(nuanceReportingResponse)
     }
+
     "return error for reporting failure" in {
       val testRequest = NuanceReportingRequest(0, auditingChunkSize, testStartDate, testEndDate)
 
@@ -78,7 +88,7 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val auditing = new HistoricAuditing(reportingService, engagementAuditing, appConfig)
 
       val result = Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
-      result mustBe Seq(NuanceBadRequest)
+      result mustBe Seq(new FailedHistoricAuditingResult(testRequest, NuanceBadRequest))
     }
 
     "read historic data in chunks and send audit events" in {
@@ -103,12 +113,17 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       val result = Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
 
-      verify(reportingService, times(2)).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*0, rows = auditingChunkSize, testStartDate, testEndDate))
-      verify(reportingService).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*1, rows = auditingChunkSize, testStartDate, testEndDate))
-      verify(reportingService).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*2, rows = 30, testStartDate, testEndDate))
+      result mustBe Seq(
+        new SuccessfulHistoricAuditingResult(expectedRequest0),
+        new SuccessfulHistoricAuditingResult(expectedRequest1),
+        new SuccessfulHistoricAuditingResult(expectedRequest2)
+      )
+
+      verify(reportingService, times(2)).getHistoricData(expectedRequest0)
+      verify(reportingService).getHistoricData(expectedRequest1)
+      verify(reportingService).getHistoricData(expectedRequest2)
 
       verify(engagementAuditing, times(3)).processEngagements(any())
-      result mustBe Seq(response0, response1, response2)
     }
 
     "read historic data in chunks and send audit events and skip errors" in {
@@ -116,12 +131,11 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val numFound = auditingChunkSize*2 + 30
       val reportingService = mock[NuanceReportingService]
       val response0 = ValidNuanceReportingResponse(numFound, auditingChunkSize * 0, JsArray())
-      val response1 = NuanceBadRequest
       val response2 = ValidNuanceReportingResponse(numFound, auditingChunkSize * 2, JsArray())
       when(reportingService.getHistoricData(any()))
         .thenReturn(Future.successful(response0))
         .thenReturn(Future.successful(response0))
-        .thenReturn(Future.successful(response1))
+        .thenReturn(Future.successful(NuanceBadRequest))
         .thenReturn(Future.successful(response2))
 
       val engagementAuditing = mock[EngagementAuditing]
@@ -133,12 +147,17 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       val result = Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
 
-      verify(reportingService, times(2)).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*0, rows = auditingChunkSize, testStartDate, testEndDate))
-      verify(reportingService).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*1, rows = auditingChunkSize, testStartDate, testEndDate))
-      verify(reportingService).getHistoricData(NuanceReportingRequest(start = auditingChunkSize*2, rows = 30, testStartDate, testEndDate))
+      result mustBe Seq(
+        new SuccessfulHistoricAuditingResult(expectedRequest0),
+        new FailedHistoricAuditingResult(expectedRequest1, NuanceBadRequest),
+        new SuccessfulHistoricAuditingResult(expectedRequest2)
+      )
+
+      verify(reportingService, times(2)).getHistoricData(expectedRequest0)
+      verify(reportingService).getHistoricData(expectedRequest1)
+      verify(reportingService).getHistoricData(expectedRequest2)
 
       verify(engagementAuditing, times(2)).processEngagements(any())
-      result mustBe Seq(response0, response1, response2)
     }
   }
 }

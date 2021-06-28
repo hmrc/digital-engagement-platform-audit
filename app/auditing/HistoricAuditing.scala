@@ -27,21 +27,29 @@ import services.NuanceReportingService
 
 import scala.concurrent.{ExecutionContext, Future}
 
+case class HistoricAuditingResult(val start: Int, val rows: Int)
+
+class SuccessfulHistoricAuditingResult(request: NuanceReportingRequest)
+  extends HistoricAuditingResult(request.start, request.rows)
+
+class FailedHistoricAuditingResult(request: NuanceReportingRequest, val response: NuanceReportingResponse)
+  extends HistoricAuditingResult(request.start, request.rows)
+
 class HistoricAuditing @Inject()(
                                   reportingService: NuanceReportingService,
                                   engagementAuditing: EngagementAuditing,
                                   appConfig: AppConfig)(
                                   implicit executionContext: ExecutionContext) extends Logging {
-  def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[Seq[NuanceReportingResponse]] = {
+  def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[Seq[HistoricAuditingResult]] = {
     val request = NuanceReportingRequest(0, appConfig.auditingChunkSize, startDate, endDate)
     reportingService.getHistoricData(request) flatMap {
       case response: ValidNuanceReportingResponse =>
           processAll(startDate, endDate, response.numFound)
-      case response => Future(Seq(response))
+      case response => Future(Seq(new FailedHistoricAuditingResult(request, response)))
     }
   }
 
-  private def processAll(startDate: LocalDateTime, endDate: LocalDateTime, numFound: Int): Future[Seq[NuanceReportingResponse]] = {
+  private def processAll(startDate: LocalDateTime, endDate: LocalDateTime, numFound: Int): Future[Seq[HistoricAuditingResult]] = {
     val starts = 0 until numFound by appConfig.auditingChunkSize
     Future.sequence(starts.map {
       start =>
@@ -54,9 +62,9 @@ class HistoricAuditing @Inject()(
         reportingService.getHistoricData(request).map {
           case response: ValidNuanceReportingResponse =>
             engagementAuditing.processEngagements(response.engagements)
-            response
+            new SuccessfulHistoricAuditingResult(request)
           case response => logger.warn(s"[auditDateRange] Got error getting data: $response")
-            response
+            new FailedHistoricAuditingResult(request, response)
         }
     })
   }
