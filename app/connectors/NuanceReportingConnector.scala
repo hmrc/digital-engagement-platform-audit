@@ -25,9 +25,11 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
+case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime)
+
 class NuanceReportingConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
-  def getHistoricData(authInfo: NuanceAuthInformation, start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime):
+  def getHistoricData(authInfo: NuanceAuthInformation, request: NuanceReportingRequest):
     Future[NuanceReportingResponse] = {
 
     implicit val hc : HeaderCarrier = new HeaderCarrier(extraHeaders = authInfo.toHeaders)
@@ -36,10 +38,10 @@ class NuanceReportingConnector @Inject()(http: HttpClient, config: AppConfig)(im
       url = config.nuanceReportingUrl,
       queryParams = Seq(
         "site" -> config.hmrcSiteId,
-        "filter" -> s"""endDate>="$startDate" and endDate<="$endDate"""",
+        "filter" -> s"""endDate>="${request.startDate}" and endDate<="${request.endDate}"""",
         "returnFields" -> "ALL",
-        "start" -> start.toString,
-        "rows" -> rows.toString
+        "start" -> request.start.toString,
+        "rows" -> request.rows.toString
       ),
       Seq()
     )

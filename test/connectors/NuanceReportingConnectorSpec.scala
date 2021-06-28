@@ -95,7 +95,9 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.OK, expectedResult.toString)
 
-        val futureResult = connector.getHistoricData(testAuthInfo,testStart, testRows, testStartDate, testEndDate)
+        val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
+
+        val futureResult = connector.getHistoricData(testAuthInfo, request)
         whenReady(futureResult) {
           response => response mustBe ValidNuanceReportingResponse(500, testStart, JsArray())
         }
@@ -105,7 +107,9 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.BAD_REQUEST)
 
-        val futureResult = connector.getHistoricData(testAuthInfo,testStart, testRows,testStartDate, testEndDate)
+        val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
+
+        val futureResult = connector.getHistoricData(testAuthInfo, request)
         whenReady(futureResult) {
           result => result mustBe NuanceBadRequest
         }
@@ -115,7 +119,9 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.UNAUTHORIZED)
 
-        val futureResult = connector.getHistoricData(testAuthInfo, testStart, testRows,  testStartDate, testEndDate)
+        val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
+
+        val futureResult = connector.getHistoricData(testAuthInfo, request)
         whenReady(futureResult) {
           result => result mustBe NuanceUnauthorised
         }
@@ -125,7 +131,9 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         wiremock(Status.INTERNAL_SERVER_ERROR)
 
-        val futureResult = connector.getHistoricData(testAuthInfo, testStart, testRows, testStartDate, testEndDate)
+        val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
+
+        val futureResult = connector.getHistoricData(testAuthInfo, request)
         whenReady(futureResult) {
           result => result mustBe NuanceServerError
         }
