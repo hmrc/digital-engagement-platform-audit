@@ -18,7 +18,7 @@ package services
 
 import connectors.{NuanceAuthConnector, NuanceReportingConnector, NuanceReportingRequest}
 import javax.inject.Inject
-import models.{NuanceAuthInformation, NuanceReportingResponse}
+import models.{NuanceAuthFailure, NuanceAuthInformation, NuanceReportingResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -29,6 +29,7 @@ class NuanceReportingService @Inject()(
   def getHistoricData(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
     authConnector.authenticate() flatMap {
       case authInfo: NuanceAuthInformation => reportingConnector.getHistoricData(authInfo, request)
+      case authError => Future.successful(NuanceAuthFailure(authError))
     }
   }
 }

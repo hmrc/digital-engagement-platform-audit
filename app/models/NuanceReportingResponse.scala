@@ -27,6 +27,8 @@ object NuanceServerError extends NuanceReportingResponse
 object NuanceBadRequest extends NuanceReportingResponse
 object NuanceUnauthorised extends NuanceReportingResponse
 
+case class NuanceAuthFailure(authResponse: NuanceAuthResponse) extends NuanceReportingResponse
+
 case class ValidNuanceReportingResponse(numFound: Int, start: Int, engagements: JsArray) extends NuanceReportingResponse
 object ValidNuanceReportingResponse {
   implicit val format: Format[ValidNuanceReportingResponse] = Json.format[ValidNuanceReportingResponse]
