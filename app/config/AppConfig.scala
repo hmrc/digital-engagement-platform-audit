@@ -33,6 +33,8 @@ class AppConfig @Inject()
   val nuanceReportingUrl: String = config.get[String]("nuance.reporting-url")
   val hmrcSiteId: String = config.get[String]("nuance.site-id")
 
+  val auditingChunkSize: Int = config.get[Int]("nuance.auditing-chunk-size")
+
 //  val authBaseUrl: String = servicesConfig.baseUrl("auth")
 //
 //  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
