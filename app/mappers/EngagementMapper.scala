@@ -16,10 +16,11 @@
 
 package mappers
 
+import javax.inject.Inject
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-class EngagementMapper(metadataMapper: MetadataMapper, transcriptMapper: TranscriptMapper) {
+class EngagementMapper @Inject()(metadataMapper: MetadataMapper, transcriptMapper: TranscriptMapper) {
   def mapEngagement(engagement: JsValue): Seq[ExtendedDataEvent] = {
     metadataMapper.mapToMetadataEvent(engagement) match {
       case Some(event) => Seq(event) ++ transcriptMapper.mapTranscriptEvents(engagement)

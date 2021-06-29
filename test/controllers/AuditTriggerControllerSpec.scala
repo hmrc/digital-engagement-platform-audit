@@ -16,21 +16,39 @@
 
 package controllers
 
+import java.time.LocalDateTime
+
+import auditing.HistoricAuditing
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 
-class MicroserviceHelloWorldControllerSpec extends AnyWordSpec with Matchers {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
+class AuditTriggerControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   private val fakeRequest = FakeRequest("GET", "/")
-  private val controller = new MicroserviceHelloWorldController(Helpers.stubControllerComponents())
+  private val historicAuditing = mock[HistoricAuditing]
+  when(historicAuditing.auditDateRange(any(), any())).thenReturn(Future.successful(Seq()))
+  private val controller = new AuditTriggerController(
+    historicAuditing,
+    Helpers.stubControllerComponents()
+  )
 
-  "GET /" should {
+  "GET trigger" should {
     "return 200" in {
-      val result = controller.hello()(fakeRequest)
+      val result = controller.trigger("2020-04-20T00:00", "2020-05-30T00:00")(fakeRequest)
       status(result) shouldBe Status.OK
+      verify(historicAuditing).auditDateRange(
+        LocalDateTime.parse("2020-04-20T00:00"),
+        LocalDateTime.parse("2020-05-30T00:00")
+      )
     }
   }
 }
