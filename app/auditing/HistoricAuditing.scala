@@ -27,7 +27,7 @@ import services.NuanceReportingService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class HistoricAuditingResult(val start: Int, val rows: Int)
+case class HistoricAuditingResult(start: Int, rows: Int)
 
 class SuccessfulHistoricAuditingResult(request: NuanceReportingRequest)
   extends HistoricAuditingResult(request.start, request.rows)
@@ -41,7 +41,7 @@ class HistoricAuditing @Inject()(
                                   appConfig: AppConfig)(
                                   implicit executionContext: ExecutionContext) extends Logging {
   def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[Seq[HistoricAuditingResult]] = {
-    val request = NuanceReportingRequest(0, appConfig.auditingChunkSize, startDate, endDate)
+    val request = NuanceReportingRequest(start = 0, rows = 1, startDate, endDate)
     reportingService.getHistoricData(request) flatMap {
       case response: ValidNuanceReportingResponse =>
           processAll(startDate, endDate, response.numFound)
@@ -63,7 +63,8 @@ class HistoricAuditing @Inject()(
           case response: ValidNuanceReportingResponse =>
             engagementAuditing.processEngagements(response.engagements)
             new SuccessfulHistoricAuditingResult(request)
-          case response => logger.warn(s"[auditDateRange] Got error getting data: $response")
+          case response =>
+            logger.warn(s"[auditDateRange] Got error getting data: $response")
             new FailedHistoricAuditingResult(request, response)
         }
     })
