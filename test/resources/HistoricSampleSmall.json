@@ -1,0 +1,636 @@
+{
+    "numFound": 3,
+    "start": 0,
+    "engagements": [
+        {
+            "engagementID": "765716408709914167",
+            "siteID": "10006719",
+            "saleQualified": false,
+            "businessRuleID": "900020",
+            "businessRuleName": "HMRC-LC-STD-SIT-STD-xtestx-C2C",
+            "pages": {
+                "launchPageID": "-1",
+                "launchPageMarker": "unrecognized_page",
+                "launchPageURL": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTesthttps://yandex.by/?clid=2233626&nr=18449"
+            },
+            "engagementInitialAgentResponseTime": 0,
+            "initialTimeInQueue": 0,
+            "conferenceTime": 0,
+            "engagementMaxAgentResponseTime": 0,
+            "engagementAvgAgentResponseTime": 0,
+            "transferred": false,
+            "deviceType": "Standard",
+            "operatingSystem": "Windows",
+            "browserType": "EDGE",
+            "browserVersion": "18.18363",
+            "agents": [],
+            "businessUnits": [
+                {
+                    "businessUnitID": "19001214",
+                    "businessUnitName": "HMRC-Training"
+                }
+            ],
+            "agentGroups": [
+                {
+                    "agentGroupID": "10006721",
+                    "agentGroupName": "HMRC-Training"
+                }
+            ],
+            "engagementDuration": 3000,
+            "businessRuleAttribute": {},
+            "visitorAttribute": {
+                "mdtpSessionId": [
+                    "ENCRYPTED-NNaVxrxE8xYxZblbQWgzRwR5FIsJzMHj31qhYjWOIA37a9fBAdcv+dPpkv0wJZiR1Tbf8SISfpWeNtnP5nsSnu9QQgtFB5JNQdFXD0UuKe6rmq0jwnW9/Ghbwr56GNxDvA4MHzoXlJYQ+Csg/AOCVlZJjVAY0bLeLg=="
+                ],
+                "mdtpdfSessionId": [
+                    "R0ruX1yE9Hz6gdw87YMFNnd5GbynBgVoEj3WOwehg54WrKGEryDV4OZRjaDBgy5P7Ooj5MTcq3NlkZwVuF0drAJJ"
+                ],
+                "clientIp": [
+                    "86.57.135.193"
+                ],
+                "deviceId": [
+                    "ENCRYPTED-O6fbgGDbego9wBzsdLZCsOgQsjzFMdvFlnoFqnlbGoncd/zbY1ScYbPB/yhVGrwIFyR9RxraljFdafSarm0Y9Jyx8Sf9z9GSB0EQbsLtZQWH22XpquWOVDfOEVwx2WlvZLnd6xuAYxeyKQ/bLsLv22iVpJDxusOCsQ=="
+                ]
+            },
+            "endDate": {
+                "iso": "2020-07-07T10:26:30+01:00",
+                "timestamp": 1594113990317
+            },
+            "lastUpdateDate": {
+                "iso": "2020-07-07T12:36:55+01:00",
+                "timestamp": 1594121815043
+            },
+            "startDate": {
+                "iso": "2020-07-07T10:26:27+01:00",
+                "timestamp": 1594113987520
+            },
+            "customerID": "765716403523791030",
+            "language": "en",
+            "launchType": "C2C",
+            "cobrowse": false,
+            "escalated": false,
+            "wrapUpTime": 0,
+            "timeFromCustomerToAgentExit": 0,
+            "sessionID": "7657164035237910301",
+            "automatons": [
+                {
+                    "automatonID": "2008",
+                    "automatonName": "HMRC_PreChat_CSG",
+                    "automatonType": "guide",
+                    "startedIn": "chat",
+                    "startedBy": "br,900020",
+                    "pageID": "unrecognized_page",
+                    "businessUnit": "HMRC-Training",
+                    "agentGroup": "HMRC-Training",
+                    "outcomeType": "Completed",
+                    "outcomeMessage": "unknown_outcome",
+                    "launchDate": "2020-07-07 10:26:27",
+                    "launchDateMlSec": 1594113987520,
+                    "automatonAttribute": {
+                        "acif_version": "release-5.23.0-2 -- 5855c7a",
+                        "name": "HMRC_PreChat_CSG",
+                        "automaton_id": "2008"
+                    },
+                    "automatonTypes": [
+                        "guide"
+                    ],
+                    "nodes": [
+                        {
+                            "automatonType": "guide",
+                            "nodeID": "2024",
+                            "nodeName": "HMRC_PreChat_CSG - Initial",
+                            "outcomeType": "Completed",
+                            "nodeAttribute": {
+                                "node_type": "survey",
+                                "node_name": "HMRC_PreChat_CSG - Initial",
+                                "next_node_id": "2025",
+                                "next_node_name": "HMRC_PreChat - Chat",
+                                "node_id": "2024"
+                            },
+                            "elementResponses": [
+                                {
+                                    "elementID": "name",
+                                    "elementValue": "Name",
+                                    "responseNumericValue": 1.0,
+                                    "responseStringValue": "3"
+                                },
+                                {
+                                    "elementID": "chat-reason",
+                                    "elementValue": "Your question",
+                                    "responseNumericValue": 1.0,
+                                    "responseStringValue": "3"
+                                }
+                            ],
+                            "nodeEnteredTime": {
+                                "timestamp": 1594113990316,
+                                "timeInClientTimezone": "2020-07-07 10:26:30"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transferAbandoned": false,
+            "conferenceConnected": false,
+            "callConnected": false,
+            "converted": false,
+            "transfersConnected": 0,
+            "callDuration": 0,
+            "totalActiveAgentTime": 0,
+            "totalActiveCallTime": 0,
+            "totalActiveCustomerTime": 0,
+            "totalAgentFreehandLines": 0,
+            "totalAgentScriptLines": 0,
+            "totalAgentLines": 0,
+            "totalCustomerLines": 0,
+            "totalEngagementLines": 0,
+            "totalAgentsInvolved": 0,
+            "totalCallsConnected": 0,
+            "totalFailedCalls": 0,
+            "totalConversions": 0,
+            "totalOrderValue": 0.0,
+            "engagementProductType": [
+                "guide"
+            ],
+            "conversions": [],
+            "dispositions": [],
+            "escalationNotes": "[]",
+            "transcript": [
+                {
+                    "type": "engagement.requested",
+                    "senderName": "system",
+                    "iso": "2020-07-07T10:26:27+01:00",
+                    "timestamp": 1594113987520,
+                    "resourceNeeded": "automaton",
+                    "automaton.automatonID": "2008",
+                    "businessUnit": "HMRC-Training",
+                    "agentGroup": "HMRC-Training"
+                },
+                {
+                    "type": "automaton.started",
+                    "iso": "2020-07-07T10:26:27+01:00",
+                    "timestamp": 1594113987520,
+                    "senderId": "900020",
+                    "senderName": "businessRule"
+                },
+                {
+                    "type": "automaton.contentSentToCustomer",
+                    "iso": "2020-07-07T10:26:27+01:00",
+                    "timestamp": 1594113987520,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                    "custom.decisiontree.questions": [
+                        "Name",
+                        "Your question"
+                    ]
+                },
+                {
+                    "type": "automaton.customerResponded",
+                    "senderName": "customer",
+                    "iso": "2020-07-07T10:26:30+01:00",
+                    "timestamp": 1594113990316,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                    "custom.decisiontree.questions": [
+                        "Name=3",
+                        "Your question=3"
+                    ]
+                },
+                {
+                    "type": "automaton.contentSentToCustomer",
+                    "iso": "2020-07-07T10:26:30+01:00",
+                    "timestamp": 1594113990316,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat - Chat",
+                    "custom.decisiontree.questions": [
+                        "Before I transfer you to an adviser, complete the form below"
+                    ]
+                },
+                {
+                    "type": "automaton.ended",
+                    "iso": "2020-07-07T10:26:30+01:00",
+                    "timestamp": 1594113990317
+                }
+            ],
+            "truncatedDueToEventLimit": false,
+            "initialEngagementInConversation": false,
+            "endType": "Customer Completed Automaton"
+        },
+        {
+            "engagementID": "766560833637639178",
+            "siteID": "10006719",
+            "saleQualified": false,
+            "businessRuleID": "900020",
+            "businessRuleName": "HMRC-LC-STD-SIT-STD-xtestx-C2C",
+            "pages": {
+                "launchPageID": "-1",
+                "launchPageMarker": "unrecognized_page",
+                "launchPageURL": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest"
+            },
+            "engagementInitialAgentResponseTime": 0,
+            "initialTimeInQueue": 0,
+            "conferenceTime": 0,
+            "engagementMaxAgentResponseTime": 0,
+            "engagementAvgAgentResponseTime": 0,
+            "transferred": false,
+            "deviceType": "Standard",
+            "operatingSystem": "Windows",
+            "browserType": "CHROME",
+            "browserVersion": "83.0.4103.116",
+            "agents": [],
+            "businessUnits": [
+                {
+                    "businessUnitID": "19001214",
+                    "businessUnitName": "HMRC-Training"
+                }
+            ],
+            "agentGroups": [
+                {
+                    "agentGroupID": "10006721",
+                    "agentGroupName": "HMRC-Training"
+                }
+            ],
+            "engagementDuration": 3000,
+            "businessRuleAttribute": {},
+            "visitorAttribute": {
+                "mdtpSessionId": [
+                    "ENCRYPTED-vIbz9gJYKNfioB0PpK5jA9eQQ3nBRtLhPRk3bJPMiF98WK9nAMbX4lhxfF7iuEO2uvpu+ASIdvGDPozLHq8O6Bhm7sOiXHYK0gf4KdirgeM2zRH3sLF7LdI3RsNx1TKgZxbK+7gw8SK2EDM5iJxtW8NCppH9Kt+JaA=="
+                ],
+                "mdtpdfSessionId": [
+                    "R0ruX1yE9Hz6gdw87YMFNnd5GbynBgVoEj3WOwehg54WrKGEryDV4OZRjaDBgy5P7Ooj5MTcq3NlkZwVuF0drAJJ"
+                ],
+                "clientIp": [
+                    "86.57.135.193"
+                ],
+                "deviceId": [
+                    "ENCRYPTED-8UpuOUezI0pObGnnM9jLgzE/Iufz9XAeDhe332wWKrXpHJ1xRr7PZSEulNohZHkrREc2GClYF/5H3qP2zcX7c/o7ZhFYLbuHZzKWlsox9dSNWRIFSPvR1Ev19Wt3m627b2DlX2VdPwC8tIlZUOONgW+vr1LyuT1Udg=="
+                ]
+            },
+            "endDate": {
+                "iso": "2020-07-07T10:25:53+01:00",
+                "timestamp": 1594113953707
+            },
+            "lastUpdateDate": {
+                "iso": "2020-07-07T12:36:37+01:00",
+                "timestamp": 1594121797182
+            },
+            "startDate": {
+                "iso": "2020-07-07T10:25:50+01:00",
+                "timestamp": 1594113950924
+            },
+            "customerID": "764871978461828822",
+            "language": "en",
+            "launchType": "C2C",
+            "cobrowse": false,
+            "escalated": false,
+            "wrapUpTime": 0,
+            "timeFromCustomerToAgentExit": 0,
+            "sessionID": "7648719784618288222",
+            "automatons": [
+                {
+                    "automatonID": "2008",
+                    "automatonName": "HMRC_PreChat_CSG",
+                    "automatonType": "guide",
+                    "startedIn": "chat",
+                    "startedBy": "br,900020",
+                    "pageID": "unrecognized_page",
+                    "businessUnit": "HMRC-Training",
+                    "agentGroup": "HMRC-Training",
+                    "outcomeType": "Completed",
+                    "outcomeMessage": "unknown_outcome",
+                    "launchDate": "2020-07-07 10:25:50",
+                    "launchDateMlSec": 1594113950924,
+                    "automatonAttribute": {
+                        "acif_version": "release-5.23.0-2 -- 5855c7a",
+                        "name": "HMRC_PreChat_CSG",
+                        "automaton_id": "2008"
+                    },
+                    "automatonTypes": [
+                        "guide"
+                    ],
+                    "nodes": [
+                        {
+                            "automatonType": "guide",
+                            "nodeID": "2024",
+                            "nodeName": "HMRC_PreChat_CSG - Initial",
+                            "outcomeType": "Completed",
+                            "nodeAttribute": {
+                                "node_type": "survey",
+                                "node_name": "HMRC_PreChat_CSG - Initial",
+                                "next_node_id": "2025",
+                                "next_node_name": "HMRC_PreChat - Chat",
+                                "node_id": "2024"
+                            },
+                            "elementResponses": [
+                                {
+                                    "elementID": "name",
+                                    "elementValue": "Name",
+                                    "responseNumericValue": 1.0,
+                                    "responseStringValue": "2"
+                                },
+                                {
+                                    "elementID": "chat-reason",
+                                    "elementValue": "Your question",
+                                    "responseNumericValue": 1.0,
+                                    "responseStringValue": "2"
+                                }
+                            ],
+                            "nodeEnteredTime": {
+                                "timestamp": 1594113953706,
+                                "timeInClientTimezone": "2020-07-07 10:25:53"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transferAbandoned": false,
+            "conferenceConnected": false,
+            "callConnected": false,
+            "converted": false,
+            "transfersConnected": 0,
+            "callDuration": 0,
+            "totalActiveAgentTime": 0,
+            "totalActiveCallTime": 0,
+            "totalActiveCustomerTime": 0,
+            "totalAgentFreehandLines": 0,
+            "totalAgentScriptLines": 0,
+            "totalAgentLines": 0,
+            "totalCustomerLines": 0,
+            "totalEngagementLines": 0,
+            "totalAgentsInvolved": 0,
+            "totalCallsConnected": 0,
+            "totalFailedCalls": 0,
+            "totalConversions": 0,
+            "totalOrderValue": 0.0,
+            "engagementProductType": [
+                "guide"
+            ],
+            "conversions": [],
+            "dispositions": [],
+            "escalationNotes": "[]",
+            "transcript": [
+                {
+                    "type": "engagement.requested",
+                    "senderName": "system",
+                    "iso": "2020-07-07T10:25:50+01:00",
+                    "timestamp": 1594113950924,
+                    "resourceNeeded": "automaton",
+                    "automaton.automatonID": "2008",
+                    "businessUnit": "HMRC-Training",
+                    "agentGroup": "HMRC-Training"
+                },
+                {
+                    "type": "automaton.started",
+                    "iso": "2020-07-07T10:25:50+01:00",
+                    "timestamp": 1594113950924,
+                    "senderId": "900020",
+                    "senderName": "businessRule"
+                },
+                {
+                    "type": "automaton.contentSentToCustomer",
+                    "iso": "2020-07-07T10:25:50+01:00",
+                    "timestamp": 1594113950924,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                    "custom.decisiontree.questions": [
+                        "Name",
+                        "Your question"
+                    ]
+                },
+                {
+                    "type": "automaton.customerResponded",
+                    "senderName": "customer",
+                    "iso": "2020-07-07T10:25:53+01:00",
+                    "timestamp": 1594113953706,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                    "custom.decisiontree.questions": [
+                        "Name=2",
+                        "Your question=2"
+                    ]
+                },
+                {
+                    "type": "automaton.contentSentToCustomer",
+                    "iso": "2020-07-07T10:25:53+01:00",
+                    "timestamp": 1594113953706,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat - Chat",
+                    "custom.decisiontree.questions": [
+                        "Before I transfer you to an adviser, complete the form below"
+                    ]
+                },
+                {
+                    "type": "automaton.ended",
+                    "iso": "2020-07-07T10:25:53+01:00",
+                    "timestamp": 1594113953707
+                }
+            ],
+            "truncatedDueToEventLimit": false,
+            "initialEngagementInConversation": false,
+            "endType": "Customer Completed Automaton"
+        },
+        {
+            "engagementID": "765997883292492471",
+            "siteID": "10006719",
+            "saleQualified": false,
+            "businessRuleID": "900020",
+            "businessRuleName": "HMRC-LC-STD-SIT-STD-xtestx-C2C",
+            "pages": {
+                "launchPageID": "-1",
+                "launchPageMarker": "unrecognized_page",
+                "launchPageURL": "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest"
+            },
+            "engagementInitialAgentResponseTime": 0,
+            "initialTimeInQueue": 0,
+            "conferenceTime": 0,
+            "engagementMaxAgentResponseTime": 0,
+            "engagementAvgAgentResponseTime": 0,
+            "transferred": false,
+            "deviceType": "Standard",
+            "operatingSystem": "Windows",
+            "browserType": "EDGE",
+            "browserVersion": "18.18363",
+            "agents": [],
+            "businessUnits": [
+                {
+                    "businessUnitID": "19001214",
+                    "businessUnitName": "HMRC-Training"
+                }
+            ],
+            "agentGroups": [
+                {
+                    "agentGroupID": "10006721",
+                    "agentGroupName": "HMRC-Training"
+                }
+            ],
+            "engagementDuration": 5000,
+            "businessRuleAttribute": {},
+            "visitorAttribute": {
+                "mdtpSessionId": [
+                    "ENCRYPTED-8gtdhUnr44WILe8TNck0F+GOtqxxwIH7Cdu6kYfu7wL7DCIdhiMjPmLonukujhONxT4cbbL7DryP6z1BNqJRRetekd7ggPos3cexZTAaeWFb8a11wshcbH/VNrCRCjithlQ0fGJVcNwV9rmqnAgh0ZjgvxyX+bKuqg=="
+                ],
+                "mdtpdfSessionId": [
+                    "R0ruX1yE9Hz6gdw87YMFNnd5GbynBgVoEj3WOwehg54WrKGEryDV4OZRjaDBgy5P7Ooj5MTcq3NlkZwVuF0drAJJ"
+                ],
+                "clientIp": [
+                    "86.57.135.193"
+                ],
+                "deviceId": [
+                    "ENCRYPTED-RK3bNxGx7URCx9Xqq1I9O9ygonyy8+iOsigFeck/DKlYQdib1+veiTf8uYkRu+EBqDAnJfroRNpS6E9Jsc1fjNDxeEE5Cc4R0UwN1nzJFuVjST4Wg5BOyC7lXNm65tegWpovyt87YG/DbJg4JKCwPqPO8JFja86LZg=="
+                ]
+            },
+            "endDate": {
+                "iso": "2020-07-07T08:46:18+01:00",
+                "timestamp": 1594107978984
+            },
+            "lastUpdateDate": {
+                "iso": "2020-07-07T10:39:28+01:00",
+                "timestamp": 1594114768327
+            },
+            "startDate": {
+                "iso": "2020-07-07T08:46:13+01:00",
+                "timestamp": 1594107973584
+            },
+            "customerID": "765716403523791030",
+            "language": "en",
+            "launchType": "C2C",
+            "cobrowse": false,
+            "escalated": false,
+            "wrapUpTime": 0,
+            "timeFromCustomerToAgentExit": 0,
+            "sessionID": "7657164035237910301",
+            "automatons": [
+                {
+                    "automatonID": "2008",
+                    "automatonName": "HMRC_PreChat_CSG",
+                    "automatonType": "guide",
+                    "startedIn": "chat",
+                    "startedBy": "br,900020",
+                    "pageID": "unrecognized_page",
+                    "businessUnit": "HMRC-Training",
+                    "agentGroup": "HMRC-Training",
+                    "outcomeType": "Completed",
+                    "outcomeMessage": "unknown_outcome",
+                    "launchDate": "2020-07-07 08:46:13",
+                    "launchDateMlSec": 1594107973584,
+                    "automatonAttribute": {
+                        "acif_version": "release-5.23.0-2 -- 5855c7a",
+                        "name": "HMRC_PreChat_CSG",
+                        "automaton_id": "2008"
+                    },
+                    "automatonTypes": [
+                        "guide"
+                    ],
+                    "nodes": [
+                        {
+                            "automatonType": "guide",
+                            "nodeID": "2024",
+                            "nodeName": "HMRC_PreChat_CSG - Initial",
+                            "outcomeType": "Completed",
+                            "nodeAttribute": {
+                                "node_type": "survey",
+                                "node_name": "HMRC_PreChat_CSG - Initial",
+                                "next_node_id": "2025",
+                                "next_node_name": "HMRC_PreChat - Chat",
+                                "node_id": "2024"
+                            },
+                            "elementResponses": [
+                                {
+                                    "elementID": "name",
+                                    "elementValue": "Name",
+                                    "responseNumericValue": 1.0,
+                                    "responseStringValue": "Customer2"
+                                },
+                                {
+                                    "elementID": "chat-reason",
+                                    "elementValue": "Your question",
+                                    "responseNumericValue": 1.0,
+                                    "responseStringValue": "2"
+                                }
+                            ],
+                            "nodeEnteredTime": {
+                                "timestamp": 1594107978983,
+                                "timeInClientTimezone": "2020-07-07 08:46:18"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transferAbandoned": false,
+            "conferenceConnected": false,
+            "callConnected": false,
+            "converted": false,
+            "transfersConnected": 0,
+            "callDuration": 0,
+            "totalActiveAgentTime": 0,
+            "totalActiveCallTime": 0,
+            "totalActiveCustomerTime": 0,
+            "totalAgentFreehandLines": 0,
+            "totalAgentScriptLines": 0,
+            "totalAgentLines": 0,
+            "totalCustomerLines": 0,
+            "totalEngagementLines": 0,
+            "totalAgentsInvolved": 0,
+            "totalCallsConnected": 0,
+            "totalFailedCalls": 0,
+            "totalConversions": 0,
+            "totalOrderValue": 0.0,
+            "engagementProductType": [
+                "guide"
+            ],
+            "conversions": [],
+            "dispositions": [],
+            "escalationNotes": "[]",
+            "transcript": [
+                {
+                    "type": "engagement.requested",
+                    "senderName": "system",
+                    "iso": "2020-07-07T08:46:13+01:00",
+                    "timestamp": 1594107973584,
+                    "resourceNeeded": "automaton",
+                    "automaton.automatonID": "2008",
+                    "businessUnit": "HMRC-Training",
+                    "agentGroup": "HMRC-Training"
+                },
+                {
+                    "type": "automaton.started",
+                    "iso": "2020-07-07T08:46:13+01:00",
+                    "timestamp": 1594107973584,
+                    "senderId": "900020",
+                    "senderName": "businessRule"
+                },
+                {
+                    "type": "automaton.contentSentToCustomer",
+                    "iso": "2020-07-07T08:46:13+01:00",
+                    "timestamp": 1594107973584,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                    "custom.decisiontree.questions": [
+                        "Name",
+                        "Your question"
+                    ]
+                },
+                {
+                    "type": "automaton.customerResponded",
+                    "senderName": "customer",
+                    "iso": "2020-07-07T08:46:18+01:00",
+                    "timestamp": 1594107978983,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat_CSG - Initial",
+                    "custom.decisiontree.questions": [
+                        "Name=Customer2",
+                        "Your question=2"
+                    ]
+                },
+                {
+                    "type": "automaton.contentSentToCustomer",
+                    "iso": "2020-07-07T08:46:18+01:00",
+                    "timestamp": 1594107978984,
+                    "custom.decisiontree.nodeID": "HMRC_PreChat - Chat",
+                    "custom.decisiontree.questions": [
+                        "Before I transfer you to an adviser, complete the form below"
+                    ]
+                },
+                {
+                    "type": "automaton.ended",
+                    "iso": "2020-07-07T08:46:18+01:00",
+                    "timestamp": 1594107978984
+                }
+            ],
+            "truncatedDueToEventLimit": false,
+            "initialEngagementInConversation": false,
+            "endType": "Customer Completed Automaton"
+        }
+    ]
+}
