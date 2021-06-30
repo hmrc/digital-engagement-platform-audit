@@ -321,3 +321,11 @@ object Queue_Abandoned {
   val eventType = "queue.abandoned"
 }
 
+case class Queue_Removed(`type`: String)
+
+object Queue_Removed {
+  implicit val format: Format[Queue_Removed] = Json.format[Queue_Removed]
+  val eventType = "queue.removed"
+}
+
+

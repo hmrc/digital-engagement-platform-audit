@@ -50,7 +50,8 @@ object TranscriptEntryMapper extends Logging {
     ConversionFunnel_Assisted.eventType -> mapAsType[ConversionFunnel_Assisted],
     ConversionFunnel_Interacted.eventType -> mapAsType[ConversionFunnel_Interacted],
     Engagement_RequestedEntry.eventType -> mapAsType[Engagement_RequestedEntry],
-    Queue_Abandoned.eventType -> mapAsType[Queue_Abandoned]
+    Queue_Abandoned.eventType -> mapAsType[Queue_Abandoned],
+    Queue_Removed.eventType -> mapAsType[Queue_Removed]
   )
 
   def mapTranscriptDetail(transcript: JsValue, engagementId: String, index: Int): Option[JsValue] = {

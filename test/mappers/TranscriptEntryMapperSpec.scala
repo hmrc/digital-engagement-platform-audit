@@ -729,6 +729,26 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
+    "process queue.removed" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "queue.removed",
+                               |  "iso": "2020-12-02T15:23:38+00:00",
+                               |  "timestamp": 1606922618366
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "queue.removed"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
+
     "process entry with missing fields" in {
       val input = Json.parse("""
                                |{
