@@ -35,6 +35,9 @@ class SuccessfulHistoricAuditingResult(request: NuanceReportingRequest)
 class FailedHistoricAuditingResult(request: NuanceReportingRequest, val response: NuanceReportingResponse)
   extends HistoricAuditingResult(request.start, request.rows)
 
+class HistoricAuditingExceptionResult(request: NuanceReportingRequest, val e: String)
+  extends HistoricAuditingResult(request.start, request.rows)
+
 class HistoricAuditing @Inject()(
                                   reportingService: NuanceReportingService,
                                   engagementAuditing: EngagementAuditing,
@@ -59,13 +62,20 @@ class HistoricAuditing @Inject()(
           startDate,
           endDate)
 
-        reportingService.getHistoricData(request).map {
-          case response: ValidNuanceReportingResponse =>
-            engagementAuditing.processEngagements(response.engagements)
-            new SuccessfulHistoricAuditingResult(request)
-          case response =>
-            logger.warn(s"[auditDateRange] Got error getting data: $response")
-            new FailedHistoricAuditingResult(request, response)
+        try {
+          reportingService.getHistoricData(request).flatMap {
+            case response: ValidNuanceReportingResponse =>
+              engagementAuditing.processEngagements(response.engagements).map {
+                _ => new SuccessfulHistoricAuditingResult(request)
+              }
+            case response =>
+              logger.warn(s"[auditDateRange] Got error getting data: $response")
+              Future.successful(new FailedHistoricAuditingResult(request, response))
+          }
+        } catch {
+          case e: Throwable =>
+            logger.warn(s"[auditDateRange] Got exception when getting historic data: ${e.getMessage}")
+            Future.successful(new HistoricAuditingExceptionResult(request, e.getMessage))
         }
     })
   }

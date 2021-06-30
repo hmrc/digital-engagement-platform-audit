@@ -35,17 +35,21 @@ package auditing
 import javax.inject.Inject
 import mappers.EngagementMapper
 import play.api.libs.json.{JsArray, JsValue}
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class EngagementAuditing @Inject()(engagementMapper: EngagementMapper, auditConnector: AuditConnector)
                                   (implicit ec: ExecutionContext) {
-  def processEngagement(engagement: JsValue): Unit = {
-    engagementMapper.mapEngagement(engagement).foreach(auditConnector.sendExtendedEvent(_))
+  def processEngagement(engagement: JsValue): Future[Seq[AuditResult]] = {
+    Future.sequence {
+      engagementMapper.mapEngagement(engagement).map(auditConnector.sendExtendedEvent(_))
+    }
   }
 
-  def processEngagements(engagements: JsArray): Unit = {
-    engagements.as[List[JsValue]].foreach(processEngagement)
+  def processEngagements(engagements: JsArray): Future[Seq[Seq[AuditResult]]] = {
+    Future.sequence {
+      engagements.as[Seq[JsValue]].map(processEngagement)
+    }
   }
 }
