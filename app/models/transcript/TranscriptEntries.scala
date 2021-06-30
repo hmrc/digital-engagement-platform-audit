@@ -142,6 +142,17 @@ object Chat_AgentLostConnection {
   val eventType = "chat.agentLostConnection"
 }
 
+case class Chat_AutomatonAgentOutcome(
+                                     `type`: String,
+                                     senderName: String,
+                                     content: String
+                                   )
+
+object Chat_AutomatonAgentOutcome {
+  implicit val format: Format[Chat_AutomatonAgentOutcome] = Json.format[Chat_AutomatonAgentOutcome]
+  val eventType = "chat.automatonAgentOutcome"
+}
+
 case class Chat_ClickstreamEntry(
                                  `type`: String,
                                  senderName: String,
@@ -320,4 +331,12 @@ object Queue_Abandoned {
   implicit val format: Format[Queue_Abandoned] = Json.format[Queue_Abandoned]
   val eventType = "queue.abandoned"
 }
+
+case class Queue_Removed(`type`: String)
+
+object Queue_Removed {
+  implicit val format: Format[Queue_Removed] = Json.format[Queue_Removed]
+  val eventType = "queue.removed"
+}
+
 

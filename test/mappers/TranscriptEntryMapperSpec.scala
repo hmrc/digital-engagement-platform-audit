@@ -187,6 +187,30 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
       TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
     }
 
+    "process chat.automatonAgentOutcome" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "chat.automatonAgentOutcome",
+                               |  "content": "<!-- Data Pass -->\n- Selections:\n    1) HMRC_PreChat_CSG - Initial\n- name: Fred Flintstone\n- chat-reason: I've started a new job and its more pay a year and I need to update my tax credits claim.\n",
+                               |  "senderName": "system",
+                               |  "iso": "2021-06-29T14:37:34+01:00",
+                               |  "timestamp": 1624973854204
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "chat.automatonAgentOutcome",
+                                  | "content": "<!-- Data Pass -->\n- Selections:\n    1) HMRC_PreChat_CSG - Initial\n- name: Fred Flintstone\n- chat-reason: I've started a new job and its more pay a year and I need to update my tax credits claim.\n",
+                                  | "senderName": "system"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
+
     "process chat.customerChatlineSent" in {
       val input = Json.parse("""
                                |{
@@ -723,6 +747,26 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | "engagementID": "187286680131967188",
                                   | "transcriptIndex": 42,
                                   | "type": "queue.abandoned"
+                                  |}
+                                  |""".stripMargin)
+
+      TranscriptEntryMapper.mapTranscriptDetail(input, testEngagementId, testIndex) mustBe Some(expected)
+    }
+
+    "process queue.removed" in {
+      val input = Json.parse("""
+                               |{
+                               |  "type": "queue.removed",
+                               |  "iso": "2020-12-02T15:23:38+00:00",
+                               |  "timestamp": 1606922618366
+                               |}
+                               |""".stripMargin)
+
+      val expected = Json.parse("""
+                                  |{
+                                  | "engagementID": "187286680131967188",
+                                  | "transcriptIndex": 42,
+                                  | "type": "queue.removed"
                                   |}
                                   |""".stripMargin)
 
