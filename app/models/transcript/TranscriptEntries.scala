@@ -142,6 +142,17 @@ object Chat_AgentLostConnection {
   val eventType = "chat.agentLostConnection"
 }
 
+case class Chat_AutomatonAgentOutcome(
+                                     `type`: String,
+                                     senderName: String,
+                                     content: String
+                                   )
+
+object Chat_AutomatonAgentOutcome {
+  implicit val format: Format[Chat_AutomatonAgentOutcome] = Json.format[Chat_AutomatonAgentOutcome]
+  val eventType = "chat.automatonAgentOutcome"
+}
+
 case class Chat_ClickstreamEntry(
                                  `type`: String,
                                  senderName: String,
