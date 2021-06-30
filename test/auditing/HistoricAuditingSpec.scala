@@ -40,7 +40,7 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
   private val auditingChunkSize = 150
 
   // Expected requests generated internally.
-  private val expectedInitialRequest = NuanceReportingRequest(start = auditingChunkSize * 0, rows = 1, testStartDate, testEndDate)
+  private val expectedInitialRequest = NuanceReportingRequest(start = auditingChunkSize * 0, rows = 0, testStartDate, testEndDate)
   private val expectedRequest0 = NuanceReportingRequest(start = auditingChunkSize * 0, rows = auditingChunkSize, testStartDate, testEndDate)
   private val expectedRequest1 = NuanceReportingRequest(start = auditingChunkSize * 1, rows = auditingChunkSize, testStartDate, testEndDate)
   private val expectedRequest2 = NuanceReportingRequest(start = auditingChunkSize * 2, rows = 30, testStartDate, testEndDate)
