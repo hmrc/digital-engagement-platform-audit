@@ -41,7 +41,7 @@ class HistoricAuditing @Inject()(
                                   appConfig: AppConfig)(
                                   implicit executionContext: ExecutionContext) extends Logging {
   def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[Seq[HistoricAuditingResult]] = {
-    val request = NuanceReportingRequest(start = 0, rows = 1, startDate, endDate)
+    val request = NuanceReportingRequest(start = 0, rows = 0, startDate, endDate)
     reportingService.getHistoricData(request) flatMap {
       case response: ValidNuanceReportingResponse =>
           processAll(startDate, endDate, response.numFound)
