@@ -62,6 +62,7 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       when(reportingService.getHistoricData(any())).thenReturn(Future.successful(nuanceReportingResponse))
 
       val engagementAuditing = mock[EngagementAuditing]
+      when(engagementAuditing.processEngagements(any())).thenReturn(Future.successful(Seq(Seq())))
 
       val appConfig = mock[AppConfig]
       when(appConfig.auditingChunkSize).thenReturn(auditingChunkSize)
@@ -107,6 +108,7 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
         .thenReturn(Future.successful(response2))
 
       val engagementAuditing = mock[EngagementAuditing]
+      when(engagementAuditing.processEngagements(any())).thenReturn(Future.successful(Seq(Seq())))
 
       val appConfig = mock[AppConfig]
       when(appConfig.auditingChunkSize).thenReturn(auditingChunkSize)
@@ -142,6 +144,7 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
         .thenReturn(Future.successful(response2))
 
       val engagementAuditing = mock[EngagementAuditing]
+      when(engagementAuditing.processEngagements(any())).thenReturn(Future.successful(Seq(Seq())))
 
       val appConfig = mock[AppConfig]
       when(appConfig.auditingChunkSize).thenReturn(auditingChunkSize)
@@ -153,6 +156,42 @@ class HistoricAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       result mustBe Seq(
         new SuccessfulHistoricAuditingResult(expectedRequest0),
         new FailedHistoricAuditingResult(expectedRequest1, NuanceBadRequest),
+        new SuccessfulHistoricAuditingResult(expectedRequest2)
+      )
+
+      verify(reportingService).getHistoricData(expectedInitialRequest)
+      verify(reportingService).getHistoricData(expectedRequest0)
+      verify(reportingService).getHistoricData(expectedRequest1)
+      verify(reportingService).getHistoricData(expectedRequest2)
+
+      verify(engagementAuditing, times(2)).processEngagements(any())
+    }
+
+    "read historic data in chunks and send audit events and skip exceptions" in {
+
+      val numFound = auditingChunkSize*2 + 30
+      val reportingService = mock[NuanceReportingService]
+      val response0 = ValidNuanceReportingResponse(numFound, auditingChunkSize * 0, JsArray())
+      val response2 = ValidNuanceReportingResponse(numFound, auditingChunkSize * 2, JsArray())
+      when(reportingService.getHistoricData(any()))
+        .thenReturn(Future.successful(response0))
+        .thenReturn(Future.successful(response0))
+        .thenThrow(new IllegalArgumentException("Test Exception"))
+        .thenReturn(Future.successful(response2))
+
+      val engagementAuditing = mock[EngagementAuditing]
+      when(engagementAuditing.processEngagements(any())).thenReturn(Future.successful(Seq(Seq())))
+
+      val appConfig = mock[AppConfig]
+      when(appConfig.auditingChunkSize).thenReturn(auditingChunkSize)
+
+      val auditing = new HistoricAuditing(reportingService, engagementAuditing, appConfig)
+
+      val result = Await.result(auditing.auditDateRange(testStartDate, testEndDate), Duration.Inf)
+
+      result mustBe Seq(
+        new SuccessfulHistoricAuditingResult(expectedRequest0),
+        new HistoricAuditingExceptionResult(expectedRequest1, "Test Exception"),
         new SuccessfulHistoricAuditingResult(expectedRequest2)
       )
 

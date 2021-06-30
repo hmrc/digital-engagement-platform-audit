@@ -52,7 +52,7 @@ class AuditTriggerController @Inject()(historicAuditing: HistoricAuditing, cc: C
 
     historicAuditing.auditDateRange(startDate, endDate).map {
       results =>
-        Ok(s"TBH - Trigger for service: from $startDateParam to $endDateParam got results: $results")
+        Ok(s"Nuance auditing from $startDateParam to $endDateParam got results: $results")
     }
   }
 }
