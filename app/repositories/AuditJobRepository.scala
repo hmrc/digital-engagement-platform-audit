@@ -31,7 +31,9 @@ import scala.concurrent.ExecutionContext
 case class AuditJob(startDate: LocalDateTime, endDate: LocalDateTime)
 
 object AuditJob {
-  implicit val format: Format[AuditJob] = new Format[AuditJob] {
+  implicit val format: Format[AuditJob] = Json.format[AuditJob]
+
+  val mongoFormat: Format[AuditJob] = new Format[AuditJob] {
     override def writes(job: AuditJob): JsValue = Json.obj(
       "startDate" ->  Json.toJson(job.startDate),
       "endDate" ->  Json.toJson(job.endDate),
@@ -53,7 +55,7 @@ class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
 ) extends PlayMongoRepository[AuditJob](
   mongoComponent = mongo,
   collectionName = "jobs",
-  domainFormat   = AuditJob.format,
+  domainFormat   = AuditJob.mongoFormat,
   indexes        = Seq(IndexModel(Indexes.ascending("id"), IndexOptions().name("idIdx").unique(true)))
 ) {
 
