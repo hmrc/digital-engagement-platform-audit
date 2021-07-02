@@ -35,7 +35,9 @@ class AppConfig @Inject()
 
   val auditingChunkSize: Int = config.get[Int]("nuance.auditing-chunk-size")
 
-//  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  val ttlInSeconds: Int = config.get[Int]("mongodb.ttlSeconds")
+
+  //  val authBaseUrl: String = servicesConfig.baseUrl("auth")
 //
 //  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
 //  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
