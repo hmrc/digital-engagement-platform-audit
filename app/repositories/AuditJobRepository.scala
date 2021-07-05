@@ -22,7 +22,7 @@ import javax.inject.Inject
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import org.mongodb.scala.result.InsertOneResult
+import org.mongodb.scala.result.{DeleteResult, InsertOneResult}
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -47,27 +47,35 @@ class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
   indexes        = Seq(IndexModel(Indexes.ascending("submissionDate"), IndexOptions().name("submissionDateIdx").unique(true)))
 ) {
 
-  def add(job: AuditJob): Future[InsertOneResult] = {
+  def addJob(job: AuditJob): Future[InsertOneResult] = {
     collection.insertOne(job).toFuture()
   }
 
-  def findAll(): Future[Seq[AuditJob]] = {
+  def findAllJobs(): Future[Seq[AuditJob]] = {
     collection.find().toFuture()
   }
 
-  def find(submissionDate: LocalDateTime): Future[Seq[AuditJob]] = {
+  def findJob(submissionDate: LocalDateTime): Future[Seq[AuditJob]] = {
     collection.find(submissionDateEquals(submissionDate)).toFuture()
+  }
+
+  def findNextJobToProcess(): Future[Option[AuditJob]] = {
+    collection.find(inProgressEquals(false)).headOption()
   }
 
   def drop(): Future[Void] = {
     collection.drop().toFuture()
   }
 
-  def setInProgress(job: AuditJob, inProgress: Boolean): Future[Option[AuditJob]] = {
+  def setJobInProgress(job: AuditJob, inProgress: Boolean): Future[Option[AuditJob]] = {
     collection.findOneAndUpdate(
       and(submissionDateEquals(job.submissionDate), inProgressEquals(!inProgress)),
       set("inProgress", inProgress)
     ).toFutureOption()
+  }
+
+  def deleteJob(job: AuditJob): Future[DeleteResult] = {
+    collection.deleteOne(submissionDateEquals(job.submissionDate)).toFuture()
   }
 
   private def submissionDateEquals(submissionDate: LocalDateTime) = {

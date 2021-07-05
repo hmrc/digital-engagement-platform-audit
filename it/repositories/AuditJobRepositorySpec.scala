@@ -53,9 +53,9 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
 
       val results = for {
         _ <- repository.drop()
-        _ <- repository.add(job1)
-        _ <- repository.add(job2)
-        found <- repository.findAll()
+        _ <- repository.addJob(job1)
+        _ <- repository.addJob(job2)
+        found <- repository.findAllJobs()
       } yield found
 
       val jobs = Await.result(results, Duration.Inf)
@@ -72,9 +72,9 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
 
       val results = for {
         _ <- repository.drop()
-        _ <- repository.add(job1)
-        _ <- repository.add(job2)
-        found <- repository.find(submissionDate)
+        _ <- repository.addJob(job1)
+        _ <- repository.addJob(job2)
+        found <- repository.findJob(submissionDate)
       } yield found
 
       val jobs = Await.result(results, Duration.Inf)
@@ -91,9 +91,9 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
 
       val results = for {
         _ <- repository.drop()
-        _ <- repository.add(job1)
-        _ <- repository.add(job2)
-        found <- repository.findAll()
+        _ <- repository.addJob(job1)
+        _ <- repository.addJob(job2)
+        found <- repository.findAllJobs()
       } yield found
 
       val jobs = Await.result(results, Duration.Inf)
@@ -101,8 +101,8 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       jobs mustEqual Seq(job1, job2)
 
       val modifiedResults = for {
-        _ <- repository.setInProgress(jobs.head, inProgress = true)
-        found <- repository.findAll()
+        _ <- repository.setJobInProgress(jobs.head, inProgress = true)
+        found <- repository.findAllJobs()
       } yield found
 
       val modifiedJobs = Await.result(modifiedResults, Duration.Inf)
@@ -121,9 +121,9 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
 
       val results = for {
         _ <- repository.drop()
-        _ <- repository.add(job1)
-        _ <- repository.add(job2)
-        found <- repository.findAll()
+        _ <- repository.addJob(job1)
+        _ <- repository.addJob(job2)
+        found <- repository.findAllJobs()
       } yield found
 
       val jobs = Await.result(results, Duration.Inf)
@@ -133,13 +133,73 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val jobToModify = jobs.head
 
       val modifiedResults = for {
-        _ <- repository.setInProgress(jobToModify, inProgress = true)
-        job <- repository.setInProgress(jobToModify, inProgress = true)
+        _ <- repository.setJobInProgress(jobToModify, inProgress = true)
+        job <- repository.setJobInProgress(jobToModify, inProgress = true)
       } yield job
 
       val modifiedJob = Await.result(modifiedResults, Duration.Inf)
 
       modifiedJob mustBe None
+    }
+
+    "find next not in progress with no jobs" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val results = for {
+        _ <- repository.drop()
+        found <- repository.findNextJobToProcess()
+      } yield found
+
+      val job = Await.result(results, Duration.Inf)
+
+      job mustEqual None
+    }
+
+    "add audit jobs to the database and find next not in progress" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val submissionDate = LocalDateTime.now()
+      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+
+      val results = for {
+        _ <- repository.drop()
+        _ <- repository.addJob(job1)
+        _ <- repository.addJob(job2)
+        found1 <- repository.findNextJobToProcess()
+        _ <- repository.setJobInProgress(found1.get, inProgress = true)
+        found2 <- repository.findNextJobToProcess()
+      } yield (found1, found2)
+
+      val jobs = Await.result(results, Duration.Inf)
+
+      jobs._1 mustEqual Option(job1)
+      jobs._2 mustEqual Option(job2)
+    }
+
+    "delete audit jobs from the database" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val submissionDate = LocalDateTime.now()
+      val job1 = AuditJob(
+        LocalDateTime.parse("2020-06-20T13:15"),
+        LocalDateTime.parse("2021-07-05T09:15"),
+        submissionDate)
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T13:54:44.75"), submissionDate.plusSeconds(1))
+
+      val futures = for {
+        _ <- repository.drop()
+        _ <- repository.addJob(job1)
+        _ <- repository.addJob(job2)
+        deleteResult <- repository.deleteJob(job1)
+        found <- repository.findAllJobs()
+      } yield (deleteResult, found)
+
+      val results = Await.result(futures, Duration.Inf)
+
+      results._1.wasAcknowledged() mustBe true
+      results._1.getDeletedCount mustBe 1
+      results._2 mustEqual Seq(job2)
     }
   }
 }
