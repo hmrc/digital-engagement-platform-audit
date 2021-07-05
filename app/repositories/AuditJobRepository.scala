@@ -40,7 +40,7 @@ object AuditJob {
 }
 
 class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext
-) extends PlayMongoRepository[AuditJob](
+) extends PlayMongoRepository[AuditJob] (
   mongoComponent = mongo,
   collectionName = "jobs",
   domainFormat   = AuditJob.format,
@@ -59,19 +59,22 @@ class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
     collection.find(submissionDateEquals(submissionDate)).toFuture()
   }
 
-
   def drop(): Future[Void] = {
     collection.drop().toFuture()
   }
 
-  def setInProgress(job: AuditJob, inProgress: Boolean): Future[_] = {
+  def setInProgress(job: AuditJob, inProgress: Boolean): Future[Option[AuditJob]] = {
     collection.findOneAndUpdate(
-      submissionDateEquals(job.submissionDate),
+      and(submissionDateEquals(job.submissionDate), inProgressEquals(!inProgress)),
       set("inProgress", inProgress)
-    ).toFuture()
+    ).toFutureOption()
   }
 
   private def submissionDateEquals(submissionDate: LocalDateTime) = {
-    equal("submissionDate", submissionDate.toString)
+    equal("submissionDate", Json.toJson(submissionDate).as[String])
+  }
+
+  private def inProgressEquals(inProgress: Boolean) = {
+    equal("inProgress", inProgress)
   }
 }

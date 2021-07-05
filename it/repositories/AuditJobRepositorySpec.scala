@@ -45,13 +45,16 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val repository = app.injector.instanceOf[AuditJobRepository]
 
       val submissionDate = LocalDateTime.now()
-      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+      val job1 = AuditJob(
+        LocalDateTime.parse("2020-06-20T13:15"),
+        LocalDateTime.parse("2021-07-05T09:15"),
+        submissionDate)
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T13:54:44.75"), submissionDate.plusSeconds(1))
 
       val results = for {
-        drop <- repository.drop()
-        add1 <- repository.add(job1)
-        add2 <- repository.add(job2)
+        _ <- repository.drop()
+        _ <- repository.add(job1)
+        _ <- repository.add(job2)
         found <- repository.findAll()
       } yield found
 
@@ -68,9 +71,9 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
 
       val results = for {
-        drop <- repository.drop()
-        add1 <- repository.add(job1)
-        add2 <- repository.add(job2)
+        _ <- repository.drop()
+        _ <- repository.add(job1)
+        _ <- repository.add(job2)
         found <- repository.find(submissionDate)
       } yield found
 
@@ -87,9 +90,9 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
 
       val results = for {
-        drop <- repository.drop()
-        add1 <- repository.add(job1)
-        add2 <- repository.add(job2)
+        _ <- repository.drop()
+        _ <- repository.add(job1)
+        _ <- repository.add(job2)
         found <- repository.findAll()
       } yield found
 
@@ -98,7 +101,7 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       jobs mustEqual Seq(job1, job2)
 
       val modifiedResults = for {
-        updated <- repository.setInProgress(job1, inProgress = true)
+        _ <- repository.setInProgress(jobs.head, inProgress = true)
         found <- repository.findAll()
       } yield found
 
@@ -107,6 +110,36 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val modifiedJob1 = job1.copy(inProgress = true)
 
       modifiedJobs mustEqual Seq(modifiedJob1, job2)
+    }
+
+    "update an audit job in the database if not already updated" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val submissionDate = LocalDateTime.now()
+      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+
+      val results = for {
+        _ <- repository.drop()
+        _ <- repository.add(job1)
+        _ <- repository.add(job2)
+        found <- repository.findAll()
+      } yield found
+
+      val jobs = Await.result(results, Duration.Inf)
+
+      jobs mustEqual Seq(job1, job2)
+
+      val jobToModify = jobs.head
+
+      val modifiedResults = for {
+        _ <- repository.setInProgress(jobToModify, inProgress = true)
+        job <- repository.setInProgress(jobToModify, inProgress = true)
+      } yield job
+
+      val modifiedJob = Await.result(modifiedResults, Duration.Inf)
+
+      modifiedJob mustBe None
     }
   }
 }
