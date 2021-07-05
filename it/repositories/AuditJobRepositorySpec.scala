@@ -41,22 +41,72 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
   override lazy val app: Application = applicationBuilder.build()
 
   "AuditJobRepository" must {
-    "add an audit job to the database" in {
+    "add audit jobs to the database and get them back" in {
       val repository = app.injector.instanceOf[AuditJobRepository]
 
-      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), LocalDateTime.now())
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), LocalDateTime.now().plusSeconds(1))
+      val submissionDate = LocalDateTime.now()
+      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
 
       val results = for {
         drop <- repository.drop()
         add1 <- repository.add(job1)
         add2 <- repository.add(job2)
-        found <- repository.find()
+        found <- repository.findAll()
       } yield found
 
       val jobs = Await.result(results, Duration.Inf)
 
       jobs mustEqual Seq(job1, job2)
+    }
+
+    "add audit jobs to the database and find by date" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val submissionDate = LocalDateTime.now()
+      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+
+      val results = for {
+        drop <- repository.drop()
+        add1 <- repository.add(job1)
+        add2 <- repository.add(job2)
+        found <- repository.find(submissionDate)
+      } yield found
+
+      val jobs = Await.result(results, Duration.Inf)
+
+      jobs mustEqual Seq(job1)
+    }
+
+    "update an audit job in the database" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val submissionDate = LocalDateTime.now()
+      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+
+      val results = for {
+        drop <- repository.drop()
+        add1 <- repository.add(job1)
+        add2 <- repository.add(job2)
+        found <- repository.findAll()
+      } yield found
+
+      val jobs = Await.result(results, Duration.Inf)
+
+      jobs mustEqual Seq(job1, job2)
+
+      val modifiedResults = for {
+        updated <- repository.setInProgress(job1, inProgress = true)
+        found <- repository.findAll()
+      } yield found
+
+      val modifiedJobs = Await.result(modifiedResults, Duration.Inf)
+
+      val modifiedJob1 = job1.copy(inProgress = true)
+
+      modifiedJobs mustEqual Seq(modifiedJob1, job2)
     }
   }
 }

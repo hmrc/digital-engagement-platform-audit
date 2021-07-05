@@ -19,10 +19,10 @@ package repositories
 import java.time.LocalDateTime
 
 import javax.inject.Inject
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.mongodb.scala.result.InsertOneResult
-import org.mongodb.scala.{FindObservable, Observable, SingleObservable}
-import org.reactivestreams.Publisher
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -37,24 +37,6 @@ case class AuditJob(
 
 object AuditJob {
   implicit val format: Format[AuditJob] = Json.format[AuditJob]
-
-//  val mongoFormat: Format[AuditJob] = new Format[AuditJob] {
-//    override def writes(job: AuditJob): JsValue = Json.obj(
-//      "startDate" ->  Json.toJson(job.startDate),
-//      "endDate" ->  Json.toJson(job.endDate),
-//      "id" -> s"${job.startDate}-${job.endDate}"
-//    )
-//
-//    override def reads(json: JsValue): JsResult[AuditJob] = {
-//      JsSuccess(
-//        AuditJob(
-//          (json \ "startDate").as[LocalDateTime],
-//          (json \ "endDate").as[LocalDateTime],
-//          (json \ "submissionDate").as[LocalDateTime]
-//        )
-//      )
-//    }
-//  }
 }
 
 class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext
@@ -69,12 +51,27 @@ class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
     collection.insertOne(job).toFuture()
   }
 
-  def find(): Future[Seq[AuditJob]] = {
+  def findAll(): Future[Seq[AuditJob]] = {
     collection.find().toFuture()
   }
+
+  def find(submissionDate: LocalDateTime): Future[Seq[AuditJob]] = {
+    collection.find(submissionDateEquals(submissionDate)).toFuture()
+  }
+
 
   def drop(): Future[Void] = {
     collection.drop().toFuture()
   }
 
+  def setInProgress(job: AuditJob, inProgress: Boolean): Future[_] = {
+    collection.findOneAndUpdate(
+      submissionDateEquals(job.submissionDate),
+      set("inProgress", inProgress)
+    ).toFuture()
+  }
+
+  private def submissionDateEquals(submissionDate: LocalDateTime) = {
+    equal("submissionDate", submissionDate.toString)
+  }
 }
