@@ -18,41 +18,33 @@ package repositories
 
 import java.time.LocalDateTime
 
-import org.mongodb.scala.{FindObservable, SingleObservable}
-import org.mongodb.scala.result.InsertOneResult
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar with GuiceOneAppPerSuite {
   "AuditJobRepository" must {
     "add an audit job to the database" in {
       val repository = app.injector.instanceOf[AuditJobRepository]
 
-      val job = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.now())
-      val result: SingleObservable[InsertOneResult] = repository.add(job)
-      result.subscribe(
-        (result: InsertOneResult) => {
-          println(s"====== result1: $result")
+      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), LocalDateTime.now())
+      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), LocalDateTime.now().plusSeconds(1))
 
-          val job = AuditJob(LocalDateTime.parse("2021-06-20T13:15"), LocalDateTime.now())
-          val result2: SingleObservable[InsertOneResult] = repository.add(job)
-          result2.subscribe(
-            (result: InsertOneResult) => {
+      val results = for {
+        drop <- repository.drop()
+        add1 <- repository.add(job1)
+        add2 <- repository.add(job2)
+        found <- repository.find()
+      } yield found
 
-              println(s"====== result2: $result")
-              val findResult: FindObservable[AuditJob] = repository.find()
-              findResult.subscribe(
-                (result: AuditJob) => println(s"------ found audit job: $result"),
-                (e: Throwable) => println(s"Find: There was an error: $e")
-              )
-            })
-        },
-        (e: Throwable) => println(s"First insert: There was an error: $e")
-      )
+      val jobs = Await.result(results, Duration.Inf)
 
-      Thread.sleep(4000)
+      jobs mustEqual Seq(job1, job2)
     }
   }
 }

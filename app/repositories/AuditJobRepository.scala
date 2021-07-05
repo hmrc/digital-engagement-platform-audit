@@ -21,50 +21,60 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.mongodb.scala.result.InsertOneResult
-import org.mongodb.scala.{FindObservable, SingleObservable}
+import org.mongodb.scala.{FindObservable, Observable, SingleObservable}
+import org.reactivestreams.Publisher
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-case class AuditJob(startDate: LocalDateTime, endDate: LocalDateTime)
+case class AuditJob(
+                     startDate: LocalDateTime,
+                     endDate: LocalDateTime,
+                     submissionDate: LocalDateTime,
+                     inProgress: Boolean = false)
 
 object AuditJob {
   implicit val format: Format[AuditJob] = Json.format[AuditJob]
 
-  val mongoFormat: Format[AuditJob] = new Format[AuditJob] {
-    override def writes(job: AuditJob): JsValue = Json.obj(
-      "startDate" ->  Json.toJson(job.startDate),
-      "endDate" ->  Json.toJson(job.endDate),
-      "id" -> s"${job.startDate}-${job.endDate}"
-    )
-
-    override def reads(json: JsValue): JsResult[AuditJob] = {
-      JsSuccess(
-        AuditJob(
-          (json \ "startDate").as[LocalDateTime],
-          (json \ "endDate").as[LocalDateTime]
-        )
-      )
-    }
-  }
+//  val mongoFormat: Format[AuditJob] = new Format[AuditJob] {
+//    override def writes(job: AuditJob): JsValue = Json.obj(
+//      "startDate" ->  Json.toJson(job.startDate),
+//      "endDate" ->  Json.toJson(job.endDate),
+//      "id" -> s"${job.startDate}-${job.endDate}"
+//    )
+//
+//    override def reads(json: JsValue): JsResult[AuditJob] = {
+//      JsSuccess(
+//        AuditJob(
+//          (json \ "startDate").as[LocalDateTime],
+//          (json \ "endDate").as[LocalDateTime],
+//          (json \ "submissionDate").as[LocalDateTime]
+//        )
+//      )
+//    }
+//  }
 }
 
 class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext
 ) extends PlayMongoRepository[AuditJob](
   mongoComponent = mongo,
   collectionName = "jobs",
-  domainFormat   = AuditJob.mongoFormat,
-  indexes        = Seq(IndexModel(Indexes.ascending("id"), IndexOptions().name("idIdx").unique(true)))
+  domainFormat   = AuditJob.format,
+  indexes        = Seq(IndexModel(Indexes.ascending("submissionDate"), IndexOptions().name("submissionDateIdx").unique(true)))
 ) {
 
-  def add(job: AuditJob): SingleObservable[InsertOneResult] = {
-    collection.insertOne(job)
+  def add(job: AuditJob): Future[InsertOneResult] = {
+    collection.insertOne(job).toFuture()
   }
 
-  def find(): FindObservable[AuditJob] = {
-    collection.find()
+  def find(): Future[Seq[AuditJob]] = {
+    collection.find().toFuture()
+  }
+
+  def drop(): Future[Void] = {
+    collection.drop().toFuture()
   }
 
 }
