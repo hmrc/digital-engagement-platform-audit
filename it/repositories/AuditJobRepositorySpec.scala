@@ -22,12 +22,24 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
 class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar with GuiceOneAppPerSuite {
+  def applicationBuilder: GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .configure(Seq(
+        "mongodb.uri" -> "mongodb://localhost:27017/digital-engagement-platform-audit-test",
+        "metrics.enabled" -> false,
+        "auditing.enabled" -> false
+      ): _*)
+
+  override lazy val app: Application = applicationBuilder.build()
+
   "AuditJobRepository" must {
     "add an audit job to the database" in {
       val repository = app.injector.instanceOf[AuditJobRepository]
