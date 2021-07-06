@@ -19,6 +19,7 @@ package repositories
 import java.time.LocalDateTime
 
 import javax.inject.Inject
+import models.AuditJob
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
@@ -28,16 +29,6 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import scala.concurrent.{ExecutionContext, Future}
-
-case class AuditJob(
-                     startDate: LocalDateTime,
-                     endDate: LocalDateTime,
-                     submissionDate: LocalDateTime,
-                     inProgress: Boolean = false)
-
-object AuditJob {
-  implicit val format: Format[AuditJob] = Json.format[AuditJob]
-}
 
 class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext
 ) extends PlayMongoRepository[AuditJob] (

@@ -18,6 +18,7 @@ package repositories
 
 import java.time.LocalDateTime
 
+import models.AuditJob
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
@@ -49,7 +50,7 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
         LocalDateTime.parse("2020-06-20T13:15"),
         LocalDateTime.parse("2021-07-05T09:15"),
         submissionDate)
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T13:54:44.75"), submissionDate.plusSeconds(1))
+      val job2 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T13:54:44.75"), submissionDate.plusSeconds(1))
 
       val results = for {
         _ <- repository.drop()
@@ -67,8 +68,8 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val repository = app.injector.instanceOf[AuditJobRepository]
 
       val submissionDate = LocalDateTime.now()
-      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+      val job1 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
 
       val results = for {
         _ <- repository.drop()
@@ -86,8 +87,8 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val repository = app.injector.instanceOf[AuditJobRepository]
 
       val submissionDate = LocalDateTime.now()
-      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+      val job1 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
 
       val results = for {
         _ <- repository.drop()
@@ -116,8 +117,8 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val repository = app.injector.instanceOf[AuditJobRepository]
 
       val submissionDate = LocalDateTime.now()
-      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+      val job1 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
 
       val results = for {
         _ <- repository.drop()
@@ -159,8 +160,8 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val repository = app.injector.instanceOf[AuditJobRepository]
 
       val submissionDate = LocalDateTime.now()
-      val job1 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+      val job1 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val job2 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
 
       val results = for {
         _ <- repository.drop()
@@ -181,11 +182,11 @@ class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar
       val repository = app.injector.instanceOf[AuditJobRepository]
 
       val submissionDate = LocalDateTime.now()
-      val job1 = AuditJob(
+      val job1 = models.AuditJob(
         LocalDateTime.parse("2020-06-20T13:15"),
         LocalDateTime.parse("2021-07-05T09:15"),
         submissionDate)
-      val job2 = AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T13:54:44.75"), submissionDate.plusSeconds(1))
+      val job2 = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T13:54:44.75"), submissionDate.plusSeconds(1))
 
       val futures = for {
         _ <- repository.drop()
