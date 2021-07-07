@@ -16,38 +16,9 @@
 
 package connectors
 
-import config.AppConfig
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
-import play.api.inject.Injector
-import play.api.inject.guice.GuiceApplicationBuilder
-import utils.WireMockHelper
+import org.scalatest.concurrent.IntegrationPatience
+import utils.{BaseSpec, WireMockHelper}
 
-trait BaseConnectorSpec  extends AnyWordSpec
-  with Matchers
-  with MockitoSugar
-  with ScalaFutures
+trait BaseConnectorSpec extends BaseSpec
   with WireMockHelper
-  with GuiceOneServerPerSuite
-  with IntegrationPatience {
-
-  lazy val application: Application = applicationBuilder().build()
-
-  def injector: Injector = application.injector
-
-  def appConfig : AppConfig = injector.instanceOf[AppConfig]
-
-  def applicationBuilder(): GuiceApplicationBuilder = {
-    new GuiceApplicationBuilder()
-      .configure(
-        Seq(
-          "metrics.enabled" -> false,
-          "auditing.enabled" -> false
-        ): _*
-      )
-  }
-}
+  with IntegrationPatience

@@ -19,6 +19,7 @@ object AppDependencies {
     "com.typesafe.play"       %% "play-test"                % PlayVersion.current,
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "5.1.0",
+    "com.typesafe.akka"       %% "akka-stream-testkit"      % "2.6.10",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"  % "0.51.0"
   ).map(_ % "test, it")
 }

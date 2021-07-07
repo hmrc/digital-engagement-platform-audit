@@ -37,6 +37,8 @@ class AppConfig @Inject()
 
   val ttlInSeconds: Int = config.get[Int]("mongodb.ttlSeconds")
 
+  val startWorkers: Boolean = config.getOptional[Boolean](path = "workers.start").getOrElse(true)
+
   //  val authBaseUrl: String = servicesConfig.baseUrl("auth")
 //
 //  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
