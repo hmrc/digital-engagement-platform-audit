@@ -16,7 +16,7 @@
 
 package workers
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Cancellable}
+import akka.actor.{ActorRef, ActorSystem, Cancellable}
 import auditing.AuditJobProcessor
 import com.google.inject.name.Named
 import config.AppConfig
@@ -37,20 +37,19 @@ class AuditJobWorkerImpl @Inject() (
                                (implicit ec: ExecutionContext) extends AuditJobWorker {
 
   private object NullJob extends Cancellable {
-    println("AuditJobWorker is not starting up")
     def cancel(): Boolean = false
     def isCancelled: Boolean = false
   }
 
   val job: Cancellable = {
     if (appConfig.startWorkers) {
-      val scheduler = schedulerActorSystem.scheduler
-      println("AuditJobWorker is started up")
-
-      val scheduledJob = schedulerActorSystem.scheduler.scheduleAtFixedRate(0.seconds, 10.seconds, jobProcessor, AuditJobProcessor.ProcessNext)
+      val scheduledJob = schedulerActorSystem.scheduler.scheduleAtFixedRate(
+        appConfig.auditJobWorkerInitialDelayInSeconds.seconds,
+        appConfig.auditJobWorkerIntervalInSeconds.seconds,
+        jobProcessor,
+        AuditJobProcessor.ProcessNext)
 
       applicationLifecycle.addStopHook { () =>
-        println("Shutting down AuditJobWorker...")
         Future.successful(scheduledJob.cancel())
       }
 
