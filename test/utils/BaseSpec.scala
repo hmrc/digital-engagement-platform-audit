@@ -44,7 +44,7 @@ trait BaseSpec extends AnyWordSpecLike
         Seq(
           "metrics.enabled" -> false,
           "auditing.enabled" -> false,
-          "workers.start" -> false
+          "workers.start" -> false    // Do not start up workers during tests
         ): _*
       )
   }
