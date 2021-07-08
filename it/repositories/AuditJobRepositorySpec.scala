@@ -29,7 +29,7 @@ import scala.concurrent.duration._
 
 class AuditJobRepositorySpec extends BaseSpec {
   override def applicationBuilder(): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
+    super.applicationBuilder()
       .configure(Seq(
         "mongodb.uri" -> "mongodb://localhost:27017/digital-engagement-platform-audit-test"
       ): _*)
