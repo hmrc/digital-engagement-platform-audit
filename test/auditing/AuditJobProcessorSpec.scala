@@ -54,7 +54,7 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
 
       when(auditJobRepository.findNextJobToProcess()).thenReturn(Future.successful(None))
 
-      val jobProcessor = system.actorOf(Props(classOf[AuditJobProcessorImpl], auditJobRepository, historicAuditing, global))
+      val jobProcessor = system.actorOf(Props(classOf[AuditJobProcessor], auditJobRepository, historicAuditing, global))
       jobProcessor ! AuditJobProcessor.ProcessNext
       expectMsg(AuditJobProcessor.DoneProcessing)
 
@@ -76,7 +76,7 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
 
       when(historicAuditing.auditDateRange(any(), any())).thenReturn(Future.successful(Seq()))
 
-      val jobProcessor = TestActorRef(new AuditJobProcessorImpl(auditJobRepository, historicAuditing))
+      val jobProcessor = TestActorRef(new AuditJobProcessor(auditJobRepository, historicAuditing))
       jobProcessor ! AuditJobProcessor.ProcessNext
       expectMsg(AuditJobProcessor.DoneProcessing)
 
@@ -98,7 +98,7 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
       when(auditJobRepository.findNextJobToProcess()).thenReturn(Future.successful(Some(auditJob)))
       when(auditJobRepository.setJobInProgress(any(), any())).thenReturn(Future.successful(None))
 
-      val jobProcessor = TestActorRef(new AuditJobProcessorImpl(auditJobRepository, historicAuditing))
+      val jobProcessor = TestActorRef(new AuditJobProcessor(auditJobRepository, historicAuditing))
       jobProcessor ! AuditJobProcessor.ProcessNext
       expectMsg(AuditJobProcessor.DoneProcessing)
 

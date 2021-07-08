@@ -16,7 +16,7 @@
 
 package config
 
-import auditing.{AuditJobProcessorImpl, NuanceScheduler}
+import auditing.{AuditJobProcessor, NuanceScheduler}
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.AkkaGuiceSupport
 import workers.{AuditJobProcessorWorker, AuditJobProcessorWorkerImpl, NuanceSchedulerWorker, NuanceSchedulerWorkerImpl}
@@ -25,7 +25,7 @@ import workers.{AuditJobProcessorWorker, AuditJobProcessorWorkerImpl, NuanceSche
 class DepAuditModule extends AbstractModule with AkkaGuiceSupport {
 
   override protected def configure(): Unit = {
-    bindActor[AuditJobProcessorImpl]("audit-job-processor")
+    bindActor[AuditJobProcessor]("audit-job-processor")
     bindActor[NuanceScheduler]("nuance-scheduler")
     bind(classOf[AuditJobProcessorWorker]).to(classOf[AuditJobProcessorWorkerImpl]).asEagerSingleton()
     bind(classOf[NuanceSchedulerWorker]).to(classOf[NuanceSchedulerWorkerImpl]).asEagerSingleton()

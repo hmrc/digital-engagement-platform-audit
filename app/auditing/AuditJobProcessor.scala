@@ -17,25 +17,19 @@
 package auditing
 
 import akka.actor.Actor
-import com.google.inject.ImplementedBy
 import javax.inject.Inject
 import models.AuditJob
 import repositories.AuditJobRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@ImplementedBy(classOf[AuditJobProcessorImpl])
-trait AuditJobProcessor extends Actor {
-  def processNext(): Future[Boolean]
-}
-
 object AuditJobProcessor {
   object ProcessNext
   object DoneProcessing
 }
 
-class AuditJobProcessorImpl @Inject()(repository: AuditJobRepository, historicAuditing: HistoricAuditing)
-                                     (implicit ec: ExecutionContext) extends AuditJobProcessor {
+class AuditJobProcessor @Inject()(repository: AuditJobRepository, historicAuditing: HistoricAuditing)
+                                 (implicit ec: ExecutionContext) extends Actor {
   override def receive: Receive = {
     case AuditJobProcessor.ProcessNext =>
       val localSender = sender()
