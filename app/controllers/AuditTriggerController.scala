@@ -36,7 +36,6 @@ import java.time.LocalDateTime
 
 import javax.inject.{Inject, Singleton}
 import models.AuditJob
-import org.mongodb.scala.result.InsertOneResult
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repositories.AuditJobRepository
 import services.LocalDateTimeService
