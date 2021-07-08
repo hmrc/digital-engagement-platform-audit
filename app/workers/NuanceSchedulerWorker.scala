@@ -42,7 +42,7 @@ class NuanceSchedulerWorkerImpl @Inject() (
   }
 
   val job: Cancellable = {
-    if (appConfig.startWorkers) {
+    if (appConfig.startNuanceSchedulerWorker) {
       val scheduledJob = actorSystem.scheduler.scheduleAtFixedRate(
         0.seconds,
         appConfig.nuanceSchedulerIntervalInMinutes.minutes,

@@ -44,7 +44,8 @@ trait BaseSpec extends AnyWordSpecLike
         Seq(
           "metrics.enabled" -> false,
           "auditing.enabled" -> false,
-          "workers.start" -> false    // Do not start up workers during tests
+          "workers.start-job-processor" -> false,    // Do not start up workers during tests
+          "workers.start-nuance-scheduler" -> false
         ): _*
       )
   }

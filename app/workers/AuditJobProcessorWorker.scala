@@ -42,7 +42,7 @@ class AuditJobWorkerImpl @Inject() (
   }
 
   val job: Cancellable = {
-    if (appConfig.startWorkers) {
+    if (appConfig.startJobProcessorWorker) {
       val scheduledJob = actorSystem.scheduler.scheduleAtFixedRate(
         appConfig.auditJobWorkerInitialDelayInSeconds.seconds,
         appConfig.auditJobWorkerIntervalInSeconds.seconds,
