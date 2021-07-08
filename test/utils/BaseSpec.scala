@@ -19,7 +19,7 @@ package utils
 import config.AppConfig
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
+import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application

@@ -18,7 +18,7 @@ package workers
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Cancellable, Scheduler}
 import akka.testkit.{TestActorRef, TestKit}
-import auditing.AuditJobProcessor
+import auditing.NuanceScheduler
 import com.typesafe.config.{Config, ConfigFactory}
 import config.AppConfig
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -28,10 +28,10 @@ import play.api.inject.ApplicationLifecycle
 import play.api.inject.guice.GuiceApplicationBuilder
 import utils.BaseSpec
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{FiniteDuration, _}
+import scala.concurrent.{ExecutionContext, Future}
 
-class AuditJobWorkerSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
+class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWorkerSpec"))
   with BaseSpec {
 
   private def createTestConfig(startWorkers: Boolean, fallback: Configuration) = {
@@ -49,20 +49,19 @@ class AuditJobWorkerSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
     super.applicationBuilder()
       .configure(
         Seq(
-          "workers.audit-job.initial-delay-in-seconds" -> 5,
-          "workers.audit-job.interval-in-seconds" -> 15
+          "workers.nuance-scheduler.interval-in-minutes" -> 240
         ): _*
       )
   }
 
-  private object TestAuditJobProcessor extends Actor {
+  private object TestNuanceScheduler extends Actor {
     override def receive: Receive = {
       case _ =>
     }
   }
 
-  "auditJobWorker" should {
-    "schedule the job processor actor" in {
+  "NuanceSchedulerWorker" should {
+    "schedule the nuance scheduler actor" in {
       val actorSystem = mock[ActorSystem]
       val scheduler = mock[Scheduler]
       when(actorSystem.scheduler).thenReturn(scheduler)
@@ -80,14 +79,14 @@ class AuditJobWorkerSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
-      val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      val nuanceScheduler = TestActorRef(TestNuanceScheduler)
+      new NuanceSchedulerWorkerImpl(nuanceScheduler, actorSystem, appConfig, applicationLifecycle)
 
       verify(scheduler).scheduleAtFixedRate(
-        meq(5.seconds),
-        meq(15.seconds),
-        meq(auditJobProcessor),
-        meq(AuditJobProcessor.ProcessNext))(any(), any())
+        meq(0.seconds),
+        meq(240.minutes),
+        meq(nuanceScheduler),
+        meq(NuanceScheduler.ScheduleRecentPast(240)))(any(), any())
 
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }
@@ -102,8 +101,8 @@ class AuditJobWorkerSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
-      val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      val nuanceScheduler = TestActorRef(TestNuanceScheduler)
+      new NuanceSchedulerWorkerImpl(nuanceScheduler, actorSystem, appConfig, applicationLifecycle)
 
       verify(actorSystem, times(0)).scheduler
       verify(applicationLifecycle, times(0)).addStopHook(any[() => Future[_]])
