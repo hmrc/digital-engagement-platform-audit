@@ -18,34 +18,64 @@ package auditing
 
 import java.time.LocalDateTime
 
+import akka.actor.{ActorSystem, Props}
+import akka.testkit.{ImplicitSender, TestActorRef, TestActors, TestKit}
 import com.mongodb.client.result.DeleteResult
 import models.AuditJob
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.AuditJobRepository
+import utils.BaseSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
-class AuditJobProcessorSpec extends AnyWordSpecLike with Matchers with MockitoSugar with GuiceOneAppPerSuite {
+class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
+  with BaseSpec
+  with ImplicitSender
+  with BeforeAndAfterEach
+  with BeforeAndAfterAll {
+
+  private val auditJobRepository = mock[AuditJobRepository]
+  private val historicAuditing = mock[HistoricAuditing]
+
+  override def applicationBuilder(): GuiceApplicationBuilder = super.applicationBuilder()
+    .overrides(
+      bind[AuditJobRepository].toInstance(auditJobRepository),
+      bind[HistoricAuditing].toInstance(historicAuditing)
+    )
+
+  override def beforeEach(): Unit = {
+    reset(auditJobRepository)
+    reset(historicAuditing)
+  }
+
+  override def afterAll(): Unit = {
+    TestKit.shutdownActorSystem(system)
+  }
+
+
+  "An Echo actor" must {
+
+    "send back messages unchanged" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "hello world"
+      expectMsg("hello world")
+    }
+
+  }
 
   "JobProcessorImpl" should {
     "be happy if there are no jobs to process" in {
 
-      val auditJobRepository = mock[AuditJobRepository]
       when(auditJobRepository.findNextJobToProcess()).thenReturn(Future.successful(None))
 
-      val historicAuditing = mock[HistoricAuditing]
-
-      val jobProcessor = new AuditJobProcessorImpl(auditJobRepository, historicAuditing)
-      val resultFuture = jobProcessor.processNext()
-      val result = Await.result(resultFuture, Duration.Inf)
-      result mustBe true
+      val jobProcessor = system.actorOf(Props(classOf[AuditJobProcessorImpl], auditJobRepository, historicAuditing, global))
+      jobProcessor ! AuditJobProcessor.ProcessNext
+      expectMsg(AuditJobProcessor.DoneProcessing)
 
       verify(auditJobRepository, times(1)).findNextJobToProcess()
     }
@@ -58,18 +88,16 @@ class AuditJobProcessorSpec extends AnyWordSpecLike with Matchers with MockitoSu
         startTime,
         endTime,
         LocalDateTime.now())
-      val auditJobRepository = mock[AuditJobRepository]
+
       when(auditJobRepository.findNextJobToProcess()).thenReturn(Future.successful(Some(auditJob)))
       when(auditJobRepository.setJobInProgress(any(), any())).thenReturn(Future.successful(Some(auditJob)))
       when(auditJobRepository.deleteJob(any())).thenReturn(Future.successful(DeleteResult.acknowledged(1)))
 
-      val historicAuditing = mock[HistoricAuditing]
       when(historicAuditing.auditDateRange(any(), any())).thenReturn(Future.successful(Seq()))
 
-      val jobProcessor = new AuditJobProcessorImpl(auditJobRepository, historicAuditing)
-      val resultFuture = jobProcessor.processNext()
-      val result = Await.result(resultFuture, Duration.Inf)
-      result mustBe true
+      val jobProcessor = TestActorRef(new AuditJobProcessorImpl(auditJobRepository, historicAuditing))
+      jobProcessor ! AuditJobProcessor.ProcessNext
+      expectMsg(AuditJobProcessor.DoneProcessing)
 
       verify(auditJobRepository, times(1)).findNextJobToProcess()
       verify(auditJobRepository, times(1)).setJobInProgress(auditJob, inProgress = true)
@@ -85,16 +113,13 @@ class AuditJobProcessorSpec extends AnyWordSpecLike with Matchers with MockitoSu
         startTime,
         endTime,
         LocalDateTime.now())
-      val auditJobRepository = mock[AuditJobRepository]
+
       when(auditJobRepository.findNextJobToProcess()).thenReturn(Future.successful(Some(auditJob)))
       when(auditJobRepository.setJobInProgress(any(), any())).thenReturn(Future.successful(None))
 
-      val historicAuditing = mock[HistoricAuditing]
-
-      val jobProcessor = new AuditJobProcessorImpl(auditJobRepository, historicAuditing)
-      val resultFuture = jobProcessor.processNext()
-      val result = Await.result(resultFuture, Duration.Inf)
-      result mustBe true
+      val jobProcessor = TestActorRef(new AuditJobProcessorImpl(auditJobRepository, historicAuditing))
+      jobProcessor ! AuditJobProcessor.ProcessNext
+      expectMsg(AuditJobProcessor.DoneProcessing)
 
       verify(auditJobRepository, times(1)).findNextJobToProcess()
       verify(auditJobRepository, times(1)).setJobInProgress(auditJob, inProgress = true)

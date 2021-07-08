@@ -34,15 +34,20 @@ package controllers
 
 import java.time.LocalDateTime
 
-import auditing.HistoricAuditing
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import javax.inject.{Inject, Singleton}
+import models.AuditJob
+import org.mongodb.scala.result.InsertOneResult
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import repositories.AuditJobRepository
+import services.LocalDateTimeService
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton()
-class AuditTriggerController @Inject()(historicAuditing: HistoricAuditing, cc: ControllerComponents)
+class AuditTriggerController @Inject()(jobRepository: AuditJobRepository,
+                                       localDateTimeService: LocalDateTimeService,
+                                       cc: ControllerComponents)
                                       (implicit ec: ExecutionContext)
     extends BackendController(cc) {
 
@@ -50,7 +55,7 @@ class AuditTriggerController @Inject()(historicAuditing: HistoricAuditing, cc: C
     val startDate = LocalDateTime.parse(startDateParam)
     val endDate = LocalDateTime.parse(endDateParam)
 
-    historicAuditing.auditDateRange(startDate, endDate).map {
+    jobRepository.addJob(AuditJob(startDate, endDate, localDateTimeService.now)).map {
       results =>
         Ok(s"Nuance auditing from $startDateParam to $endDateParam got results: $results")
     }

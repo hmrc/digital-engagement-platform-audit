@@ -16,12 +16,16 @@
 
 package config
 
+import auditing.AuditJobProcessorImpl
 import com.google.inject.AbstractModule
+import play.api.libs.concurrent.AkkaGuiceSupport
+import workers.{AuditJobWorker, AuditJobWorkerImpl}
 
-class Module extends AbstractModule {
 
-  override def configure(): Unit = {
-    // For session based storage instead of cred based, change to SessionIdentifierAction
-//    bind(classOf[MongoDriver]).to(classOf[TrustsMongoDriver]).asEagerSingleton()
+class DepAuditModule extends AbstractModule with AkkaGuiceSupport {
+
+  override protected def configure(): Unit = {
+    bindActor[AuditJobProcessorImpl]("audit-job-processor")
+    bind(classOf[AuditJobWorker]).to(classOf[AuditJobWorkerImpl]).asEagerSingleton()
   }
 }

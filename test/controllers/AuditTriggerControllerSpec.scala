@@ -18,15 +18,19 @@ package controllers
 
 import java.time.LocalDateTime
 
-import auditing.HistoricAuditing
+import com.mongodb.client.result.InsertOneResult
+import models.AuditJob
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import org.mongodb.scala.bson.BsonString
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
+import repositories.AuditJobRepository
+import services.LocalDateTimeService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,20 +38,32 @@ import scala.concurrent.Future
 class AuditTriggerControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   private val fakeRequest = FakeRequest("GET", "/")
-  private val historicAuditing = mock[HistoricAuditing]
-  when(historicAuditing.auditDateRange(any(), any())).thenReturn(Future.successful(Seq()))
+
+  private val localDateTime = LocalDateTime.parse("2021-07-09T13:24:26")
+  private val localDateTimeService = mock[LocalDateTimeService]
+  when(localDateTimeService.now).thenReturn(localDateTime)
+
+  private val jobRepository = mock[AuditJobRepository]
+  when(jobRepository.addJob(any())).thenReturn(Future.successful(InsertOneResult.acknowledged(BsonString("Success"))))
+
   private val controller = new AuditTriggerController(
-    historicAuditing,
+    jobRepository,
+    localDateTimeService,
     Helpers.stubControllerComponents()
   )
 
   "GET trigger" should {
-    "return 200" in {
-      val result = controller.trigger("2020-04-20T00:00", "2020-05-30T00:00")(fakeRequest)
+    "add the audit job to the repository" in {
+      val startDate = "2020-04-20T00:00"
+      val endDate = "2020-05-30T00:00"
+      val result = controller.trigger(startDate, endDate)(fakeRequest)
       status(result) shouldBe Status.OK
-      verify(historicAuditing).auditDateRange(
-        LocalDateTime.parse("2020-04-20T00:00"),
-        LocalDateTime.parse("2020-05-30T00:00")
+      verify(jobRepository).addJob(
+        AuditJob(
+          LocalDateTime.parse(startDate),
+          LocalDateTime.parse(endDate),
+          localDateTime
+        )
       )
     }
   }

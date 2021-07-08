@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
-import org.scalatest.concurrent.IntegrationPatience
-import utils.{BaseSpec, WireMockHelper}
+import java.time.LocalDateTime
 
-trait BaseConnectorSpec extends BaseSpec
-  with WireMockHelper
-  with IntegrationPatience
+class LocalDateTimeService {
+  def now: LocalDateTime = LocalDateTime.now
+}

@@ -19,27 +19,22 @@ package repositories
 import java.time.LocalDateTime
 
 import models.AuditJob
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import utils.BaseSpec
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-class AuditJobRepositorySpec extends AnyWordSpec with Matchers with MockitoSugar with GuiceOneAppPerSuite {
-  def applicationBuilder: GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
+class AuditJobRepositorySpec extends BaseSpec {
+  override def applicationBuilder(): GuiceApplicationBuilder =
+    super.applicationBuilder()
       .configure(Seq(
-        "mongodb.uri" -> "mongodb://localhost:27017/digital-engagement-platform-audit-test",
-        "metrics.enabled" -> false,
-        "auditing.enabled" -> false
+        "mongodb.uri" -> "mongodb://localhost:27017/digital-engagement-platform-audit-test"
       ): _*)
 
-  override lazy val app: Application = applicationBuilder.build()
+  override lazy val app: Application = applicationBuilder().build()
 
   "AuditJobRepository" must {
     "add audit jobs to the database and get them back" in {
