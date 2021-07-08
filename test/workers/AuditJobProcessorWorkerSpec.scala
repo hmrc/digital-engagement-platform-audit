@@ -34,8 +34,8 @@ import scala.concurrent.duration.{FiniteDuration, _}
 class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
   with BaseSpec {
 
-  private def createTestConfig(startWorker: Boolean, fallback: Configuration) = {
-    val contents = s"workers.job-processor.start = $startWorker"
+  private def createTestConfig(enabled: Boolean, fallback: Configuration) = {
+    val contents = s"workers.job-processor.enabled = $enabled"
     val config: Config = ConfigFactory.parseString(contents)
     new AppConfig(Configuration(config).withFallback(fallback))
   }
@@ -75,7 +75,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       val configuration = injector.instanceOf[Configuration]
 
       val applicationLifecycle = mock[ApplicationLifecycle]
-      val appConfig = createTestConfig(startWorker = true, configuration)
+      val appConfig = createTestConfig(enabled = true, configuration)
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
@@ -91,13 +91,13 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }
 
-    "not schedule the job processor actor if workers.job-processor.start is false" in {
+    "not schedule the job processor actor if workers.job-processor.enabled is false" in {
       val actorSystem = mock[ActorSystem]
 
       val configuration = injector.instanceOf[Configuration]
 
       val applicationLifecycle = mock[ApplicationLifecycle]
-      val appConfig = createTestConfig(startWorker = false, configuration)
+      val appConfig = createTestConfig(enabled = false, configuration)
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 

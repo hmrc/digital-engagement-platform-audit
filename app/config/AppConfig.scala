@@ -35,8 +35,8 @@ class AppConfig @Inject()
 
   val ttlInSeconds: Int = config.get[Int]("mongodb.ttlSeconds")
 
-  val startJobProcessorWorker: Boolean = config.getOptional[Boolean](path = "workers.job-processor.start").getOrElse(true)
-  val startNuanceSchedulerWorker: Boolean = config.getOptional[Boolean](path = "workers.nuance-scheduler.start").getOrElse(true)
+  val startJobProcessorWorker: Boolean = config.getOptional[Boolean](path = "workers.job-processor.enabled").getOrElse(true)
+  val startNuanceSchedulerWorker: Boolean = config.getOptional[Boolean](path = "workers.nuance-scheduler.enabled").getOrElse(true)
 
   val DefaultAuditJobWorkerInterval = 10      // 10 seconds
   val auditJobWorkerIntervalInSeconds: Int = config.getOptional[Int]("workers.job-processor.interval-in-seconds").getOrElse(DefaultAuditJobWorkerInterval)

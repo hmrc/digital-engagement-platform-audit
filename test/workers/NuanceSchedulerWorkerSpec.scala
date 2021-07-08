@@ -34,8 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWorkerSpec"))
   with BaseSpec {
 
-  private def createTestConfig(startWorker: Boolean, fallback: Configuration) = {
-    val contents = s"workers.nuance-scheduler.start = $startWorker"
+  private def createTestConfig(enabled: Boolean, fallback: Configuration) = {
+    val contents = s"workers.nuance-scheduler.enabled = $enabled"
     val config: Config = ConfigFactory.parseString(contents)
     new AppConfig(Configuration(config).withFallback(fallback))
   }
@@ -75,7 +75,7 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
       val configuration = injector.instanceOf[Configuration]
 
       val applicationLifecycle = mock[ApplicationLifecycle]
-      val appConfig = createTestConfig(startWorker = true, configuration)
+      val appConfig = createTestConfig(enabled = true, configuration)
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
@@ -91,13 +91,13 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }
 
-    "not schedule the job processor actor if workers.nuance-scheduler.start is false" in {
+    "not schedule the job processor actor if workers.nuance-scheduler.enabled is false" in {
       val actorSystem = mock[ActorSystem]
 
       val configuration = injector.instanceOf[Configuration]
 
       val applicationLifecycle = mock[ApplicationLifecycle]
-      val appConfig = createTestConfig(startWorker = false, configuration)
+      val appConfig = createTestConfig(enabled = false, configuration)
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
