@@ -19,7 +19,7 @@ package utils
 import config.AppConfig
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -44,8 +44,7 @@ trait BaseSpec extends AnyWordSpecLike
         Seq(
           "metrics.enabled" -> false,
           "auditing.enabled" -> false,
-          "workers.job-processor.enabled" -> false,    // Do not start up workers during tests
-          "workers.nuance-scheduler.enabled" -> false
+          "workers.start" -> false    // Do not start up workers during tests
         ): _*
       )
   }

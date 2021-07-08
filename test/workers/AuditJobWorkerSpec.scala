@@ -31,11 +31,11 @@ import utils.BaseSpec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{FiniteDuration, _}
 
-class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
+class AuditJobWorkerSpec extends TestKit(ActorSystem("AuditJobProcessorSpec"))
   with BaseSpec {
 
-  private def createTestConfig(enabled: Boolean, fallback: Configuration) = {
-    val contents = s"workers.job-processor.enabled = $enabled"
+  private def createTestConfig(startWorkers: Boolean, fallback: Configuration) = {
+    val contents = s"workers.start = $startWorkers"
     val config: Config = ConfigFactory.parseString(contents)
     new AppConfig(Configuration(config).withFallback(fallback))
   }
@@ -49,15 +49,10 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
     super.applicationBuilder()
       .configure(
         Seq(
-          "workers.job-processor.interval-in-seconds" -> 15
+          "workers.audit-job.initial-delay-in-seconds" -> 5,
+          "workers.audit-job.interval-in-seconds" -> 15
         ): _*
       )
-  }
-
-  private object TestAuditJobProcessor extends Actor {
-    override def receive: Receive = {
-      case _ =>
-    }
   }
 
   "auditJobWorker" should {
@@ -75,34 +70,46 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       val configuration = injector.instanceOf[Configuration]
 
       val applicationLifecycle = mock[ApplicationLifecycle]
-      val appConfig = createTestConfig(enabled = true, configuration)
+      val appConfig = createTestConfig(startWorkers = true, configuration)
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
-      val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      object TestActor extends Actor {
+        override def receive: Receive = {
+          case _ =>
+        }
+      }
+
+      val actorRef = TestActorRef(TestActor)
+      new AuditJobWorkerImpl(actorRef, actorSystem, appConfig, applicationLifecycle)
 
       verify(scheduler).scheduleAtFixedRate(
-        meq(0.seconds),
+        meq(5.seconds),
         meq(15.seconds),
-        meq(auditJobProcessor),
+        meq(actorRef),
         meq(AuditJobProcessor.ProcessNext))(any(), any())
 
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }
 
-    "not schedule the job processor actor if workers.job-processor.enabled is false" in {
+    "not schedule the job processor actor if workers.start is false" in {
       val actorSystem = mock[ActorSystem]
 
       val configuration = injector.instanceOf[Configuration]
 
       val applicationLifecycle = mock[ApplicationLifecycle]
-      val appConfig = createTestConfig(enabled = false, configuration)
+      val appConfig = createTestConfig(startWorkers = false, configuration)
 
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
-      val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      object TestActor extends Actor {
+        override def receive: Receive = {
+          case _ =>
+        }
+      }
+
+      val actorRef = TestActorRef(TestActor)
+      new AuditJobWorkerImpl(actorRef, actorSystem, appConfig, applicationLifecycle)
 
       verify(actorSystem, times(0)).scheduler
       verify(applicationLifecycle, times(0)).addStopHook(any[() => Future[_]])
