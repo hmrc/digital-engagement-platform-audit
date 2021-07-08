@@ -18,13 +18,11 @@ package config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
 class AppConfig @Inject()
   (
     config: Configuration
-  , servicesConfig: ServicesConfig
   )
 {
   val nuanceAuthUrl: String = config.get[String]("nuance.auth-url")
@@ -43,9 +41,4 @@ class AppConfig @Inject()
   val DefaultAuditJobWorkerInterval = 10
   val auditJobWorkerInitialDelayInSeconds: Int = config.getOptional[Int]("workers.audit-job.initial-delay-in-seconds").getOrElse(DefaultAuditJobWorkerInitialDelay)
   val auditJobWorkerIntervalInSeconds: Int = config.getOptional[Int]("workers.audit-job.interval-in-seconds").getOrElse(DefaultAuditJobWorkerInterval)
-
-  //  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-//
-//  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-//  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
 }

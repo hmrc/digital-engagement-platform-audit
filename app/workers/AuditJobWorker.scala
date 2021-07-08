@@ -30,10 +30,10 @@ trait AuditJobWorker
 
 @Singleton
 class AuditJobWorkerImpl @Inject() (
-                                 @Named("audit-job-processor") jobProcessor: ActorRef,
-                                 schedulerActorSystem: ActorSystem,
-                                 appConfig: AppConfig,
-                                 applicationLifecycle: ApplicationLifecycle)
+                                     @Named("audit-job-processor") jobProcessor: ActorRef,
+                                     actorSystem: ActorSystem,
+                                     appConfig: AppConfig,
+                                     applicationLifecycle: ApplicationLifecycle)
                                (implicit ec: ExecutionContext) extends AuditJobWorker {
 
   private object NullJob extends Cancellable {
@@ -43,7 +43,7 @@ class AuditJobWorkerImpl @Inject() (
 
   val job: Cancellable = {
     if (appConfig.startWorkers) {
-      val scheduledJob = schedulerActorSystem.scheduler.scheduleAtFixedRate(
+      val scheduledJob = actorSystem.scheduler.scheduleAtFixedRate(
         appConfig.auditJobWorkerInitialDelayInSeconds.seconds,
         appConfig.auditJobWorkerIntervalInSeconds.seconds,
         jobProcessor,
