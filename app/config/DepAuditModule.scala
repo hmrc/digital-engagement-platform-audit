@@ -16,7 +16,7 @@
 
 package config
 
-import auditing.{AuditJobProcessor, NuanceScheduler}
+import actors.{AuditJobProcessor, NuanceScheduler}
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.AkkaGuiceSupport
 import workers.{AuditJobProcessorWorker, AuditJobProcessorWorkerImpl, NuanceSchedulerWorker, NuanceSchedulerWorkerImpl}

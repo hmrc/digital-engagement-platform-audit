@@ -16,8 +16,8 @@
 
 package workers
 
+import actors.NuanceScheduler
 import akka.actor.{ActorRef, ActorSystem, Cancellable}
-import auditing.NuanceScheduler
 import com.google.inject.name.Named
 import config.AppConfig
 import javax.inject.{Inject, Singleton}

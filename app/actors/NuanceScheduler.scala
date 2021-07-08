@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package auditing
+package actors
 
 import akka.actor.Actor
 import javax.inject.Inject

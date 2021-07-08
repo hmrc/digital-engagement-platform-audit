@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package auditing
+package actors
 
 import java.time.LocalDateTime
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
+import auditing.HistoricAuditing
 import com.mongodb.client.result.DeleteResult
 import models.AuditJob
 import org.mockito.ArgumentMatchers.any
