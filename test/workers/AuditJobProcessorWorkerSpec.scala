@@ -80,7 +80,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
       val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      new AuditJobProcessorWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
 
       verify(scheduler).scheduleAtFixedRate(
         meq(0.seconds),
@@ -102,7 +102,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
       val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      new AuditJobProcessorWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
 
       verify(actorSystem, times(0)).scheduler
       verify(applicationLifecycle, times(0)).addStopHook(any[() => Future[_]])
