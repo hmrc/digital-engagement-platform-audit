@@ -49,7 +49,6 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
     super.applicationBuilder()
       .configure(
         Seq(
-          "workers.job-processor.initial-delay-in-seconds" -> 5,
           "workers.job-processor.interval-in-seconds" -> 15
         ): _*
       )
@@ -84,7 +83,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
 
       verify(scheduler).scheduleAtFixedRate(
-        meq(5.seconds),
+        meq(0.seconds),
         meq(15.seconds),
         meq(auditJobProcessor),
         meq(AuditJobProcessor.ProcessNext))(any(), any())

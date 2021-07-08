@@ -38,9 +38,7 @@ class AppConfig @Inject()
   val startJobProcessorWorker: Boolean = config.getOptional[Boolean](path = "workers.job-processor.start").getOrElse(true)
   val startNuanceSchedulerWorker: Boolean = config.getOptional[Boolean](path = "workers.nuance-scheduler.start").getOrElse(true)
 
-  val DefaultAuditJobWorkerInitialDelay = 0
-  val DefaultAuditJobWorkerInterval = 10
-  val auditJobWorkerInitialDelayInSeconds: Int = config.getOptional[Int]("workers.job-processor.initial-delay-in-seconds").getOrElse(DefaultAuditJobWorkerInitialDelay)
+  val DefaultAuditJobWorkerInterval = 10      // 10 seconds
   val auditJobWorkerIntervalInSeconds: Int = config.getOptional[Int]("workers.job-processor.interval-in-seconds").getOrElse(DefaultAuditJobWorkerInterval)
 
   val DefaultNuanceSchedulerInterval = 120    // 2 hours
