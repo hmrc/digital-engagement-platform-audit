@@ -35,7 +35,7 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
   with BaseSpec {
 
   private def createTestConfig(startWorker: Boolean, fallback: Configuration) = {
-    val contents = s"workers.start-nuance-scheduler = $startWorker"
+    val contents = s"workers.nuance-scheduler.start = $startWorker"
     val config: Config = ConfigFactory.parseString(contents)
     new AppConfig(Configuration(config).withFallback(fallback))
   }
@@ -91,7 +91,7 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }
 
-    "not schedule the job processor actor if workers.start-nuance-scheduler is false" in {
+    "not schedule the job processor actor if workers.nuance-scheduler.start is false" in {
       val actorSystem = mock[ActorSystem]
 
       val configuration = injector.instanceOf[Configuration]

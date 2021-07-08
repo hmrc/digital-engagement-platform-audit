@@ -35,13 +35,13 @@ class AppConfig @Inject()
 
   val ttlInSeconds: Int = config.get[Int]("mongodb.ttlSeconds")
 
-  val startJobProcessorWorker: Boolean = config.getOptional[Boolean](path = "workers.start-job-processor").getOrElse(true)
-  val startNuanceSchedulerWorker: Boolean = config.getOptional[Boolean](path = "workers.start-nuance-scheduler").getOrElse(true)
+  val startJobProcessorWorker: Boolean = config.getOptional[Boolean](path = "workers.job-processor.start").getOrElse(true)
+  val startNuanceSchedulerWorker: Boolean = config.getOptional[Boolean](path = "workers.nuance-scheduler.start").getOrElse(true)
 
   val DefaultAuditJobWorkerInitialDelay = 0
   val DefaultAuditJobWorkerInterval = 10
-  val auditJobWorkerInitialDelayInSeconds: Int = config.getOptional[Int]("workers.audit-job.initial-delay-in-seconds").getOrElse(DefaultAuditJobWorkerInitialDelay)
-  val auditJobWorkerIntervalInSeconds: Int = config.getOptional[Int]("workers.audit-job.interval-in-seconds").getOrElse(DefaultAuditJobWorkerInterval)
+  val auditJobWorkerInitialDelayInSeconds: Int = config.getOptional[Int]("workers.job-processor.initial-delay-in-seconds").getOrElse(DefaultAuditJobWorkerInitialDelay)
+  val auditJobWorkerIntervalInSeconds: Int = config.getOptional[Int]("workers.job-processor.interval-in-seconds").getOrElse(DefaultAuditJobWorkerInterval)
 
   val DefaultNuanceSchedulerInterval = 120    // 2 hours
   val nuanceSchedulerIntervalInMinutes: Int = config.getOptional[Int]("workers.nuance-scheduler.interval-in-minutes").getOrElse(DefaultNuanceSchedulerInterval)

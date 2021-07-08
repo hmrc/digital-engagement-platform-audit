@@ -35,7 +35,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
   with BaseSpec {
 
   private def createTestConfig(startWorker: Boolean, fallback: Configuration) = {
-    val contents = s"workers.start-job-processor = $startWorker"
+    val contents = s"workers.job-processor.start = $startWorker"
     val config: Config = ConfigFactory.parseString(contents)
     new AppConfig(Configuration(config).withFallback(fallback))
   }
@@ -49,8 +49,8 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
     super.applicationBuilder()
       .configure(
         Seq(
-          "workers.audit-job.initial-delay-in-seconds" -> 5,
-          "workers.audit-job.interval-in-seconds" -> 15
+          "workers.job-processor.initial-delay-in-seconds" -> 5,
+          "workers.job-processor.interval-in-seconds" -> 15
         ): _*
       )
   }
@@ -92,7 +92,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }
 
-    "not schedule the job processor actor if workers.start-job-processor is false" in {
+    "not schedule the job processor actor if workers.job-processor.start is false" in {
       val actorSystem = mock[ActorSystem]
 
       val configuration = injector.instanceOf[Configuration]
