@@ -19,14 +19,12 @@ package auditing
 import java.time.LocalDateTime
 
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestActorRef, TestActors, TestKit}
+import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
 import com.mongodb.client.result.DeleteResult
 import models.AuditJob
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.AuditJobRepository
 import utils.BaseSpec
 
@@ -42,12 +40,6 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
   private val auditJobRepository = mock[AuditJobRepository]
   private val historicAuditing = mock[HistoricAuditing]
 
-  override def applicationBuilder(): GuiceApplicationBuilder = super.applicationBuilder()
-    .overrides(
-      bind[AuditJobRepository].toInstance(auditJobRepository),
-      bind[HistoricAuditing].toInstance(historicAuditing)
-    )
-
   override def beforeEach(): Unit = {
     reset(auditJobRepository)
     reset(historicAuditing)
@@ -55,17 +47,6 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
 
   override def afterAll(): Unit = {
     TestKit.shutdownActorSystem(system)
-  }
-
-
-  "An Echo actor" must {
-
-    "send back messages unchanged" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-      echo ! "hello world"
-      expectMsg("hello world")
-    }
-
   }
 
   "JobProcessorImpl" should {

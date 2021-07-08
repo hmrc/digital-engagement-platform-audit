@@ -16,12 +16,11 @@
 
 package auditing
 
-import java.time.LocalDateTime
-
 import akka.actor.Actor
 import javax.inject.Inject
 import models.AuditJob
 import repositories.AuditJobRepository
+import services.LocalDateTimeService
 
 import scala.concurrent.ExecutionContext
 
@@ -30,10 +29,12 @@ object NuanceScheduler {
   object NuanceJobScheduled
 }
 
-class NuanceScheduler @Inject()(repository: AuditJobRepository)(implicit ec: ExecutionContext) extends Actor {
+class NuanceScheduler @Inject()(
+                                 repository: AuditJobRepository,
+                                 localDateTimeService: LocalDateTimeService)(implicit ec: ExecutionContext) extends Actor {
   override def receive: Receive = {
     case message: NuanceScheduler.ScheduleRecentPast =>
-      val endDateTime = LocalDateTime.now()
+      val endDateTime = localDateTimeService.now
       val startDateTime = endDateTime.minusMinutes(message.intervalInMinutes)
       val localSender = sender()
       repository.addJob(AuditJob(startDateTime, endDateTime, endDateTime)) map {
