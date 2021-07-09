@@ -16,9 +16,9 @@
 
 package workers
 
+import actors.AuditJobProcessor
 import akka.actor.{Actor, ActorRef, ActorSystem, Cancellable, Scheduler}
 import akka.testkit.{TestActorRef, TestKit}
-import auditing.AuditJobProcessor
 import com.typesafe.config.{Config, ConfigFactory}
 import config.AppConfig
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -80,7 +80,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
       val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      new AuditJobProcessorWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
 
       verify(scheduler).scheduleAtFixedRate(
         meq(0.seconds),
@@ -102,7 +102,7 @@ class AuditJobProcessorWorkerSpec extends TestKit(ActorSystem("AuditJobProcessor
       implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
       val auditJobProcessor = TestActorRef(TestAuditJobProcessor)
-      new AuditJobWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
+      new AuditJobProcessorWorkerImpl(auditJobProcessor, actorSystem, appConfig, applicationLifecycle)
 
       verify(actorSystem, times(0)).scheduler
       verify(applicationLifecycle, times(0)).addStopHook(any[() => Future[_]])

@@ -16,9 +16,9 @@
 
 package workers
 
+import actors.NuanceScheduler
 import akka.actor.{Actor, ActorRef, ActorSystem, Cancellable, Scheduler}
 import akka.testkit.{TestActorRef, TestKit}
-import auditing.NuanceScheduler
 import com.typesafe.config.{Config, ConfigFactory}
 import config.AppConfig
 import org.mockito.ArgumentMatchers.{any, eq => meq}

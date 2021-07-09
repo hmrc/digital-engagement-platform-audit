@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package auditing
+package actors
 
 import java.time.LocalDateTime
 
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
+import akka.testkit.{ImplicitSender, TestKit}
+import auditing.HistoricAuditing
 import com.mongodb.client.result.DeleteResult
 import models.AuditJob
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +55,7 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
 
       when(auditJobRepository.findNextJobToProcess()).thenReturn(Future.successful(None))
 
-      val jobProcessor = system.actorOf(Props(classOf[AuditJobProcessorImpl], auditJobRepository, historicAuditing, global))
+      val jobProcessor = system.actorOf(Props(classOf[AuditJobProcessor], auditJobRepository, historicAuditing, global))
       jobProcessor ! AuditJobProcessor.ProcessNext
       expectMsg(AuditJobProcessor.DoneProcessing)
 
@@ -76,7 +77,7 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
 
       when(historicAuditing.auditDateRange(any(), any())).thenReturn(Future.successful(Seq()))
 
-      val jobProcessor = TestActorRef(new AuditJobProcessorImpl(auditJobRepository, historicAuditing))
+      val jobProcessor = system.actorOf(Props(classOf[AuditJobProcessor], auditJobRepository, historicAuditing, global))
       jobProcessor ! AuditJobProcessor.ProcessNext
       expectMsg(AuditJobProcessor.DoneProcessing)
 
@@ -98,7 +99,7 @@ class AuditJobProcessorSpec extends TestKit(ActorSystem("AuditJobProcessorSpec")
       when(auditJobRepository.findNextJobToProcess()).thenReturn(Future.successful(Some(auditJob)))
       when(auditJobRepository.setJobInProgress(any(), any())).thenReturn(Future.successful(None))
 
-      val jobProcessor = TestActorRef(new AuditJobProcessorImpl(auditJobRepository, historicAuditing))
+      val jobProcessor = system.actorOf(Props(classOf[AuditJobProcessor], auditJobRepository, historicAuditing, global))
       jobProcessor ! AuditJobProcessor.ProcessNext
       expectMsg(AuditJobProcessor.DoneProcessing)
 

@@ -16,8 +16,8 @@
 
 package workers
 
+import actors.AuditJobProcessor
 import akka.actor.{ActorRef, ActorSystem, Cancellable}
-import auditing.AuditJobProcessor
 import com.google.inject.name.Named
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
@@ -26,15 +26,15 @@ import play.api.inject.ApplicationLifecycle
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AuditJobWorker
+trait AuditJobProcessorWorker
 
 @Singleton
-class AuditJobWorkerImpl @Inject() (
+class AuditJobProcessorWorkerImpl @Inject()(
                                      @Named("audit-job-processor") jobProcessor: ActorRef,
                                      actorSystem: ActorSystem,
                                      appConfig: AppConfig,
                                      applicationLifecycle: ApplicationLifecycle)
-                               (implicit ec: ExecutionContext) extends AuditJobWorker {
+                                           (implicit ec: ExecutionContext) extends AuditJobProcessorWorker {
 
   private object NullJob extends Cancellable {
     def cancel(): Boolean = false
