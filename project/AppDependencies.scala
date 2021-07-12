@@ -1,17 +1,15 @@
 import play.core.PlayVersion
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
 import sbt._
 
 object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "5.3.0",
+    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "5.7.0",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.51.0"
   )
 
   val test: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"   % "5.3.0",
+    "uk.gov.hmrc"             %% "bootstrap-test-play-28"   % "5.7.0",
     "org.scalatest"           %% "scalatest"                % "3.2.5",
     "org.scalatestplus"       %% "scalatestplus-mockito"    % "1.0.0-M2",
     "org.mockito"             %  "mockito-core"             % "3.10.0",
