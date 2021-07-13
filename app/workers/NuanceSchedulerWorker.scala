@@ -47,7 +47,9 @@ class NuanceSchedulerWorkerImpl @Inject() (
         0.seconds,
         appConfig.nuanceSchedulerIntervalInMinutes.minutes,
         nuanceScheduler,
-        NuanceScheduler.ScheduleRecentPast(appConfig.nuanceSchedulerIntervalInMinutes))
+        NuanceScheduler.ScheduleRecentPast(
+          appConfig.nuanceSchedulerIntervalInMinutes,
+          appConfig.nuanceSchedulerOffsetInMinutes))
 
       applicationLifecycle.addStopHook { () =>
         Future.successful(scheduledJob.cancel())

@@ -49,6 +49,7 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
     super.applicationBuilder()
       .configure(
         Seq(
+          "workers.nuance-scheduler.offset-in-minutes" -> 270,
           "workers.nuance-scheduler.interval-in-minutes" -> 240
         ): _*
       )
@@ -86,7 +87,7 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
         meq(0.seconds),
         meq(240.minutes),
         meq(nuanceScheduler),
-        meq(NuanceScheduler.ScheduleRecentPast(240)))(any(), any())
+        meq(NuanceScheduler.ScheduleRecentPast(240, 270)))(any(), any())
 
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }

@@ -53,13 +53,14 @@ class NuanceSchedulerSpec extends TestKit(ActorSystem("NuanceSchedulerSpec"))
 
       when(auditJobRepository.addJob(any())).thenReturn(Future.successful(InsertOneResult.acknowledged(BsonString("Success"))))
 
-      val minutes = 123
+      val interval = 120
+      val offset = 150
       val nuanceScheduler = system.actorOf(Props(classOf[NuanceScheduler], auditJobRepository, localDateTimeService, global))
-      nuanceScheduler ! NuanceScheduler.ScheduleRecentPast(minutes)
+      nuanceScheduler ! NuanceScheduler.ScheduleRecentPast(interval, offset)
       expectMsg(NuanceScheduler.NuanceJobScheduled)
 
-      val expectedStartDateTime = currentDateTime.minusMinutes(minutes)
-      val expectedEndDateTime = currentDateTime
+      val expectedStartDateTime = currentDateTime.minusMinutes(interval + offset)
+      val expectedEndDateTime = currentDateTime.minusMinutes(offset)
       verify(auditJobRepository, times(1)).addJob(AuditJob(
         expectedStartDateTime,
         expectedEndDateTime,
