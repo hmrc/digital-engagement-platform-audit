@@ -25,7 +25,7 @@ import services.LocalDateTimeService
 import scala.concurrent.ExecutionContext
 
 object NuanceScheduler {
-  case class ScheduleRecentPast(intervalInMinutes: Int)
+  case class ScheduleRecentPast(intervalInMinutes: Int, offsetInMinutes: Int)
   object NuanceJobScheduled
 }
 
@@ -34,10 +34,11 @@ class NuanceScheduler @Inject()(
                                  localDateTimeService: LocalDateTimeService)(implicit ec: ExecutionContext) extends Actor {
   override def receive: Receive = {
     case message: NuanceScheduler.ScheduleRecentPast =>
-      val endDateTime = localDateTimeService.now
+      val currentDateTime = localDateTimeService.now
+      val endDateTime = currentDateTime.minusMinutes(message.offsetInMinutes)
       val startDateTime = endDateTime.minusMinutes(message.intervalInMinutes)
       val localSender = sender()
-      repository.addJob(AuditJob(startDateTime, endDateTime, endDateTime)) map {
+      repository.addJob(AuditJob(startDateTime, endDateTime, currentDateTime)) map {
         _ => localSender ! NuanceScheduler.NuanceJobScheduled
       }
   }
