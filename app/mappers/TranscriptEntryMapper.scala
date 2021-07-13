@@ -88,14 +88,17 @@ object TranscriptEntryMapper extends Logging {
           Some(mappings(t)(transcript))
         } catch {
           case e: Exception =>
-            logger.warn(s"Got exception ${e.getMessage()} when mapping entry: $transcript\n")
+            val o = transcript.as[JsObject]
+            logger.warn(s"Got exception ${e.getMessage} when mapping entry with type '$t' and fields ${o.keys}\n")
             None
         }
       case Some(t) =>
-        logger.warn(s"[TranscriptEntryMapper] Unknown entry type: $transcript")
+        val o = transcript.as[JsObject]
+        logger.warn(s"[TranscriptEntryMapper] Unknown entry type '$t', with fields ${o.keys}")
         None
       case _ =>
-        logger.warn(s"[TranscriptEntryMapper] Couldn't read type from entry: $transcript")
+        val o = transcript.as[JsObject]
+        logger.warn(s"[TranscriptEntryMapper] Couldn't read type from entry with fields: ${o.keys}")
         None
     }
   }
