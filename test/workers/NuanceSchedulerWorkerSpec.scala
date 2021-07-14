@@ -87,7 +87,7 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
         meq(0.seconds),
         meq(240.minutes),
         meq(nuanceScheduler),
-        meq(NuanceScheduler.ScheduleRecentPast(240, 270)))(any(), any())
+        meq(NuanceScheduler.ScheduleIntervalInPast(240, 270)))(any(), any())
 
       verify(applicationLifecycle).addStopHook(any[() => Future[_]])
     }
