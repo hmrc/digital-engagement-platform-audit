@@ -56,7 +56,7 @@ class NuanceSchedulerSpec extends TestKit(ActorSystem("NuanceSchedulerSpec"))
       val interval = 120
       val offset = 150
       val nuanceScheduler = system.actorOf(Props(classOf[NuanceScheduler], auditJobRepository, localDateTimeService, global))
-      nuanceScheduler ! NuanceScheduler.ScheduleRecentPast(interval, offset)
+      nuanceScheduler ! NuanceScheduler.ScheduleIntervalInPast(interval, offset)
       expectMsg(NuanceScheduler.NuanceJobScheduled)
 
       val expectedStartDateTime = currentDateTime.minusMinutes(interval + offset)

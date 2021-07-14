@@ -49,11 +49,20 @@
 
     <logger name="application" level="DEBUG"/>
 
+    <logger name="actors" level="INFO"/>
+    <logger name="auditing" level="INFO"/>
+    <logger name="connectors" level="INFO"/>
+    <logger name="controllers" level="INFO"/>
+    <logger name="mappers" level="INFO"/>
+    <logger name="repositories" level="INFO"/>
+    <logger name="services" level="INFO"/>
+    <logger name="workers" level="INFO"/>
+
     <logger name="connector" level="TRACE">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="INFO">
+    <root level="WARN">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

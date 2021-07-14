@@ -47,7 +47,7 @@ class NuanceSchedulerWorkerImpl @Inject() (
         0.seconds,
         appConfig.nuanceSchedulerIntervalInMinutes.minutes,
         nuanceScheduler,
-        NuanceScheduler.ScheduleRecentPast(
+        NuanceScheduler.ScheduleIntervalInPast(
           appConfig.nuanceSchedulerIntervalInMinutes,
           appConfig.nuanceSchedulerOffsetInMinutes))
 

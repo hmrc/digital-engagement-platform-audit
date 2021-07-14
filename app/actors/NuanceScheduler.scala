@@ -19,25 +19,29 @@ package actors
 import akka.actor.Actor
 import javax.inject.Inject
 import models.AuditJob
+import play.api.Logging
 import repositories.AuditJobRepository
 import services.LocalDateTimeService
 
 import scala.concurrent.ExecutionContext
 
 object NuanceScheduler {
-  case class ScheduleRecentPast(intervalInMinutes: Int, offsetInMinutes: Int)
+  case class ScheduleIntervalInPast(intervalInMinutes: Int, offsetInMinutes: Int)
   object NuanceJobScheduled
 }
 
 class NuanceScheduler @Inject()(
                                  repository: AuditJobRepository,
-                                 localDateTimeService: LocalDateTimeService)(implicit ec: ExecutionContext) extends Actor {
+                                 localDateTimeService: LocalDateTimeService)(implicit ec: ExecutionContext)
+  extends Actor with Logging {
+
   override def receive: Receive = {
-    case message: NuanceScheduler.ScheduleRecentPast =>
+    case message: NuanceScheduler.ScheduleIntervalInPast =>
       val currentDateTime = localDateTimeService.now
       val endDateTime = currentDateTime.minusMinutes(message.offsetInMinutes)
       val startDateTime = endDateTime.minusMinutes(message.intervalInMinutes)
       val localSender = sender()
+      logger.info(s"ScheduleIntervalInPast: from $startDateTime to $endDateTime")
       repository.addJob(AuditJob(startDateTime, endDateTime, currentDateTime)) map {
         _ => localSender ! NuanceScheduler.NuanceJobScheduled
       }

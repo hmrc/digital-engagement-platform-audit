@@ -20,6 +20,7 @@ import akka.actor.Actor
 import auditing.{HistoricAuditing, HistoricAuditingResult}
 import javax.inject.Inject
 import models.AuditJob
+import play.api.Logging
 import repositories.AuditJobRepository
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +31,7 @@ object AuditJobProcessor {
 }
 
 class AuditJobProcessor @Inject()(repository: AuditJobRepository, historicAuditing: HistoricAuditing)
-                                 (implicit ec: ExecutionContext) extends Actor {
+                                 (implicit ec: ExecutionContext) extends Actor with Logging {
   override def receive: Receive = {
     case AuditJobProcessor.ProcessNext =>
       val localSender = sender()
@@ -46,6 +47,7 @@ class AuditJobProcessor @Inject()(repository: AuditJobRepository, historicAuditi
         repository.setJobInProgress(auditJob, inProgress = true) flatMap {
           case Some(auditJob: AuditJob) =>
             // Job successfully set to "in progress"
+            logger.info(s"processNext: processing audit job $auditJob")
             processJob(auditJob) flatMap { _ =>
               repository.deleteJob(auditJob) map { _ => true }
             }
