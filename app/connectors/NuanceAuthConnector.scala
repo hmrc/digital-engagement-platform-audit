@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NuanceAuthConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
+class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
   def authenticate(): Future[NuanceAuthResponse] = {
 

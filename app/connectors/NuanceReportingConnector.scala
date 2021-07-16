@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime)
 
-class NuanceReportingConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
+class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
   def getHistoricData(authInfo: NuanceAuthInformation, request: NuanceReportingRequest):
     Future[NuanceReportingResponse] = {
