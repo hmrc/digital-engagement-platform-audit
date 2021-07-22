@@ -31,14 +31,14 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec
     super.applicationBuilder()
       .configure(
         Seq(
-          "nuance.auth-url" -> s"http://localhost:${server.port()}/auth-path",
+          "microservice.services.nuance-api.port" -> server.port(),
           "nuance.auth-name" -> "AuthName",
           "nuance.auth-password" -> "AuthPassword"
         ): _*
       )
   }
 
-  def nuanceUrl: String = "/auth-path"
+  def nuanceUrl: String = "/j_spring_security_check"
 
   private def stubForPost(server: WireMockServer,
                   url: String,
