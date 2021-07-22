@@ -31,7 +31,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec
     super.applicationBuilder()
       .configure(
         Seq(
-          "microservice.services.nuance-auth.port" -> server.port(),
+          "microservice.services.nuance-api.port" -> server.port(),
           "nuance.auth-name" -> "AuthName",
           "nuance.auth-password" -> "AuthPassword"
         ): _*

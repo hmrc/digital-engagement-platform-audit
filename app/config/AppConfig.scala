@@ -28,10 +28,10 @@ class AppConfig @Inject()
     config: Configuration, servicesConfig: ServicesConfig
   )
 {
-  val nuanceAuthUrl: String = servicesConfig.baseUrl("nuance-auth") + "/j_spring_security_check"
+  val nuanceAuthUrl: String = servicesConfig.baseUrl("nuance-api") + "/j_spring_security_check"
   val nuanceAuthName: String = config.get[String]("nuance.auth-name")
   val nuanceAuthPassword: String = config.get[String]("nuance.auth-password")
-  val nuanceReportingUrl: String = servicesConfig.baseUrl("nuance-reporting-api") + "/v3/transcript/historic"
+  val nuanceReportingUrl: String = servicesConfig.baseUrl("nuance-api") + "/v3/transcript/historic"
   val hmrcSiteId: String = config.get[String]("nuance.site-id")
 
   val auditingChunkSize: Int = config.get[Int]("nuance.auditing-chunk-size")

@@ -34,7 +34,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
     super.applicationBuilder()
       .configure(
         Seq(
-          "microservice.services.nuance-reporting-api.port" -> server.port(),
+          "microservice.services.nuance-api.port" -> server.port(),
           "nuance.site-id" -> "1234567"
         ): _*
       )
