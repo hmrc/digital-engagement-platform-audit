@@ -34,13 +34,13 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
     super.applicationBuilder()
       .configure(
         Seq(
-          "nuance.reporting-url" -> s"http://localhost:${server.port()}/reporting",
+          "microservice.services.nuance-reporting-api.port" -> server.port(),
           "nuance.site-id" -> "1234567"
         ): _*
       )
   }
 
-  def nuanceUrl: String = "/reporting"
+  def nuanceUrl: String = "/v3/transcript/historic"
   val testSessionId = "xxxSESSIONIDxxx"
   val testServerId = "api130"
   val testFilter = """endDate>="2020-04-20T00:00:10" and endDate<="2020-07-17T00:00:20""""

@@ -26,6 +26,7 @@ import org.mockito.Mockito.{times, verify, when}
 import play.api.Configuration
 import play.api.inject.ApplicationLifecycle
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.BaseSpec
 
 import scala.concurrent.duration.{FiniteDuration, _}
@@ -37,7 +38,8 @@ class NuanceSchedulerWorkerSpec extends TestKit(ActorSystem("NuanceSchedulerWork
   private def createTestConfig(enabled: Boolean, fallback: Configuration) = {
     val contents = s"workers.nuance-scheduler.enabled = $enabled"
     val config: Config = ConfigFactory.parseString(contents)
-    new AppConfig(Configuration(config).withFallback(fallback))
+    val configuration = Configuration(config).withFallback(fallback)
+    new AppConfig(configuration, new ServicesConfig(configuration))
   }
 
   private object TestJob extends Cancellable {

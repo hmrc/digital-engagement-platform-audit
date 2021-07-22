@@ -19,18 +19,19 @@ package config
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.libs.ws.WSProxyServer
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSProxyConfiguration
 
 @Singleton
 class AppConfig @Inject()
   (
-    config: Configuration
+    config: Configuration, servicesConfig: ServicesConfig
   )
 {
-  val nuanceAuthUrl: String = config.get[String]("nuance.auth-url")
+  val nuanceAuthUrl: String = servicesConfig.baseUrl("nuance-auth") + "/j_spring_security_check"
   val nuanceAuthName: String = config.get[String]("nuance.auth-name")
   val nuanceAuthPassword: String = config.get[String]("nuance.auth-password")
-  val nuanceReportingUrl: String = config.get[String]("nuance.reporting-url")
+  val nuanceReportingUrl: String = servicesConfig.baseUrl("nuance-reporting-api") + "/v3/transcript/historic"
   val hmrcSiteId: String = config.get[String]("nuance.site-id")
 
   val auditingChunkSize: Int = config.get[Int]("nuance.auditing-chunk-size")
