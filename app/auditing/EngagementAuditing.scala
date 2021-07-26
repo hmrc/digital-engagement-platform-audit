@@ -36,14 +36,19 @@ import javax.inject.Inject
 import mappers.EngagementMapper
 import play.api.libs.json.{JsArray, JsValue}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class EngagementAuditing @Inject()(engagementMapper: EngagementMapper, auditConnector: AuditConnector)
                                   (implicit ec: ExecutionContext) {
   def processEngagement(engagement: JsValue): Future[Seq[AuditResult]] = {
     Future.sequence {
-      engagementMapper.mapEngagement(engagement).map(auditConnector.sendExtendedEvent(_))
+      engagementMapper.mapEngagement(engagement).map { event: ExtendedDataEvent =>
+        val result = Await.result(auditConnector.sendExtendedEvent(event), Duration.Inf)
+        Future.successful(result)
+      }
     }
   }
 
