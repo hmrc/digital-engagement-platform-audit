@@ -23,10 +23,12 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsArray, Json}
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 class EngagementAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar {
   "auditing.EngagementAuditing" must {
@@ -41,9 +43,10 @@ class EngagementAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar
       when(engagementMapper.mapEngagement(any())).thenReturn(Seq(metadataEvent, transcriptEvent1, transcriptEvent2))
 
       val auditConnector = mock[AuditConnector]
+      when(auditConnector.sendExtendedEvent(any())(any(), any())).thenReturn(Future.successful(AuditResult.Success))
 
       val something = new EngagementAuditing(engagementMapper, auditConnector)
-      something.processEngagement(engagement)
+      Await.result(something.processEngagement(engagement), Duration.Inf)
 
       verify(auditConnector).sendExtendedEvent(metadataEvent)
       verify(auditConnector).sendExtendedEvent(transcriptEvent1)
@@ -65,11 +68,12 @@ class EngagementAuditingSpec extends AnyWordSpec with Matchers with MockitoSugar
       when(engagementMapper.mapEngagement(engagementB)).thenReturn(Seq(metadataEventB, transcriptEventB1, transcriptEventB2))
 
       val auditConnector = mock[AuditConnector]
+      when(auditConnector.sendExtendedEvent(any())(any(), any())).thenReturn(Future.successful(AuditResult.Success))
 
       val engagements = JsArray(Seq(engagementA, engagementB))
 
       val something = new EngagementAuditing(engagementMapper, auditConnector)
-      something.processEngagements(engagements)
+      Await.result(something.processEngagements(engagements), Duration.Inf)
 
       verify(auditConnector).sendExtendedEvent(metadataEventA)
       verify(auditConnector).sendExtendedEvent(transcriptEventA1)
