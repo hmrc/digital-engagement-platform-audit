@@ -25,7 +25,8 @@ import models.{NuanceReportingResponse, ValidNuanceReportingResponse}
 import play.api.Logging
 import services.NuanceReportingService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 case class HistoricAuditingResult(start: Int, rows: Int)
 
@@ -45,38 +46,41 @@ class HistoricAuditing @Inject()(
                                   implicit executionContext: ExecutionContext) extends Logging {
   def auditDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Future[Seq[HistoricAuditingResult]] = {
     val request = NuanceReportingRequest(start = 0, rows = 0, startDate, endDate)
-    reportingService.getHistoricData(request) flatMap {
+    reportingService.getHistoricData(request) map {
       case response: ValidNuanceReportingResponse =>
           processAll(startDate, endDate, response.numFound)
-      case response => Future(Seq(new FailedHistoricAuditingResult(request, response)))
+      case response => Seq(new FailedHistoricAuditingResult(request, response))
     }
   }
 
-  private def processAll(startDate: LocalDateTime, endDate: LocalDateTime, numFound: Int): Future[Seq[HistoricAuditingResult]] = {
+  private def processAll(startDate: LocalDateTime, endDate: LocalDateTime, numFound: Int): Seq[HistoricAuditingResult] = {
     val starts = 0 until numFound by appConfig.auditingChunkSize
-    Future.sequence(starts.map {
+    starts.map {
       start =>
-        val request = NuanceReportingRequest(
-          start,
-          appConfig.auditingChunkSize.min(numFound - start),
-          startDate,
-          endDate)
+        val f = {
+          val request = NuanceReportingRequest(
+            start,
+            appConfig.auditingChunkSize.min(numFound - start),
+            startDate,
+            endDate)
 
-        try {
-          reportingService.getHistoricData(request).flatMap {
-            case response: ValidNuanceReportingResponse =>
-              engagementAuditing.processEngagements(response.engagements).map {
-                _ => new SuccessfulHistoricAuditingResult(request)
-              }
-            case response =>
-              logger.warn(s"[auditDateRange] Got error getting data: $response")
-              Future.successful(new FailedHistoricAuditingResult(request, response))
+          try {
+            reportingService.getHistoricData(request).flatMap {
+              case response: ValidNuanceReportingResponse =>
+                engagementAuditing.processEngagements(response.engagements).map {
+                  _ => new SuccessfulHistoricAuditingResult(request)
+                }
+              case response =>
+                logger.warn(s"[auditDateRange] Got error getting data: $response")
+                Future.successful(new FailedHistoricAuditingResult(request, response))
+            }
+          } catch {
+            case e: Throwable =>
+              logger.warn(s"[auditDateRange] Got exception when getting historic data: ${e.getMessage}")
+              Future.successful(new HistoricAuditingExceptionResult(request, e.getMessage))
           }
-        } catch {
-          case e: Throwable =>
-            logger.warn(s"[auditDateRange] Got exception when getting historic data: ${e.getMessage}")
-            Future.successful(new HistoricAuditingExceptionResult(request, e.getMessage))
         }
-    })
+        Await.result(f, Duration.Inf)
+    }
   }
 }
