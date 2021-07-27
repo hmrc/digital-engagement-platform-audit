@@ -5,7 +5,7 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "5.7.0",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.51.0"
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.52.0"
   )
 
   val test: Seq[ModuleID] = Seq(
@@ -18,6 +18,6 @@ object AppDependencies {
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "5.1.0",
     "com.typesafe.akka"       %% "akka-stream-testkit"      % "2.6.10",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"  % "0.51.0"
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"  % "0.52.0"
   ).map(_ % "test, it")
 }

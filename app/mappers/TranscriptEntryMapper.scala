@@ -25,7 +25,7 @@ object TranscriptEntryMapper extends Logging {
 
   private def mapAsType[T](transcript: JsValue)(implicit r: Reads[T], w: Writes[T]) = Json.toJson(transcript.as[T])
 
-  val mappings: Map[String, (JsValue) => JsValue] = Map(
+  val mappings: Map[String, JsValue => JsValue] = Map(
     Agent_RequestedEntry.eventType -> mapAsType[Agent_RequestedEntry],
     Automaton_StartedEntry.eventType -> mapAsType[Automaton_StartedEntry],
     Automaton_ContentSentToCustomerEntry.eventType -> mapAsType[Automaton_ContentSentToCustomerEntry],
@@ -83,7 +83,7 @@ object TranscriptEntryMapper extends Logging {
 
   private def mapBasicDetails(transcript: JsValue): Option[JsValue] = {
     getType(transcript) match {
-      case Some(t) if (mappings.contains(t)) =>
+      case Some(t) if mappings.contains(t) =>
         try {
           Some(mappings(t)(transcript))
         } catch {

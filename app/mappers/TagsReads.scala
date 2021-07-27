@@ -50,7 +50,7 @@ object TagsReads {
     }
   }
 
-  private def extractValue(source: JsValue, path: JsPath)(getValue: (JsValue) => JsValue): String = {
+  private def extractValue(source: JsValue, path: JsPath)(getValue: JsValue => JsValue): String = {
     source.transform(path.json.pick) match {
       case JsSuccess(value, _) => getValue(value).as[String]
       case _ => ""

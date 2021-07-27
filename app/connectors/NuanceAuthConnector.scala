@@ -19,7 +19,7 @@ package connectors
 import config.AppConfig
 import javax.inject.Inject
 import models.NuanceAuthResponse
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   def answer[T](f: InvocationOnMock => T): Answer[T] = {
-    (invocation: InvocationOnMock) => f(invocation)
+    invocation: InvocationOnMock => f(invocation)
   }
 
   private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]
