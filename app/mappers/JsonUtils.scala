@@ -29,7 +29,7 @@ object JsonUtils {
 
   def doNothing(): Reads[JsObject] = __.json.pick[JsObject]
 
-  def copyValue(source: JsValue, sourcePath: JsPath, targetPath: JsPath)(getValue: (JsValue) => JsValue): Reads[JsObject] = {
+  def copyValue(source: JsValue, sourcePath: JsPath, targetPath: JsPath)(getValue: JsValue => JsValue): Reads[JsObject] = {
     source.transform(sourcePath.json.pick) match {
       case JsSuccess(value, _) => putValue(targetPath, getValue(value))
       case _ => doNothing()
