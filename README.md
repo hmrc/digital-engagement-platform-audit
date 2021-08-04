@@ -28,7 +28,7 @@ Run the code from source using
 
 `sbt run`
 
-Dependencies will also need to be started from source or using service manager. If you started all the required services using DIGITAL_ENGAGEMENT_PLATFORM_ALL, 
+Dependencies will also need to be started from source or using service manager. If you started all the required services using DIGITAL_ENGAGEMENT_PLATFORM_AUDIT_ALL, 
 you will need to 'sm --stop DIGITAL_ENGAGEMENT_PLATFORM_AUDIT' prior to running from source.
 
 ## Manually trigger using Postman locally
