@@ -15,7 +15,7 @@ in the event a problem occurs with the scheduled data. This endpoint takes a sta
 
 Ensure your service manager config is up to date, and run the following command:
 
-`sm --start DIGITAL_ENGAGEMENT_PLATFORM_ALL -r`
+`sm --start DIGITAL_ENGAGEMENT_PLATFORM_AUDIT_ALL -r`
 
 This will start all the required services
 
@@ -26,7 +26,7 @@ Clone the repository using SSH:
 
 Run the code from source using
 
-`sbt "run 9190"`
+`sbt run`
 
 Dependencies will also need to be started from source or using service manager. If you started all the required services using DIGITAL_ENGAGEMENT_PLATFORM_ALL, 
 you will need to 'sm --stop DIGITAL_ENGAGEMENT_PLATFORM_AUDIT' prior to running from source.
