@@ -47,8 +47,9 @@ class AuditJobProcessor @Inject()(repository: AuditJobRepository, historicAuditi
         repository.setJobInProgress(auditJob, inProgress = true) flatMap {
           case Some(auditJob: AuditJob) =>
             // Job successfully set to "in progress"
-            logger.info(s"processNext: processing audit job $auditJob")
+            logger.info(s"[processNext] processing audit job $auditJob")
             processJob(auditJob) flatMap { _ =>
+              logger.info(s"[processNext] finished processing audit job $auditJob")
               repository.deleteJob(auditJob) map { _ => true }
             }
           case None =>

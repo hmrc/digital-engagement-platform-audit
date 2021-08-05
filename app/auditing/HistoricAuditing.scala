@@ -23,6 +23,7 @@ import connectors.NuanceReportingRequest
 import javax.inject.Inject
 import models.{NuanceReportingResponse, ValidNuanceReportingResponse}
 import play.api.Logging
+import play.api.libs.json.JsValue
 import services.NuanceReportingService
 
 import scala.concurrent.duration.Duration
@@ -48,7 +49,8 @@ class HistoricAuditing @Inject()(
     val request = NuanceReportingRequest(start = 0, rows = 0, startDate, endDate)
     reportingService.getHistoricData(request) map {
       case response: ValidNuanceReportingResponse =>
-          processAll(startDate, endDate, response.numFound)
+        logger.info(s"[auditDateRange]: processing ${response.engagements.as[List[JsValue]].size} engagements")
+        processAll(startDate, endDate, response.numFound)
       case response =>
         logger.warn(s"[auditDateRange] Got error reading number of engagements: $response")
         Seq(new FailedHistoricAuditingResult(request, response))
@@ -69,16 +71,17 @@ class HistoricAuditing @Inject()(
           try {
             reportingService.getHistoricData(request).flatMap {
               case response: ValidNuanceReportingResponse =>
+                logger.info(s"[processAll]: processing chunk of ${response.engagements.as[List[JsValue]].size} engagements")
                 engagementAuditing.processEngagements(response.engagements).map {
                   _ => new SuccessfulHistoricAuditingResult(request)
                 }
               case response =>
-                logger.warn(s"[auditDateRange] Got error getting data: $response")
+                logger.warn(s"[processAll] Got error getting data: $response")
                 Future.successful(new FailedHistoricAuditingResult(request, response))
             }
           } catch {
             case e: Throwable =>
-              logger.warn(s"[auditDateRange] Got exception when getting historic data: ${e.getMessage}")
+              logger.warn(s"[processAll] Got exception when getting historic data: ${e.getMessage}")
               Future.successful(new HistoricAuditingExceptionResult(request, e.getMessage))
           }
         }
