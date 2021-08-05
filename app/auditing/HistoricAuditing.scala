@@ -49,7 +49,9 @@ class HistoricAuditing @Inject()(
     reportingService.getHistoricData(request) map {
       case response: ValidNuanceReportingResponse =>
           processAll(startDate, endDate, response.numFound)
-      case response => Seq(new FailedHistoricAuditingResult(request, response))
+      case response =>
+        logger.warn(s"[auditDateRange] Got error reading number of engagements: $response")
+        Seq(new FailedHistoricAuditingResult(request, response))
     }
   }
 

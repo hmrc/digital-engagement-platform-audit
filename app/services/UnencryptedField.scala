@@ -27,6 +27,7 @@ object UnencryptedField extends Logging {
       decryptedValue =>
         decryptedValue.split("-").toList match {
           case hashedValue :: rawValue if decrypter.verifyHash(rawValue.mkString("-"), hashedValue) =>
+            logger.info(s"[decrypt] SUCCESSFULLY decrypted value for field $fieldName")
             Some(rawValue.mkString("-"))
           case _ => logger.warn(s"[decrypt] invalid decrypted value for field $fieldName")
             None
