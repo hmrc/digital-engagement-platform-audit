@@ -47,7 +47,7 @@ object NuanceReportingResponse extends Logging {
           logger.warn("[NuanceReportingResponse] Got 'unauthorized' response from reporting API")
           NuanceUnauthorised
         case code =>
-          logger.warn(s"[NuanceReportingResponse] Got error $code from reporting API")
+          logger.warn(s"[NuanceReportingResponse] Got error $code from reporting API, with body ${response.body}")
           NuanceServerError
       }
     }

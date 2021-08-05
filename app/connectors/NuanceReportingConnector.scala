@@ -21,28 +21,33 @@ import java.time.LocalDateTime
 import config.AppConfig
 import javax.inject.Inject
 import models.{NuanceAuthInformation, NuanceReportingResponse}
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime)
 
-class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
+class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   def getHistoricData(authInfo: NuanceAuthInformation, request: NuanceReportingRequest):
     Future[NuanceReportingResponse] = {
 
     implicit val hc : HeaderCarrier = new HeaderCarrier(extraHeaders = authInfo.toHeaders)
 
+    val queryParams = Seq(
+      "site" -> config.hmrcSiteId,
+      "filter" -> s"""endDate>="${request.startDate}" and endDate<="${request.endDate}"""",
+      "returnFields" -> "ALL",
+      "start" -> request.start.toString,
+      "rows" -> request.rows.toString
+    )
+
+    logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
+
     http.GET[NuanceReportingResponse](
       url = config.nuanceReportingUrl,
-      queryParams = Seq(
-        "site" -> config.hmrcSiteId,
-        "filter" -> s"""endDate>="${request.startDate}" and endDate<="${request.endDate}"""",
-        "returnFields" -> "ALL",
-        "start" -> request.start.toString,
-        "rows" -> request.rows.toString
-      ),
+      queryParams = queryParams,
       Seq()
     )
   }
