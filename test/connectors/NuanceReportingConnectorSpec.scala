@@ -56,7 +56,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
                  delayResponse: Int = 0): StubMapping = {
     server.stubFor(get(urlPathEqualTo(url))
         .withQueryParams(Map(
-          "site" -> equalTo(appConfig.hmrcSiteId),
+//          "site" -> equalTo(appConfig.hmrcSiteId),
           "filter" -> equalTo(testFilter),
           "returnFields" -> equalTo("ALL"),
           "start" -> equalTo(testStart.toString),
