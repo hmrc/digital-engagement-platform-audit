@@ -37,7 +37,7 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
 
     val queryParams = Seq(
       "site" -> config.hmrcSiteId,
-      "filter" -> s"""endDate>="${request.startDate}" and endDate<="${request.endDate}"""",
+      "filter" -> s"""startDate>="${request.startDate}" and endDate<="${request.endDate}"""",
       "returnFields" -> "ALL",
       "start" -> request.start.toString,
       "rows" -> request.rows.toString

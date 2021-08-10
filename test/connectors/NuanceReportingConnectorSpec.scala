@@ -43,7 +43,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
   def nuanceUrl: String = "/v3/transcript/historic"
   val testSessionId = "xxxSESSIONIDxxx"
   val testServerId = "api130"
-  val testFilter = """endDate>="2020-04-20T00:00:10" and endDate<="2020-07-17T00:00:20""""
+  val testFilter = """startDate>="2020-04-20T00:00:10" and endDate<="2020-07-17T00:00:20""""
   val testStart = 100
   val testRows = 1234
 

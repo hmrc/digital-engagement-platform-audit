@@ -36,8 +36,6 @@ class AppConfig @Inject()
 
   val auditingChunkSize: Int = config.get[Int]("nuance.auditing-chunk-size")
 
-  val ttlInSeconds: Int = config.get[Int]("mongodb.ttlSeconds")
-
   val startJobProcessorWorker: Boolean = config.getOptional[Boolean](path = "workers.job-processor.enabled").getOrElse(true)
   val startNuanceSchedulerWorker: Boolean = config.getOptional[Boolean](path = "workers.nuance-scheduler.enabled").getOrElse(true)
 
