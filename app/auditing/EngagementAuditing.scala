@@ -47,11 +47,8 @@ class EngagementAuditing @Inject()(engagementMapper: EngagementMapper, auditConn
   def processEngagement(engagement: JsValue): Future[Seq[AuditResult]] = {
     Future.sequence {
       engagementMapper.mapEngagement(engagement).map { event: ExtendedDataEvent =>
-        val result = Await.result(auditConnector.sendExtendedEvent(event) recover {
-          case t: Throwable =>
-            logger error (s"Failed sending audit message ${event.auditType}", t)
-            AuditResult.Failure(s"Failed sending audit message ${event.auditType}", Some(t))
-        }, Duration.Inf)
+        logger.info(s"[eventData]: sending extended event ${event.auditType}")
+        val result = Await.result(auditConnector.sendExtendedEvent(event), Duration.Inf)
         Future.successful(result)
       }
     }

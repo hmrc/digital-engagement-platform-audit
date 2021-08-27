@@ -50,6 +50,7 @@ class HistoricAuditing @Inject()(
     reportingService.getHistoricData(request) map {
       case response: ValidNuanceReportingResponse =>
         logger.info(s"[auditDateRange]: processing ${response.engagements.as[List[JsValue]].size} engagements")
+        logger.info(s"[auditDateRange]: numFound ${response.numFound}")
         processAll(startDate, endDate, response.numFound)
       case response =>
         logger.warn(s"[auditDateRange] Got error reading number of engagements: $response")
