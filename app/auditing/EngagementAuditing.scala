@@ -40,13 +40,18 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
+import play.api.Logging
 
 class EngagementAuditing @Inject()(engagementMapper: EngagementMapper, auditConnector: AuditConnector)
-                                  (implicit ec: ExecutionContext) {
+                                  (implicit ec: ExecutionContext) extends Logging {
   def processEngagement(engagement: JsValue): Future[Seq[AuditResult]] = {
     Future.sequence {
       engagementMapper.mapEngagement(engagement).map { event: ExtendedDataEvent =>
-        val result = Await.result(auditConnector.sendExtendedEvent(event), Duration.Inf)
+        val result = Await.result(auditConnector.sendExtendedEvent(event) recover {
+          case t: Throwable =>
+            logger error (s"Failed sending audit message ${event.auditType}", t)
+            AuditResult.Failure(s"Failed sending audit message ${event.auditType}", Some(t))
+        }, Duration.Inf)
         Future.successful(result)
       }
     }
