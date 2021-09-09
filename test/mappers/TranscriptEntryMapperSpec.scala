@@ -293,7 +293,8 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | "senderAlias": "HMRC",
                                   | "senderId": "12345@hmrc",
                                   | "senderPID": "12345",
-                                  | "enterType": "TRANSFER"
+                                  | "enterType": "TRANSFER",
+                                  | "virtualAssistantSessionID": "@9360416e-e378-2b67-c0e7-a1c2d3ad3664@c365f18e-4f53-4604-ad92-391795882fce"
                                   |}
                                   |""".stripMargin)
 
@@ -602,6 +603,7 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                |  "type": "chat.customerExited",
                                |  "content": "Customer Closed Chat Window",
                                |  "senderName": "customer",
+                               |  "senderAlias": "HMRC",
                                |  "iso": "2021-02-15T16:21:32+00:00",
                                |  "timestamp": 1613406092549
                                |}
@@ -613,7 +615,8 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | "transcriptIndex": 42,
                                   | "type": "chat.customerExited",
                                   | "content": "Customer Closed Chat Window",
-                                  | "senderName": "customer"
+                                  | "senderName": "customer",
+                                  | "senderAlias": "HMRC"
                                   |}
                                   |""".stripMargin)
 

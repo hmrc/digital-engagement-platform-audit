@@ -105,7 +105,8 @@ case class Chat_AgentEnterChatEntry(
                                      senderId: String,
                                      senderAlias: Option[String],
                                      content: Option[String],
-                                     enterType: String
+                                     enterType: String,
+                                     virtualAssistantSessionID: Option[String]
                                    )
 
 object Chat_AgentEnterChatEntry {
@@ -182,7 +183,8 @@ object Chat_CustomerChatlineSentEntry {
 case class Chat_CustomerExitedEntry(
                                      `type`: String,
                                      senderName: String,
-                                     content: Option[String]
+                                     content: Option[String],
+                                     senderAlias: Option[String]
                                    )
 
 object Chat_CustomerExitedEntry {
