@@ -145,7 +145,7 @@ object Chat_AgentLostConnection {
 
 case class Chat_AutomatonAgentOutcome(
                                      `type`: String,
-                                     senderName: String,
+                                     senderName: Option[String],
                                      content: String
                                    )
 
