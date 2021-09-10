@@ -559,7 +559,8 @@
             "transcriptIndex": 7,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "765436198059526406"
+            "engagementID": "765436198059526406",
+            "virtualAssistantSessionID": "@30517c78-dfe8-0663-cb87-f145ecd69bf0@d20f339a-13ec-4ee9-b206-3a8f7a27661d"
         },
         "generatedAt": "2021-02-15T16:21:20Z"
     },
@@ -666,6 +667,7 @@
             "senderName": "customer",
             "transcriptIndex": 13,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "765436198059526406",
             "content": "Customer Closed Chat Window"
         },
@@ -973,7 +975,8 @@
             "transcriptIndex": 6,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "-8093707645275702045"
+            "engagementID": "-8093707645275702045",
+            "virtualAssistantSessionID": "@9360416e-e378-2b67-c0e7-a1c2d3ad3664@06fc1d82-f746-4f63-a428-6d2adeaea41b"
         },
         "generatedAt": "2020-12-02T15:11:34Z"
     },
@@ -5140,6 +5143,7 @@
             "senderName": "customer",
             "transcriptIndex": 8,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "186722891415436658",
             "content": "Customer Closed Chat Window"
         },
@@ -6360,6 +6364,7 @@
             "senderName": "customer",
             "transcriptIndex": 8,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "189819116143079929",
             "content": "Customer Closed Chat Window"
         },
@@ -7982,6 +7987,7 @@
             "senderName": "customer",
             "transcriptIndex": 8,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "187567295298500993",
             "content": "Customer Closed Chat Window"
         },
@@ -8400,6 +8406,7 @@
             "senderName": "customer",
             "transcriptIndex": 9,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "189537620095800679",
             "content": "Customer Closed Chat Window"
         },
@@ -9273,6 +9280,7 @@
             "senderName": "customer",
             "transcriptIndex": 9,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "188974670077527029",
             "content": "Customer Closed Chat Window"
         },
@@ -10508,6 +10516,7 @@
             "senderName": "customer",
             "transcriptIndex": 10,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "188974669782780799",
             "content": "Customer Closed Chat Window"
         },
@@ -11412,6 +11421,7 @@
             "senderName": "customer",
             "transcriptIndex": 8,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "188130244027227496",
             "content": "Customer Closed Chat Window"
         },
@@ -11830,6 +11840,7 @@
             "senderName": "customer",
             "transcriptIndex": 9,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "190100568699138618",
             "content": "Customer Closed Chat Window"
         },
@@ -12496,7 +12507,8 @@
             "transcriptIndex": 6,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "764027683780728308"
+            "engagementID": "764027683780728308",
+            "virtualAssistantSessionID": "@30517c78-dfe8-0663-cb87-f145ecd69bf0@558f7ac5-e48a-4e83-aa7f-de2207667dc1"
         },
         "generatedAt": "2020-07-29T11:58:10Z"
     },
@@ -12842,6 +12854,7 @@
             "senderName": "customer",
             "transcriptIndex": 23,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "764027683780728308",
             "content": "Customer Closed Chat Window"
         },
@@ -13238,7 +13251,8 @@
             "transcriptIndex": 6,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "764872108708606002"
+            "engagementID": "764872108708606002",
+            "virtualAssistantSessionID": "@30517c78-dfe8-0663-cb87-f145ecd69bf0@ddeb0b9b-5b8c-4d78-a5e7-157ec2def6ba"
         },
         "generatedAt": "2020-07-29T11:57:36Z"
     },
@@ -13565,6 +13579,7 @@
             "senderName": "customer",
             "transcriptIndex": 22,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "764872108708606002",
             "content": "Customer Closed Chat Window"
         },
@@ -13896,7 +13911,8 @@
             "transcriptIndex": 7,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "189818642053983727"
+            "engagementID": "189818642053983727",
+            "virtualAssistantSessionID": "@30517c78-dfe8-0663-cb87-f145ecd69bf0@b68d1af0-00fc-4127-879a-a2852a77f9fd"
         },
         "generatedAt": "2020-07-13T17:43:58Z"
     },
@@ -14316,7 +14332,8 @@
             "transcriptIndex": 6,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "190100115611952300"
+            "engagementID": "190100115611952300",
+            "virtualAssistantSessionID": "@d22b71a0-993e-a5c2-969e-78ec18f388c4@53a644b5-fdcd-4871-92a4-6c9fa4ec7d2a"
         },
         "generatedAt": "2020-07-13T11:43:22Z"
     },
@@ -14394,6 +14411,7 @@
             "senderName": "customer",
             "transcriptIndex": 10,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "190100115611952300",
             "content": "Customer Closed Chat Window"
         },
@@ -14708,7 +14726,8 @@
             "transcriptIndex": 6,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "187285365840316064"
+            "engagementID": "187285365840316064",
+            "virtualAssistantSessionID": "@d22b71a0-993e-a5c2-969e-78ec18f388c4@00a33d34-f138-46f1-a3a3-b7b813e5dc57"
         },
         "generatedAt": "2020-07-13T11:42:04Z"
     },
@@ -14786,6 +14805,7 @@
             "senderName": "customer",
             "transcriptIndex": 10,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "187285365840316064",
             "content": "Customer Closed Chat Window"
         },
@@ -15934,7 +15954,8 @@
             "transcriptIndex": 7,
             "type": "chat.agentEnterChat",
             "senderAlias": "HMRC",
-            "engagementID": "188411265659827187"
+            "engagementID": "188411265659827187",
+            "virtualAssistantSessionID": "@30517c78-dfe8-0663-cb87-f145ecd69bf0@256d230e-a238-43fb-ae29-2b2eeb9006e8"
         },
         "generatedAt": "2020-07-13T11:19:49Z"
     },
@@ -16077,6 +16098,7 @@
             "senderName": "customer",
             "transcriptIndex": 15,
             "type": "chat.customerExited",
+            "senderAlias": "You",
             "engagementID": "188411265659827187",
             "content": "Customer Closed Chat Window"
         },
