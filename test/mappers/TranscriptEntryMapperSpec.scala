@@ -230,7 +230,8 @@ class TranscriptEntryMapperSpec extends AnyWordSpec with Matchers with MockitoSu
                                   | "transcriptIndex": 42,
                                   | "type": "chat.customerChatlineSent",
                                   | "content": "hello",
-                                  | "senderName": "customer"
+                                  | "senderName": "customer",
+                                  | "senderAlias": "You"
                                   |}
                                   |""".stripMargin)
 

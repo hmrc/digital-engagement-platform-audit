@@ -481,6 +481,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "765436198059526406",
@@ -628,6 +629,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
             "engagementID": "765436198059526406",
@@ -910,6 +912,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "-8093707645275702045",
@@ -1052,6 +1055,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 10,
             "type": "chat.customerChatlineSent",
             "engagementID": "-8093707645275702045",
@@ -2129,6 +2133,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "764309601433176044",
@@ -2535,6 +2540,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "764309601411088212",
@@ -2934,6 +2940,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "765154026334130222",
@@ -3341,6 +3348,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "766279926131524220",
@@ -3768,6 +3776,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "765998451121911672",
@@ -4175,6 +4184,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "765716963435653645",
@@ -4590,6 +4600,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "186722891418517407",
@@ -4993,6 +5004,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "186722891415436658",
@@ -5400,6 +5412,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "188411741269366130",
@@ -5807,6 +5820,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "188411741265957881",
@@ -6214,6 +6228,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "189819116143079929",
@@ -6621,6 +6636,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "187004366366142712",
@@ -7009,6 +7025,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "188130266072364059",
@@ -7415,6 +7432,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "190100590898750756",
@@ -7563,6 +7581,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 8,
             "type": "chat.customerChatlineSent",
             "engagementID": "190100590898750756",
@@ -7841,6 +7860,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "187567295298500993",
@@ -8242,6 +8262,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "189537620095800679",
@@ -8668,6 +8689,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "187848770203050100",
@@ -9115,6 +9137,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "188974670077527029",
@@ -9516,6 +9539,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "189256144787205217",
@@ -9902,7 +9926,7 @@
         },
         "detail": {
             "senderName": "customer",
-            "transcriptIndex": 1,
+            "senderAlias": "You",
             "type": "chat.customerChatlineSent",
             "engagementID": "190100569705602860",
             "content": "Hi"
@@ -10050,6 +10074,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 8,
             "type": "chat.customerChatlineSent",
             "engagementID": "190100569705602860",
@@ -10328,6 +10353,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "188974669782780799",
@@ -10476,6 +10502,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 8,
             "type": "chat.customerChatlineSent",
             "engagementID": "188974669782780799",
@@ -10758,6 +10785,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "188411719794141839",
@@ -10965,6 +10993,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
             "engagementID": "188411719794141839",
@@ -11275,6 +11304,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "188130244027227496",
@@ -11676,6 +11706,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "190100568699138618",
@@ -12442,6 +12473,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "764027683780728308",
@@ -12584,6 +12616,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 10,
             "type": "chat.customerChatlineSent",
             "engagementID": "764027683780728308",
@@ -12625,6 +12658,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 12,
             "type": "chat.customerChatlineSent",
             "engagementID": "764027683780728308",
@@ -13186,6 +13220,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "764872108708606002",
@@ -13328,6 +13363,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 10,
             "type": "chat.customerChatlineSent",
             "engagementID": "764872108708606002",
@@ -13833,6 +13869,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "189818642053983727",
@@ -13980,6 +14017,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
             "engagementID": "189818642053983727",
@@ -14267,6 +14305,7 @@
         },
         "detail": {
             "senderName": "customer",
+           "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "190100115611952300",
@@ -14661,6 +14700,7 @@
         },
         "detail": {
             "senderName": "customer",
+           "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "187285365840316064",
@@ -15039,6 +15079,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "188129790707985532",
@@ -15459,6 +15500,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "189818640566215092",
@@ -15878,6 +15920,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "188411265659827187",
@@ -16023,6 +16066,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
             "engagementID": "188411265659827187",
@@ -16541,6 +16585,7 @@
         },
         "detail": {
             "senderName": "customer",
+           "senderAlias": "You",
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
             "engagementID": "-8093708466315035673",
@@ -16744,6 +16789,7 @@
         },
         "detail": {
             "senderName": "customer",
+            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
             "engagementID": "-8093708466319033374",
