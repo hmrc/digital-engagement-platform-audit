@@ -172,8 +172,8 @@ object Chat_ClickstreamEntry {
 case class Chat_CustomerChatlineSentEntry(
                                      `type`: String,
                                      senderName: String,
-                                     content: String,
-                                     senderAlias: Option[String]
+                                     senderAlias: Option[String],
+                                     content: String
                                    )
 
 object Chat_CustomerChatlineSentEntry {

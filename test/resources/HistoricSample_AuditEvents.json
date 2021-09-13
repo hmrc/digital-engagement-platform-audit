@@ -481,9 +481,9 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "765436198059526406",
             "content": "chat"
         },
@@ -629,9 +629,9 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "765436198059526406",
             "content": "chat"
         },
@@ -912,9 +912,9 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "-8093707645275702045",
             "content": "hello"
         },
@@ -1055,9 +1055,10 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
+  
             "transcriptIndex": 10,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "-8093707645275702045",
             "content": "contact"
         },
@@ -2133,9 +2134,10 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
+        
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "764309601433176044",
             "content": "Hello"
         },
@@ -2540,9 +2542,10 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
+          
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "764309601411088212",
             "content": "Hello"
         },
@@ -2940,9 +2943,10 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
+       
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "765154026334130222",
             "content": "hello"
         },
@@ -3348,9 +3352,10 @@
         },
         "detail": {
             "senderName": "customer",
-            "senderAlias": "You",
+         
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+          "senderAlias": "You",
             "engagementID": "766279926131524220",
             "content": "HELLO"
         },
@@ -3775,10 +3780,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "765998451121911672",
             "content": "Hello"
         },
@@ -4183,10 +4190,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "765716963435653645",
             "content": "HELLO"
         },
@@ -4599,10 +4608,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "186722891418517407",
             "content": "TEST 6 5/10 FS123456A"
         },
@@ -5003,10 +5014,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "186722891415436658",
             "content": "test5 5/10 ES123456"
         },
@@ -5411,10 +5424,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188411741269366130",
             "content": "Test 4 5/10 D123456A"
         },
@@ -5819,10 +5834,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188411741265957881",
             "content": "TEST 3 5/10"
         },
@@ -6227,10 +6244,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "189819116143079929",
             "content": "TEST 2 5/10"
         },
@@ -6635,10 +6654,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "187004366366142712",
             "content": "Mon 5/10"
         },
@@ -7024,10 +7045,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188130266072364059",
             "content": "test 2"
         },
@@ -7431,10 +7454,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "190100590898750756",
             "content": "hello"
         },
@@ -7580,10 +7605,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 8,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "190100590898750756",
             "content": "ab123456"
         },
@@ -7859,10 +7886,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "187567295298500993",
             "content": "web tool test"
         },
@@ -8261,10 +8290,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "189537620095800679",
             "content": "web tool test"
         },
@@ -8688,10 +8719,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "187848770203050100",
             "content": "7"
         },
@@ -9136,10 +9169,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188974670077527029",
             "content": "x"
         },
@@ -9538,10 +9573,11 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
             "engagementID": "189256144787205217",
             "content": "Hi"
         },
@@ -9925,9 +9961,11 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "190100569705602860",
             "content": "Hi"
         },
@@ -10073,10 +10111,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 8,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "190100569705602860",
             "content": "AA123456A"
         },
@@ -10352,10 +10392,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188974669782780799",
             "content": "Hi"
         },
@@ -10501,10 +10543,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 8,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188974669782780799",
             "content": "1234567890"
         },
@@ -10784,10 +10828,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188411719794141839",
             "content": "Hi"
         },
@@ -10992,10 +11038,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188411719794141839",
             "content": "AA123456A"
         },
@@ -11303,10 +11351,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188130244027227496",
             "content": "test web tool"
         },
@@ -11705,10 +11755,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "190100568699138618",
             "content": "hi"
         },
@@ -12472,10 +12524,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "764027683780728308",
             "content": "what is the eat out to help out scheme"
         },
@@ -12615,10 +12669,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 10,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "764027683780728308",
             "content": "you are a customer"
         },
@@ -12657,10 +12713,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 12,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "764027683780728308",
             "content": "chat to live agent"
         },
@@ -13219,10 +13277,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "764872108708606002",
             "content": "help"
         },
@@ -13362,10 +13422,12 @@
             "X-Session-ID": "DecryptedSessionId"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 10,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "764872108708606002",
             "content": "contact"
         },
@@ -13868,10 +13930,12 @@
             "path": "http://hmrc.beesuarez.com/?NuanceVAMigration=PREPROD"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "189818642053983727",
             "content": "hello"
         },
@@ -14016,10 +14080,12 @@
             "path": "http://hmrc.beesuarez.com/?NuanceVAMigration=PREPROD"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "189818642053983727",
             "content": "##psinfo"
         },
@@ -14305,9 +14371,10 @@
         },
         "detail": {
             "senderName": "customer",
-           "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "190100115611952300",
             "content": "##psinfo"
         },
@@ -14700,9 +14767,10 @@
         },
         "detail": {
             "senderName": "customer",
-           "senderAlias": "You",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "187285365840316064",
             "content": "##psinfo"
         },
@@ -15078,10 +15146,12 @@
             "path": "http://hmrc.beesuarez.com/?NuanceVAMigration=DEV"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188129790707985532",
             "content": "Yes"
         },
@@ -15499,10 +15569,12 @@
             "path": "http://hmrc.beesuarez.com/?NuanceVAMigration=DEV"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "189818640566215092",
             "content": "##psinfo"
         },
@@ -15919,10 +15991,12 @@
             "path": "http://hmrc.beesuarez.com/?NuanceVAMigration=PREPROD"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188411265659827187",
             "content": "hello"
         },
@@ -16065,10 +16139,12 @@
             "path": "http://hmrc.beesuarez.com/?NuanceVAMigration=PREPROD"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
+
             "transcriptIndex": 11,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "188411265659827187",
             "content": "##psinfo"
         },
@@ -16585,9 +16661,11 @@
         },
         "detail": {
             "senderName": "customer",
-           "senderAlias": "You",
+
             "transcriptIndex": 1,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
+
             "engagementID": "-8093708466315035673",
             "content": "carlos test"
         },
@@ -16788,10 +16866,10 @@
             "path": "unrecognized_page"
         },
         "detail": {
-            "senderName": "customer",
-            "senderAlias": "You",
+             "senderName": "customer",
             "transcriptIndex": 3,
             "type": "chat.customerChatlineSent",
+            "senderAlias": "You",
             "engagementID": "-8093708466319033374",
             "content": "carlos test"
         },
