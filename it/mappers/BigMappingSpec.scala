@@ -69,27 +69,9 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       engagementAuditing.processEngagements(engagements)
 
-      verify(auditConnector, times(971)).sendExtendedEvent(any())(any(), any())
+      verify(auditConnector, times(6)).sendExtendedEvent(any())(any(), any())
 
       JsArray(events) mustBe getJsonValueFromFile("HistoricSample_AuditEvents.json")
-    }
-
-    "handle another full historic file" in {
-      val auditConnector = mock[AuditConnector]
-      when(auditConnector.sendExtendedEvent(any())(any(), any())).thenReturn(Future.successful(AuditResult.Success))
-
-      val metadataMapper = new MetadataMapper(nuanceIdDecryptionService)
-      val transcriptMapper = new TranscriptMapper(nuanceIdDecryptionService)
-      val engagementMapper = new EngagementMapper(metadataMapper, transcriptMapper)
-
-      val json = getJsonValueFromFile("HistoricSampleFrom100.json")
-
-      val engagementAuditing = new EngagementAuditing(engagementMapper, auditConnector)
-      val engagements = json.transform((__ \ 'engagements).json.pick).get.as[JsArray]
-
-      engagementAuditing.processEngagements(engagements)
-
-      verify(auditConnector, times( 2018)).sendExtendedEvent(any())(any(), any())
     }
   }
 }
