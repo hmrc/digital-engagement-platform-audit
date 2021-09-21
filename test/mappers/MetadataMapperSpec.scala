@@ -41,7 +41,7 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       result mustBe Some(ExtendedDataEvent(
         "digital-engagement-platform",
         "EngagementMetadata",
-        "Metadata-187286680131967188",
+        "2e48619e-018b-3dda-8c2c-0b2e76143a03",
         Map[String, String](
           "clientIP" -> "81.97.99.4",
           "path" -> "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",

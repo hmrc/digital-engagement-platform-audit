@@ -55,7 +55,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementTranscript",
-          "Transcript-187286680131967188-42",
+          "18bc0957-7fc0-3fb7-aadd-d49dc6df4bb8",
           Map[String, String]("tag1" -> "value1", "tag2" -> "value2"),
           Json.parse(
             """
@@ -131,7 +131,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementTranscript",
-          "Transcript-187286680131967188-42",
+          "18bc0957-7fc0-3fb7-aadd-d49dc6df4bb8",
           Map[String, String]("tag1" -> "value1", "tag2" -> "value2"),
           Json.parse(
             """
@@ -188,7 +188,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementTranscript",
-          "Transcript-187286680131967188-0",
+          "9231d778-77b0-3c2f-9731-fd578627b84f",
           Map[String, String](
             "clientIP" -> "81.97.99.4",
             "path" -> "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",
@@ -248,7 +248,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
         ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementTranscript",
-          "Transcript-187286680131967188-1",
+          "2965eda8-6a77-3f2a-b51b-2499fe39a69b",
           Map[String, String](
             "clientIP" -> "81.97.99.4",
             "path" -> "https://www.tax.service.gov.uk/account-recovery/lost-user-id-password/check-emails?ui_locales=en&nuance=2008HMRCSITTest",

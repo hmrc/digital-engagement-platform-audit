@@ -18,16 +18,19 @@ package mappers
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneOffset}
-
 import javax.inject.Inject
 import play.api.Logging
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
+import java.util.UUID
+
 class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
   private def transcriptPath = JsPath() \ 'transcript
   private def isoPath = JsPath() \ 'iso
+
+  private def generateUUIDString(input: String) = UUID.nameUUIDFromBytes(input.getBytes).toString
 
   private def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String], datetime: String) = {
     TranscriptEntryMapper.mapTranscriptDetail(transcript, engagementId, index) match {
@@ -36,7 +39,7 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
         Some(ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementTranscript",
-          s"Transcript-$engagementId-$index",
+          generateUUIDString(s"Transcript-$engagementId-$index"),
           tags,
           detail,
           dt.toInstant(ZoneOffset.UTC)

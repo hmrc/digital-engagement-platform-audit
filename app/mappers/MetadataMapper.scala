@@ -18,7 +18,6 @@ package mappers
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneOffset}
-
 import javax.inject.Inject
 import play.api.Logging
 import play.api.libs.json._
@@ -38,16 +37,21 @@ class MetadataMapper @Inject()(nuanceDecryptionService: NuanceIdDecryptionServic
     }
   }
 
+  import java.util.UUID
+
+  private def generateUUIDString(input: String) = UUID.nameUUIDFromBytes(input.getBytes).toString
+
   def mapToMetadataEvent(engagement: JsValue): Option[ExtendedDataEvent] = {
     val engagementId = engagement.transform(engagementIDPick)
     val endDate = engagement.transform(endDatePick)
     (engagementId, endDate) match {
       case (JsSuccess(JsString(engagementId), _), JsSuccess(JsString(endDate), _)) =>
+
         val generatedAtDate = LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME)
         Some(ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementMetadata",
-          s"Metadata-$engagementId",
+          generateUUIDString(s"Metadata-$engagementId"),
           TagsReads.extractTags(engagement, nuanceDecryptionService),
           removeTranscript(engagement),
           generatedAtDate.toInstant(ZoneOffset.UTC)
