@@ -165,7 +165,7 @@
             "initialEngagementInConversation": false,
             "endType": "Customer Not Completed Automaton"
         },
-        "generatedAt": "2021-03-02T13:23:44Z"
+        "generatedAt": "2021-03-02T13:23:44.868Z"
     },
     {
         "auditSource": "digital-engagement-platform",
@@ -187,7 +187,7 @@
             "type": "engagement.requested",
             "engagementID": "187286680131967188"
         },
-        "generatedAt": "2021-03-02T13:23:38Z"
+        "generatedAt": "2021-03-02T13:23:38.610Z"
     },
     {
         "auditSource": "digital-engagement-platform",
@@ -206,7 +206,7 @@
             "type": "automaton.started",
             "engagementID": "187286680131967188"
         },
-        "generatedAt": "2021-03-02T13:23:38Z"
+        "generatedAt": "2021-03-02T13:23:38.611Z"
     },
     {
         "auditSource": "digital-engagement-platform",
@@ -228,7 +228,7 @@
             "type": "automaton.contentSentToCustomer",
             "engagementID": "187286680131967188"
         },
-        "generatedAt": "2021-03-02T13:23:38Z"
+        "generatedAt": "2021-03-02T13:23:38.611Z"
     },
     {
         "auditSource": "digital-engagement-platform",
@@ -251,7 +251,7 @@
             "type": "automaton.customerResponded",
             "engagementID": "187286680131967188"
         },
-        "generatedAt": "2021-03-02T13:23:44Z"
+        "generatedAt": "2021-03-02T13:23:44.868Z"
     },
     {
         "auditSource": "digital-engagement-platform",
@@ -272,6 +272,6 @@
             "type": "automaton.contentSentToCustomer",
             "engagementID": "187286680131967188"
         },
-        "generatedAt": "2021-03-02T13:23:44Z"
+        "generatedAt": "2021-03-02T13:23:44.868Z"
     }
 ]

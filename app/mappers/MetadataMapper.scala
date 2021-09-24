@@ -16,8 +16,7 @@
 
 package mappers
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.{Instant, ZoneId, ZonedDateTime}
 import javax.inject.Inject
 import play.api.Logging
 import play.api.libs.json._
@@ -27,7 +26,7 @@ import JsonUtils._
 
 class MetadataMapper @Inject()(nuanceDecryptionService: NuanceIdDecryptionService) extends Logging {
   private val engagementIDPick = (__ \ 'engagementID).json.pick
-  private val endDatePick = (__ \ 'endDate \ 'iso).json.pick
+  private val endDatePick = (__ \ 'endDate \ 'timestamp).json.pick[JsNumber]
 
   private def removeTranscript(engagement: JsValue): JsValue = {
     val transcriptPath = __ \ 'transcript
@@ -45,16 +44,18 @@ class MetadataMapper @Inject()(nuanceDecryptionService: NuanceIdDecryptionServic
     val engagementId = engagement.transform(engagementIDPick)
     val endDate = engagement.transform(endDatePick)
     (engagementId, endDate) match {
-      case (JsSuccess(JsString(engagementId), _), JsSuccess(JsString(endDate), _)) =>
+      case (JsSuccess(JsString(engagementId), _), JsSuccess(JsNumber(endDate), _)) =>
 
-        val generatedAtDate = LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME)
+        val instant = Instant.ofEpochMilli(endDate.toLong)
+        val generatedAtDate = ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"))
+
         Some(ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementMetadata",
           generateUUIDString(s"Metadata-$engagementId"),
           TagsReads.extractTags(engagement, nuanceDecryptionService),
           removeTranscript(engagement),
-          generatedAtDate.toInstant(ZoneOffset.UTC)
+          generatedAtDate.toInstant
         ))
       case (_: JsError, _) =>
         logger.warn(s"[MetadataMapper] Couldn't read engagement id from engagement")

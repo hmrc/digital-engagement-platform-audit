@@ -96,8 +96,8 @@ object TestEngagementData {
         |     ]
         | },
         | "endDate": {
-        |     "iso": "2021-03-02T13:23:44+00:00",
-        |     "timestamp": 1614691424868
+        |     "iso": "2020-07-07T09:26:27+01:00",
+        |     "timestamp": 1594113987520
         | },
         | "lastUpdateDate": {
         |     "iso": "2021-03-02T14:18:20+00:00",
@@ -259,8 +259,8 @@ object TestEngagementData {
         |     ]
         | },
         | "endDate": {
-        |     "iso": "2021-03-02T13:23:44+00:00",
-        |     "timestamp": 1614691424868
+        |     "iso": "2020-07-07T09:26:27+01:00",
+        |     "timestamp": 1594113987520
         | },
         | "lastUpdateDate": {
         |     "iso": "2021-03-02T14:18:20+00:00",
