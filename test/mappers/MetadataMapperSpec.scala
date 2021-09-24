@@ -16,8 +16,7 @@
 
 package mappers
 
-import java.time.{LocalDateTime, ZoneOffset}
-
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 import mappers.TestEngagementData._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -49,7 +48,7 @@ class MetadataMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
           "X-Session-ID" -> "DecryptedSessionId"
         ),
         TestEngagementData.testEngagementWithoutTranscriptJson,
-        LocalDateTime.parse("2021-03-02T13:23:44").toInstant(ZoneOffset.UTC)
+        Instant.parse("2020-07-07T09:26:27.520Z")
       ))
     }
     "not create an audit event if no engagement id" in {

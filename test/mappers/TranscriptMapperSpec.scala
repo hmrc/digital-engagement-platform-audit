@@ -16,8 +16,7 @@
 
 package mappers
 
-import java.time.{LocalDateTime, ZoneOffset}
-
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
@@ -67,7 +66,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
               |  "senderName": "businessRule"
               | }
               |""".stripMargin),
-          LocalDateTime.parse("2020-09-30T13:23:38").toInstant(ZoneOffset.UTC)
+            Instant.parse("2021-03-02T13:23:38.611Z")
         )
       )
     }
@@ -90,13 +89,13 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
       result mustBe None
     }
 
-    "return error for a transcript without an iso time" in {
+    "return error for a transcript without a timestamp" in {
       val mapper = new TranscriptMapper(nuanceIdDecryptionService)
       val input =
         """
           | {
           |   "type": "automaton.started",
-          |   "timestamp": 1614691418611,
+          |   "iso": "2020-09-30T13:23:38+01:20",
           |   "senderId": "900020",
           |   "senderName": "businessRule"
           | }
@@ -145,7 +144,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
               |  "senderName": "businessRule"
               | }
               |""".stripMargin),
-          LocalDateTime.parse("2020-09-30T13:23:38").toInstant(ZoneOffset.UTC)
+          Instant.parse("2021-03-02T13:23:38.611Z")
         )
       )
     }
@@ -206,7 +205,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
               |  "senderName": "businessRule"
               | }
               |""".stripMargin),
-          LocalDateTime.parse("2020-09-30T13:23:38").toInstant(ZoneOffset.UTC)
+          Instant.parse("2021-03-02T13:23:38.611Z")
         )
       )
     }
@@ -266,7 +265,7 @@ class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
               |  "senderName": "businessRule"
               | }
               |""".stripMargin),
-          LocalDateTime.parse("2020-09-30T13:23:38").toInstant(ZoneOffset.UTC)
+          Instant.parse("2021-03-02T13:23:38.611Z")
         )
       )
     }

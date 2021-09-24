@@ -17,7 +17,7 @@
 package mappers
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset, ZonedDateTime}
 import javax.inject.Inject
 import play.api.Logging
 import play.api.libs.json._
@@ -28,30 +28,31 @@ import java.util.UUID
 
 class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
   private def transcriptPath = JsPath() \ 'transcript
-  private def isoPath = JsPath() \ 'iso
+  private def timestampPath = JsPath() \ 'timestamp
 
   private def generateUUIDString(input: String) = UUID.nameUUIDFromBytes(input.getBytes).toString
 
-  private def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String], datetime: String) = {
+  private def mapTranscriptEntry(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String], datetime: Long) = {
     TranscriptEntryMapper.mapTranscriptDetail(transcript, engagementId, index) match {
       case Some(detail) =>
-        val dt = LocalDateTime.parse(datetime, DateTimeFormatter.ISO_DATE_TIME)
+        val instant = Instant.ofEpochMilli(datetime)
+        val dt = ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"))
         Some(ExtendedDataEvent(
           "digital-engagement-platform",
           "EngagementTranscript",
           generateUUIDString(s"Transcript-$engagementId-$index"),
           tags,
           detail,
-          dt.toInstant(ZoneOffset.UTC)
+          dt.toInstant
         ))
       case _ => None
     }
   }
 
   def mapTranscriptEntryEvent(transcript: JsValue, engagementId: String, index: Int, tags: Map[String, String]): Option[ExtendedDataEvent] = {
-    transcript.transform(isoPath.json.pick) match {
-      case JsSuccess(JsString(datetime), _) =>
-        mapTranscriptEntry(transcript, engagementId, index, tags, datetime)
+    transcript.transform(timestampPath.json.pick[JsNumber]) match {
+      case JsSuccess(JsNumber(datetime), _) =>
+        mapTranscriptEntry(transcript, engagementId, index, tags, datetime.toLong)
       case _ =>
         val o = transcript.as[JsObject]
         logger.warn(s"[TranscriptMapper] Couldn't read iso date from transcript entry with fields ${o.keys}")
