@@ -29,7 +29,10 @@ class NuanceReportingService @Inject()(
                                       (implicit ec: ExecutionContext) extends Logging {
   def getHistoricData(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
     authConnector.authenticate() flatMap {
-      case authInfo: NuanceAuthInformation => reportingConnector.getHistoricData(authInfo, request)
+      case authInfo: NuanceAuthInformation => {
+        logger.info(s"[getHistoricData] Authentication request success with: - $request")
+        reportingConnector.getHistoricData(authInfo, request)
+      }
       case authError =>
         logger.warn("[getHistoricData] Unable to authenticate with Nuance server.")
         Future.successful(NuanceAuthFailure(authError))
