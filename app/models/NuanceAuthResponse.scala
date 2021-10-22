@@ -45,6 +45,7 @@ object NuanceAuthResponse extends Logging {
           val cookieHeaders: Seq[String] = response.headers(HeaderNames.SET_COOKIE)
           val cookieHeadersAsString = cookieHeaders.mkString(cookieHeaderEncoding.SetCookieHeaderSeparator)
           val cookies: Seq[Cookie] = cookieHeaderEncoding.decodeSetCookieHeader(cookieHeadersAsString)
+          logger.info("[NuanceAuthResponse] Got a successful reaponce from auth API")
           NuanceAuthInformation(cookieHeaderEncoding.encodeCookieHeader(cookies))
         case Status.BAD_REQUEST =>
           logger.warn("[NuanceAuthResponse] Got 'bad request' response from auth API")

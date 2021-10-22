@@ -34,6 +34,7 @@ package controllers
 
 import java.time.LocalDateTime
 
+import play.api.Logging
 import javax.inject.{Inject, Singleton}
 import models.AuditJob
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -48,7 +49,7 @@ class AuditTriggerController @Inject()(jobRepository: AuditJobRepository,
                                        localDateTimeService: LocalDateTimeService,
                                        cc: ControllerComponents)
                                       (implicit ec: ExecutionContext)
-    extends BackendController(cc) {
+    extends BackendController(cc) with Logging {
 
   def trigger(startDateParam: String, endDateParam: String): Action[AnyContent] = Action.async { _ =>
     val startDate = LocalDateTime.parse(startDateParam)
@@ -56,6 +57,7 @@ class AuditTriggerController @Inject()(jobRepository: AuditJobRepository,
 
     jobRepository.addJob(AuditJob(startDate, endDate, localDateTimeService.now)).map {
       results =>
+        logger.info(s"[ProcessJob] Nuance auditing from $startDateParam to $endDateParam got results: $results")
         Ok(s"Nuance auditing from $startDateParam to $endDateParam got results: $results")
     }
   }
