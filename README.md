@@ -8,7 +8,6 @@ Nuance when Chat/Digital Assistant launched.
 This service also offers a trigger endpoint which provides the mechanism to call historical data
 in the event a problem occurs with the scheduled data. This endpoint takes a start and end date as parameters.
 
-
 ## Running through service manager
 
 *You need to be on the VPN*
@@ -39,12 +38,34 @@ When running locally, the engagements will be taken from digital-engagement-plat
 
 This will create a job in Mongo with the given start date and end date. Once the job has been processed it will be deleted.
 
-
 ## Technical information
-
 The service uses MongoDB to store a collection of jobs.
 
+## kibana logs and how to see audit service is running in production
+###How the audit service workers
+Every 2 hours a request is sent to Nuance Start time = now minus 3 hours / End time now - 1 hour to get the number of records.
+This data is out in a mongoDB. If there are no engagements returned the number will be 0.
+The Audit service queries then splits the number of engagements into 800 chunks. 
+Every 15 seconds a worker queries the database for any chunks that have not been processes and processes them.
+There is only one instance so no duplicate audit events will be created. The timings can be configered in app-configs.
 
-### License
+### On the discovery page in Kibana ther are key works you can search for.
+
+### processAll 
+Will give you the requests to the proxy that goes out to the Nuance Historic API service.
+###auditDateRange
+Will give the number of records found. This is requested every two hours.
+###getHistoricData
+Will give you the number of records completed in a chunk (split into 800 data sizes), 
+the start time and the end time of the data chuck.
+
+### NuanceAuthResponse
+Will give you the responce from Nuance on the requests every 2 hours. 
+Here is where you will be any issues for logging in of in nuance is down.
+
+### processNext
+Will give you the information on when a chunk of work has been started and completed.
+
+## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
