@@ -16,7 +16,6 @@
 
 package mappers
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
@@ -25,6 +24,8 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+
+import java.time.Instant
 
 class TranscriptMapperSpec extends AnyWordSpec with Matchers with MockitoSugar {
   private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]

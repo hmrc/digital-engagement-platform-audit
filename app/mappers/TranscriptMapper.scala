@@ -16,15 +16,14 @@
 
 package mappers
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset, ZonedDateTime}
-import javax.inject.Inject
 import play.api.Logging
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
+import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.UUID
+import javax.inject.Inject
 
 class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
   private def transcriptPath = JsPath() \ 'transcript
