@@ -69,9 +69,7 @@ Will give you the information on when a chunk of work has been started and compl
 
 ##How to analise engagements from the Portal that are sent to Splunk
 To compare engagements that are in the Nuance Portal to what has been sent to Splunk you
-will need access to Production Nuance Portal = "https://portal-hmrc-uk.digital.nuance.com/portal",
-Kibana = "https://kibana.tools.production.tax.service.gov.uk/" and
-Splunk = "https://splunk-search-prod-right.tax.service.gov.uk/".
+will need access to Production Nuance Portal, Kibana and Splunk.
 
 We'll use an example of getting a full day's engagements for one Agent Group.
 
@@ -93,8 +91,7 @@ get a full day. This will give us a startDate>="2021-12-22T01:06:05.000" and sta
 These times we'll use in Splunk. We'll also just Agent Group HMRC-BTAC-VRS.
 
 ###Sarching for the engagements in the Nuance Portal
-Go into the Nuance Portal = "https://portal-hmrc-uk.digital.nuance.com/portal/portal.jsp"
-
+Go into the Production Nuance Portal.
 Click on Transcript > Transcript Query Builder > RightTouch
 
 Select
@@ -108,10 +105,9 @@ And click Search
 In this search we found 19 engagements.
 
 ###Searching for the engagements in Splunk
-Login to Splunk "https://splunk-search-prod-right.tax.service.gov.uk/"
-and go to DEP "Audit Service Monitoring Dashboard"
+Login to Production Right Splunk and go to DEP "Audit Service Monitoring Dashboard".
 
-Go to the "Engagement Events" section
+Go to the "Engagement Events" section.
 
 Select the times you got from Kibana "Data time range" from "2021-12-22T01:06:05.000" to 2021-12-23T01:06:05.000
 Select the Agent Group = "HMRC-BTAC-VRS"
