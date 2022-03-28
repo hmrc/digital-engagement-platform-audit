@@ -5,7 +5,7 @@ lazy val IntegrationTest = config("it") extend(Test)
 
 val appName = "digital-engagement-platform-audit"
 
-val silencerVersion = "1.7.7"
+val silencerVersion = "1.7.8"
 
 lazy val scoverageSettings = {
   Seq(
