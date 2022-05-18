@@ -25,11 +25,7 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse, UnauthorizedException}
 trait NuanceAuthResponse
 
 object NuanceAuthBadRequest extends NuanceAuthResponse
-object NuanceAuthUnauthorised extends NuanceAuthResponse {
-  implicit def throwUnauthorised(): Unit = {
-    throw new UnauthorizedException("Unable to authorise before calling historical reporting API")
-  }
-}
+object NuanceAuthUnauthorised extends NuanceAuthResponse
 object NuanceAuthServerError extends NuanceAuthResponse
 
 case class NuanceAuthInformation(cookieHeader: String) extends NuanceAuthResponse {
@@ -55,7 +51,7 @@ object NuanceAuthResponse extends Logging {
           logger.warn("[NuanceAuthResponse] Got 'bad request' response from auth API")
           NuanceAuthBadRequest
         case Status.UNAUTHORIZED =>
-          logger.warn("[NuanceAuthResponse] Got 'unauthorized' response from auth API")
+          logger.error("[NuanceAuthResponse] Got 'unauthorized' response from auth API")
           NuanceAuthUnauthorised
         case code =>
           logger.warn(s"[NuanceAuthResponse] Got error $code from auth API")
