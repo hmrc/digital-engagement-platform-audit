@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,16 @@ import play.api.Logging
 import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.{Cookie, DefaultCookieHeaderEncoding}
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HttpReads, HttpResponse, UnauthorizedException}
 
 trait NuanceAuthResponse
 
 object NuanceAuthBadRequest extends NuanceAuthResponse
-object NuanceAuthUnauthorised extends NuanceAuthResponse
+object NuanceAuthUnauthorised extends NuanceAuthResponse {
+  implicit def throwUnauthorised(): Unit = {
+    throw new UnauthorizedException("Unable to authorise before calling historical reporting API")
+  }
+}
 object NuanceAuthServerError extends NuanceAuthResponse
 
 case class NuanceAuthInformation(cookieHeader: String) extends NuanceAuthResponse {
