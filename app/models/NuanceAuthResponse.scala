@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.{Cookie, DefaultCookieHeaderEncoding}
-import uk.gov.hmrc.http.{HttpReads, HttpResponse, UnauthorizedException}
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 trait NuanceAuthResponse
 
