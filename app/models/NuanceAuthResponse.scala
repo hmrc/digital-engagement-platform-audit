@@ -51,7 +51,7 @@ object NuanceAuthResponse extends Logging {
           logger.warn("[NuanceAuthResponse] Got 'bad request' response from auth API")
           NuanceAuthBadRequest
         case Status.UNAUTHORIZED =>
-          logger.warn("[NuanceAuthResponse] Got 'unauthorized' response from auth API")
+          logger.error("[NuanceAuthResponse] Got 'unauthorized' response from auth API")
           NuanceAuthUnauthorised
         case code =>
           logger.warn(s"[NuanceAuthResponse] Got error $code from auth API")
