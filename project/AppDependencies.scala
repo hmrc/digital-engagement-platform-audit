@@ -4,17 +4,17 @@ import sbt._
 object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "5.21.0",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.62.0"
+    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "5.24.0",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.64.0"
   )
 
   val akkaVersion = "2.6.19"
 
   val test: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.21.0",
-    "org.scalatest"           %% "scalatest"                  % "3.2.11",
+    "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.24.0",
+    "org.scalatest"           %% "scalatest"                  % "3.2.12",
     "org.scalatestplus"       %% "scalatestplus-mockito"      % "1.0.0-M2",
-    "org.mockito"             %  "mockito-core"               % "4.4.0",
+    "org.mockito"             %  "mockito-core"               % "4.5.1",
     "com.github.tomakehurst"  %  "wiremock-standalone"        % "2.27.2",
     "com.typesafe.play"       %% "play-test"                  % PlayVersion.current,
     "com.vladsch.flexmark"    %  "flexmark-all"               % "0.62.2",
@@ -25,6 +25,6 @@ object AppDependencies {
     "com.typesafe.akka"       %% "akka-serialization-jackson" % akkaVersion,
     "com.typesafe.akka"       %% "akka-protobuf-v3"           % akkaVersion,
     "com.typesafe.akka"       %% "akka-stream"                % akkaVersion,
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % "0.62.0"
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % "0.64.0"
   ).map(_ % "test, it")
 }
