@@ -7,6 +7,9 @@ Nuance when Chat/Digital Assistant launched.
 
 This service also offers a trigger endpoint which provides the mechanism to call historical data
 in the event a problem occurs with the scheduled data. This endpoint takes a start and end date as parameters.
+This can only be done in preproduction environments and is used for testing purposes only.
+For example, you can make a call to the trigger endpoint without waiting every 2 hours. 
+This can be done using the curl-microservice in jenkins orchestrator job.
 
 ## Running through service manager
 
@@ -43,7 +46,7 @@ The service uses MongoDB to store a collection of jobs.
 
 ## kibana logs and how to see audit service is running in production
 ###How the audit service workers
-Every 2 hours a request is sent to Nuance Start time = now minus 3 hours / End time now - 1 hour to get the number of records.
+Every 2 hours a request is sent to Nuance Start time = now minus 7 hours / End time now - 5 hour to get the number of records.
 This data is out in a mongoDB. If there are no engagements returned the number will be 0.
 The Audit service queries then splits the number of engagements into 800 chunks. 
 Every 15 seconds a worker queries the database for any chunks that have not been processes and processes them.
