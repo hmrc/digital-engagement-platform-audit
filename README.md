@@ -11,6 +11,10 @@ This can only be done in preproduction environments and is used for testing purp
 For example, you can make a call to the trigger endpoint without waiting every 2 hours. 
 This can be done using the curl-microservice in jenkins orchestrator job.
 
+This service makes two calls to Nuance Historical API. 
+The first call gets the number of engagements within a two hour period and saves that data along with the start and end time in MongoDB.
+The second call gets a maximum number of 800 engagement chunks and processes them.
+
 ## Running through service manager
 
 *You need to be on the VPN*
