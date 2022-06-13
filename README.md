@@ -2,18 +2,26 @@
 
 ## Overview
 
-The DEP Audit service schedules the capture of transcript and session details initially passed to 
-Nuance when Chat/Digital Assistant launched.
+This service periodically calls the Nuance Reporting API to retrieve customer engagement data, map the data to the required data structure and audit (CIP). The calls to the Nuance Reporting API are scheduled every 2 hours and retrieves data from 5 hours ago and 2 hours worth of data. The reason for going back 5 hours is to allow enough time for the real-time data to be populated on the Nuance side.
 
-This service also offers a trigger endpoint which provides the mechanism to call historical data
-in the event a problem occurs with the scheduled data. This endpoint takes a start and end date as parameters.
-This can only be done in preproduction environments and is used for testing purposes only.
-For example, you can make a call to the trigger endpoint without waiting every 2 hours. 
-This can be done using the curl-microservice in jenkins orchestrator job.
+Two calls are made to Nuance. The first being the authentication call and if this is successful the call to obtain engagement data is made.
 
-This service makes two calls to Nuance Historical API. 
-The first call gets the number of engagements within a two hour period and saves that data along with the start and end time in MongoDB.
-The second call gets a maximum number of 800 engagement chunks and processes them.
+There are 2 Akka Actors in the service:
+
+1) Nuance scheduler - Creates a scheduled job which adds a row in MongoDB with a startTime and endTime. These dates are calculated using the current datetime and app config values.
+2) Jobs processor - Creates a scheduled job which processes the next row in mongoDB at a fixed rate (currently set a every 15 seconds and is configurable through app config).
+
+The sequence of events is as follows:
+
+1) job created in database with startTime & endTime
+2) job read from database
+3) call made to Nuance to authenticate  
+4) call made to Nuance reporting API using start and end times obtained from the job
+5) data retrieved from Nuance for the period of time specified in the previous API call
+6) data is mapped
+7) data is audited (CIP)
+
+The data retrieved from Nuance's API can be truncated into chunks. This helps with controlling the amount of processing the audit service needs to do. The chunk size is configurable in app config files and sets the number of engagements to be retrieved. By default, this is set to 800.
 
 ## Running through service manager
 
@@ -35,43 +43,30 @@ Run the code from source using
 `sbt run`
 
 Dependencies will also need to be started from source or using service manager. If you started all the required services using DIGITAL_ENGAGEMENT_PLATFORM_AUDIT_ALL, 
-you will need to 'sm --stop DIGITAL_ENGAGEMENT_PLATFORM_AUDIT' prior to running from source.
+you will need to `sm --stop DIGITAL_ENGAGEMENT_PLATFORM_AUDIT` prior to running from source.
 
 ## Manually trigger using Postman locally
+This service also offers a trigger endpoint which provides the mechanism to manually add a job to mongoDB (step 1 in flow above). This endpoint takes a start and end date as parameters. This can only be done in preproduction environments and is used for testing purposes only. For example, you can make a call to the trigger endpoint without waiting every 2 hours. This can be done using the curl-microservice in jenkins orchestrator job.
 
 `GET http://localhost:9190/digital-engagement-platform-audit/trigger?startDate=2021-02-20T00:00:00&endDate=2021-02-20T12:00:00`
 
-When running locally, the engagements will be taken from digital-engagement-platform-nuance-api-stub.
+NOTE: The digital-engagement-platform-nuance-api-stub service provides stub data for the Nuance Reporting API call. **This stub service should ALWAYS be used in all pre-prod environments. Calls to the real Nuance reporting API should never occur in pre-prod environments as this will retrieve real people's data into pre-prod CIP environments**.
 
-This will create a job in Mongo with the given start date and end date. Once the job has been processed it will be deleted.
+Once the job has been processed it will be deleted from Mongo.
 
 ## Technical information
 The service uses MongoDB to store a collection of jobs.
 
-## kibana logs and how to see audit service is running in production
-###How the audit service workers
-Every 2 hours a request is sent to Nuance Start time = now minus 7 hours / End time now - 5 hour to get the number of records.
-This data is out in a mongoDB. If there are no engagements returned the number will be 0.
-The Audit service queries then splits the number of engagements into 800 chunks. 
-Every 15 seconds a worker queries the database for any chunks that have not been processes and processes them.
-There is only one instance so no duplicate audit events will be created. The timings can be configered in app-configs.
-
-### On the discovery page in Kibana ther are key works you can search for.
-
-### processAll 
-Will give you the requests to the proxy that goes out to the Nuance Historic API service.
-###auditDateRange
-Will give the number of records found. This is requested every two hours.
-###getHistoricData
-Will give you the number of records completed in a chunk (split into 800 data sizes), 
-the start time and the end time of the data chuck.
-
-### NuanceAuthResponse
-Will give you the responce from Nuance on the requests every 2 hours. 
-Here is where you will be any issues for logging in of in nuance is down.
-
-### processNext
-Will give you the information on when a chunk of work has been started and completed.
+Example MongoDB job:
+```
+{
+    "_id" : ObjectId("61094e1756815b2d1e71d4fc"),
+    "startDate" : "2021-08-03T10:09:27.599",
+    "endDate" : "2021-08-03T12:09:27.599",
+    "submissionDate" : "2021-08-03T15:09:27.599",
+    "inProgress" : true
+}
+```
 
 ## License
 
