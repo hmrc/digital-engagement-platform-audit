@@ -2,21 +2,21 @@
 
 ## Overview
 
-This service periodically calls the Nuance Reporting API to retrieve customer engagement data, map the data to the required data structure and audit (CIP). The calls to the Nuance Reporting API are scheduled every 2 hours and retrieves data from 5 hours ago and 2 hours worth of data. The reason for going back 5 hours is to allow enough time for the real-time data to be populated on the Nuance side.
+This service periodically calls the Nuance Reporting API to retrieve customer engagement data, map the data to the required data structure and audit (CIP). The calls to the Nuance Reporting API are scheduled every 2 hours and retrieve data from 5 hours ago and 2 hours worth of data. The reason for going back 5 hours is to allow enough time for the real-time data to be populated on the Nuance side.
 
 Two calls are made to Nuance. The first being the authentication call and if this is successful the call to obtain engagement data is made.
 
 There are 2 Akka Actors in the service:
 
 1) Nuance scheduler - Creates a scheduled job which adds a row in MongoDB with a startTime and endTime. These dates are calculated using the current datetime and app config values.
-2) Jobs processor - Creates a scheduled job which processes the next row in mongoDB at a fixed rate (currently set a every 15 seconds and is configurable through app config).
+2) Jobs processor - Creates a scheduled job which processes the next row in MongoDB at a fixed rate (currently set at every 15 seconds and is configurable through app config).
 
 The sequence of events is as follows:
 
 1) job created in database with startTime & endTime
 2) job read from database
 3) call made to Nuance to authenticate  
-4) call made to Nuance reporting API using start and end times obtained from the job
+4) call made to Nuance Reporting API using start and end times obtained from the job
 5) data retrieved from Nuance for the period of time specified in the previous API call
 6) data is mapped
 7) data is audited (CIP)
@@ -46,11 +46,11 @@ Dependencies will also need to be started from source or using service manager. 
 you will need to `sm --stop DIGITAL_ENGAGEMENT_PLATFORM_AUDIT` prior to running from source.
 
 ## Manually trigger using Postman locally
-This service also offers a trigger endpoint which provides the mechanism to manually add a job to mongoDB (step 1 in flow above). This endpoint takes a start and end date as parameters. This can only be done in preproduction environments and is used for testing purposes only. For example, you can make a call to the trigger endpoint without waiting every 2 hours. This can be done using the curl-microservice in jenkins orchestrator job.
+This service also offers a trigger endpoint which provides the mechanism to manually add a job to MongoDB (step 1 in flow above). This endpoint takes a start and end date as parameters. This can only be done in preproduction environments and is used for testing purposes only. For example, you can make a call to the trigger endpoint without waiting every 2 hours. This can be done using the curl-microservice in Jenkins orchestrator job.
 
 `GET http://localhost:9190/digital-engagement-platform-audit/trigger?startDate=2021-02-20T00:00:00&endDate=2021-02-20T12:00:00`
 
-NOTE: The digital-engagement-platform-nuance-api-stub service provides stub data for the Nuance Reporting API call. **This stub service should ALWAYS be used in all pre-prod environments. Calls to the real Nuance reporting API should never occur in pre-prod environments as this will retrieve real people's data into pre-prod CIP environments**.
+NOTE: The digital-engagement-platform-nuance-api-stub service provides stub data for the Nuance Reporting API call. **This stub service should ALWAYS be used in all pre-prod environments. Calls to the real Nuance Reporting API should never occur in pre-prod environments as this will retrieve real people's data into pre-prod CIP environments**.
 
 Once the job has been processed it will be deleted from Mongo.
 
