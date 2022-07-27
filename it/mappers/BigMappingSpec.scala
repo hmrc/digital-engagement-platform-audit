@@ -26,8 +26,9 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json._
 import services.NuanceIdDecryptionService
+import uk.gov.hmrc.audit.serialiser.AuditSerialiser
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import uk.gov.hmrc.play.audit.model.{ExtendedDataEvent, RedactionLog, TruncationLog}
 import utils.JsonUtils._
 
 import scala.collection.mutable.ListBuffer
@@ -51,10 +52,10 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       val auditConnector = mock[AuditConnector]
       when(auditConnector.sendExtendedEvent(any())(any(), any())).thenAnswer(answer({ invocation =>
-        implicit val format: Format[ExtendedDataEvent] = Json.format[ExtendedDataEvent]
+				implicit val serializer: AuditSerialiser = new AuditSerialiser()
 
         val event: ExtendedDataEvent = invocation.getArguments.head.asInstanceOf[ExtendedDataEvent]
-        events += Json.toJson(event)
+        events += serializer.serialise(event)
         Future.successful(AuditResult.Success)
       }))
 

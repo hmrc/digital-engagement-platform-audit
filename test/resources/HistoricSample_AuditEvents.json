@@ -2,6 +2,11 @@
     {
         "auditSource": "digital-engagement-platform",
         "auditType": "EngagementMetadata",
+		"dataPipeline": {
+		  "redaction": {
+			"containsRedactions": false
+		  }
+		},
         "eventId": "2e48619e-018b-3dda-8c2c-0b2e76143a03",
         "tags": {
             "clientIP": "81.97.99.4",
@@ -170,6 +175,11 @@
     {
         "auditSource": "digital-engagement-platform",
         "auditType": "EngagementTranscript",
+		"dataPipeline": {
+		  "redaction": {
+			"containsRedactions": false
+		  }
+		},
         "eventId": "9231d778-77b0-3c2f-9731-fd578627b84f",
         "tags": {
             "clientIP": "81.97.99.4",
@@ -192,6 +202,11 @@
     {
         "auditSource": "digital-engagement-platform",
         "auditType": "EngagementTranscript",
+		"dataPipeline": {
+		  "redaction": {
+			"containsRedactions": false
+		  }
+		},
         "eventId": "2965eda8-6a77-3f2a-b51b-2499fe39a69b",
         "tags": {
             "clientIP": "81.97.99.4",
@@ -211,6 +226,11 @@
     {
         "auditSource": "digital-engagement-platform",
         "auditType": "EngagementTranscript",
+		"dataPipeline": {
+		  "redaction": {
+			"containsRedactions": false
+		  }
+		},
         "eventId": "0c1ee9eb-5c38-34a4-8042-f85ba8da3e56",
         "tags": {
             "clientIP": "81.97.99.4",
@@ -233,6 +253,11 @@
     {
         "auditSource": "digital-engagement-platform",
         "auditType": "EngagementTranscript",
+		"dataPipeline": {
+		  "redaction": {
+			"containsRedactions": false
+		  }
+		},
         "eventId": "24f18a86-d585-3267-a37d-25ab278aac82",
         "tags": {
             "clientIP": "81.97.99.4",
@@ -256,6 +281,11 @@
     {
         "auditSource": "digital-engagement-platform",
         "auditType": "EngagementTranscript",
+		"dataPipeline": {
+		  "redaction": {
+			"containsRedactions": false
+		  }
+		},
         "eventId": "cd653270-c8f5-3aab-8270-b65d8948a840",
         "tags": {
             "clientIP": "81.97.99.4",
