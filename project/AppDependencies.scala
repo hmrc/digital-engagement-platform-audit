@@ -4,14 +4,14 @@ import sbt._
 object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "5.24.0",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.64.0"
+    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "6.4.0",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.68.0"
   )
 
   val akkaVersion = "2.6.19"
 
   val test: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.24.0",
+    "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "6.4.0",
     "org.scalatest"           %% "scalatest"                  % "3.2.12",
     "org.scalatestplus"       %% "scalatestplus-mockito"      % "1.0.0-M2",
     "org.mockito"             %  "mockito-core"               % "4.5.1",
@@ -25,6 +25,6 @@ object AppDependencies {
     "com.typesafe.akka"       %% "akka-serialization-jackson" % akkaVersion,
     "com.typesafe.akka"       %% "akka-protobuf-v3"           % akkaVersion,
     "com.typesafe.akka"       %% "akka-stream"                % akkaVersion,
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % "0.64.0"
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % "0.68.0"
   ).map(_ % "test, it")
 }
