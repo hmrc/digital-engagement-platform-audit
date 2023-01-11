@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.libs.ws.WSProxyServer
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.http.ws.WSProxyConfiguration
+import uk.gov.hmrc.play.http.ws.WSProxyConfiguration.buildWsProxyServer
 
 @Singleton
 class AppConfig @Inject()
@@ -47,5 +47,5 @@ class AppConfig @Inject()
   val nuanceSchedulerIntervalInMinutes: Int = config.getOptional[Int]("workers.nuance-scheduler.interval-in-minutes").getOrElse(DefaultNuanceSchedulerInterval)
   val nuanceSchedulerOffsetInMinutes: Int = config.getOptional[Int]("workers.nuance-scheduler.offset-in-minutes").getOrElse(DefaultNuanceSchedulerOffset)
 
-  lazy val wsProxyServer: Option[WSProxyServer] = WSProxyConfiguration("proxy", config)
+  lazy val wsProxyServer: Option[WSProxyServer] = buildWsProxyServer(config)
 }

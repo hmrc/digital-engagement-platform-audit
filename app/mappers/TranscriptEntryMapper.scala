@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,8 @@ object TranscriptEntryMapper extends Logging {
     mapBasicDetails(transcript) match {
       case Some(value) =>
         value.transform(
-          putString(JsPath() \ 'engagementID, engagementId) andThen
-            putValue(JsPath() \ 'transcriptIndex, Json.toJson(index)) andThen
+          putString(JsPath() \ "engagementID", engagementId) andThen
+            putValue(JsPath() \ "transcriptIndex", Json.toJson(index)) andThen
             createSenderPidInDetailIfExists(transcript)
         ) match {
           case JsSuccess(value, _) => Some(value)
@@ -72,7 +72,7 @@ object TranscriptEntryMapper extends Logging {
     }
   }
 
-  private def typePath = JsPath() \ 'type
+  private def typePath = JsPath() \ "type"
 
   private def getType(transcript: JsValue): Option[String] = {
     transcript.transform(typePath.json.pick) match {
@@ -104,9 +104,9 @@ object TranscriptEntryMapper extends Logging {
   }
 
   private def createSenderPidInDetailIfExists(transcript: JsValue) : Reads[JsObject] = {
-    transcript.transform((__ \ 'senderId).json.pick) match {
+    transcript.transform((__ \ "senderId").json.pick) match {
       case JsSuccess(JsString(senderId), _) if hasHmrcPid(senderId) =>
-        putString(__ \ 'senderPID, extractHmrcPid(senderId))
+        putString(__ \ "senderPID", extractHmrcPid(senderId))
       case _ => doNothing()
     }
   }
