@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import java.util.UUID
 import javax.inject.Inject
 
 class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionService) extends Logging {
-  private def transcriptPath = JsPath() \ 'transcript
-  private def timestampPath = JsPath() \ 'timestamp
+  private def transcriptPath = JsPath() \ "transcript"
+  private def timestampPath = JsPath() \ "timestamp"
 
   private def generateUUIDString(input: String) = UUID.nameUUIDFromBytes(input.getBytes).toString
 
@@ -61,7 +61,7 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
 
   def mapTranscriptEvents(engagement: JsValue): Seq[ExtendedDataEvent] = {
     val transcript = engagement.transform(transcriptPath.json.pick)
-    val engagementId = engagement.transform((JsPath() \ 'engagementID).json.pick)
+    val engagementId = engagement.transform((JsPath() \ "engagementID").json.pick)
     val tags = TagsReads.extractTags(engagement, nuanceIdDecryptionService)
 
     (transcript, engagementId) match {
@@ -69,7 +69,7 @@ class TranscriptMapper @Inject()(nuanceIdDecryptionService: NuanceIdDecryptionSe
         val mappedTranscripts = transcripts.value.zipWithIndex.map {
           case (t, index) => mapTranscriptEntryEvent(t, engagementId, index, tags)
         }
-        mappedTranscripts.flatten
+        mappedTranscripts.toSeq.flatten
       case _ =>
         logger.warn(s"[TranscriptMapper] Couldn't read transcript or engagement id from engagement.")
         Seq()

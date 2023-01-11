@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,21 +31,21 @@ object TagsReads {
   }
 
   private def extractClientIP(engagement: JsValue) = {
-    extractValue(engagement, __ \ 'visitorAttribute \ 'clientIp) { value: JsValue => value(0) }
+    extractValue(engagement, __ \ "visitorAttribute" \ "clientIp") { value: JsValue => value(0) }
   }
 
   private def extractPath(engagement: JsValue) = {
-    extractValue(engagement, __ \ 'pages \ 'launchPageURL) { value: JsValue => value }
+    extractValue(engagement, __ \ "pages" \ "launchPageURL") { value: JsValue => value }
   }
 
   private def extractDeviceId(engagement: JsValue, decryptionService: NuanceIdDecryptionService): String = {
-    extractValue(engagement, __ \ 'visitorAttribute \ 'deviceId) {
+    extractValue(engagement, __ \ "visitorAttribute" \ "deviceId") {
       value => JsString(decryptionService.decryptDeviceId(value(0).as[String]))
     }
   }
 
   private def extractSessionId(engagement: JsValue, decryptionService: NuanceIdDecryptionService): String = {
-    extractValue(engagement, __ \ 'visitorAttribute \ 'mdtpSessionId) {
+    extractValue(engagement, __ \ "visitorAttribute" \ "mdtpSessionId") {
       value => JsString(decryptionService.decryptSessionId(value(0).as[String]))
     }
   }
@@ -64,29 +64,30 @@ object TagsReads {
       copyDeviceId(engagement, decryptionService) andThen
       copySessionId(engagement, decryptionService)
     ) match {
-      case JsSuccess(result, _) => putValue(__ \ 'tags, result)
+      case JsSuccess(result, _) => putValue(__ \ "tags", result)
+
       case _ => doNothing()
     }
   }
 
   def copyClientIp(engagement: JsValue): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'visitorAttribute \ 'clientIp, __ \ 'clientIP) {
+    copyValue(engagement, __ \ "visitorAttribute" \ "clientIp", __ \ "clientIP") {
       value => value(0)
     }
   }
 
   def copyPath(engagement: JsValue): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'pages \ 'launchPageURL, __ \ 'path){ value => value}
+    copyValue(engagement, __ \ "pages" \ "launchPageURL", __ \ "path"){ value => value}
   }
 
   def copyDeviceId(engagement: JsValue, decryptionService: NuanceIdDecryptionService): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'visitorAttribute \ 'deviceId, __ \ 'deviceID) {
+    copyValue(engagement, __ \ "visitorAttribute" \ "deviceId", __ \ "deviceID") {
       value => JsString(decryptionService.decryptDeviceId(value(0).as[String]))
     }
   }
 
   def copySessionId(engagement: JsValue, decryptionService: NuanceIdDecryptionService): Reads[JsObject] = {
-    copyValue(engagement, __ \ 'visitorAttribute \ 'mdtpSessionId, __ \ "X-Session-ID") {
+    copyValue(engagement, __ \ "visitorAttribute" \ "mdtpSessionId", __ \ "X-Session-ID") {
       value => JsString(decryptionService.decryptSessionId(value(0).as[String]))
     }
   }

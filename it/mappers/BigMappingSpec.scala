@@ -28,7 +28,7 @@ import play.api.libs.json._
 import services.NuanceIdDecryptionService
 import uk.gov.hmrc.audit.serialiser.AuditSerialiser
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.model.{ExtendedDataEvent, RedactionLog, TruncationLog}
+import uk.gov.hmrc.play.audit.model.{ExtendedDataEvent}
 import utils.JsonUtils._
 
 import scala.collection.mutable.ListBuffer
@@ -66,7 +66,7 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val json = getJsonValueFromFile("HistoricSample.json")
 
       val engagementAuditing = new EngagementAuditing(engagementMapper, auditConnector)
-      val engagements = json.transform((__ \ 'engagements).json.pick).get.as[JsArray]
+      val engagements = json.transform((__ \ "engagements").json.pick).get.as[JsArray]
 
       engagementAuditing.processEngagements(engagements)
 

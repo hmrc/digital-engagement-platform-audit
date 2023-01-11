@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package services
 
 import javax.inject.Inject
 import play.api.{Configuration, Logging}
-import uk.gov.hmrc.crypto.{Crypted, CryptoGCMWithKeysFromConfig, PlainText, Scrambled, Sha512Crypto}
+import uk.gov.hmrc.crypto.{Crypted, PlainText, Scrambled, Sha512Crypto, SymmetricCryptoFactory}
 
 import scala.util.{Failure, Success, Try}
 
@@ -28,7 +28,7 @@ class NuanceDecrypter @Inject()(
 
   lazy val hashingKey: String = config.get[String]("request-body-encryption.hashing-key")
 
-  lazy val crypto: CryptoGCMWithKeysFromConfig = new CryptoGCMWithKeysFromConfig("request-body-encryption", config.underlying)
+  lazy val crypto = SymmetricCryptoFactory.aesGcmCryptoFromConfig("request-body-encryption", config.underlying)
 
   lazy val hasher: Sha512Crypto = new Sha512Crypto(hashingKey)
 

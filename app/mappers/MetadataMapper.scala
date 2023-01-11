@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import JsonUtils._
 
 class MetadataMapper @Inject()(nuanceDecryptionService: NuanceIdDecryptionService) extends Logging {
-  private val engagementIDPick = (__ \ 'engagementID).json.pick
-  private val endDatePick = (__ \ 'endDate \ 'timestamp).json.pick[JsNumber]
+  private val engagementIDPick = (__ \ "engagementID").json.pick
+  private val endDatePick = (__ \ "endDate" \ "timestamp").json.pick[JsNumber]
 
   private def removeTranscript(engagement: JsValue): JsValue = {
-    val transcriptPath = __ \ 'transcript
+    val transcriptPath = __ \ "transcript"
     engagement.transform(deleteValue(transcriptPath)) match {
       case JsSuccess(value, _) => value
       case _ => engagement
