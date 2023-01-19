@@ -34,6 +34,15 @@ class AppConfig @Inject()
   val nuanceReportingUrl: String = servicesConfig.baseUrl("nuance-api") + "/v3/transcript/historic"
   val hmrcSiteId: String = config.get[String]("nuance.site-id")
 
+  val OAuthPrivateKey: String = config.get[String]("oauth.private-key")
+  val OAuthClientId: String = config.get[String]("oauth.client-id")
+  val OAuthClientSecret: String = config.get[String]("oauth.client-secret")
+
+  val OAuthIssuer : String = config.get[String]("oauth.issuer")
+  val OAuthSubject : String = config.get[String]("oauth.subject")
+  val OAuthAudience : String = config.get[String]("oauth.audience")
+  val OAuthKeyId : String = config.get[String]("oauth.key-id")
+
   val auditingChunkSize: Int = config.get[Int]("nuance.auditing-chunk-size")
 
   val startJobProcessorWorker: Boolean = config.getOptional[Boolean](path = "workers.job-processor.enabled").getOrElse(true)

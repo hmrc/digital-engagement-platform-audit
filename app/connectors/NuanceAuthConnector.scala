@@ -17,17 +17,50 @@
 package connectors
 
 import config.AppConfig
+
 import javax.inject.Inject
 import models.NuanceAuthResponse
 import uk.gov.hmrc.http.HeaderCarrier
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTCreationException
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.time.Instant
+import java.time.temporal.{ChronoUnit, TemporalUnit}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.jdk.CollectionConverters._
+import scala.util.Try
+
 
 class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
+  def createJwt(): Unit = {
+
+    Try {
+      val dateFormat = new SimpleDateFormat("YMMdHMS")
+
+      val payload: Map[String, String] = Map(
+        "iss" -> config.OAuthIssuer,
+        "sub" -> config.OAuthSubject,
+        "aud" -> config.OAuthAudience,
+        "iat" -> dateFormat.format(Instant.now()),
+        "exp" -> dateFormat.format(Instant.now().plus(5, ChronoUnit.MINUTES))
+      )
+
+      val token = JWT
+        .create
+        .withPayload(payload.asJava)
+      
+    }
+
+    ???
+  }
+
   def authenticate(): Future[NuanceAuthResponse] = {
 
-    implicit val hc : HeaderCarrier = new HeaderCarrier
+    implicit val hc: HeaderCarrier = new HeaderCarrier
 
     http.POSTForm[NuanceAuthResponse](
       config.nuanceAuthUrl,
