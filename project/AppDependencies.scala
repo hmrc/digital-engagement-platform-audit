@@ -6,7 +6,9 @@ object AppDependencies {
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "7.12.0",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.74.0",
-    "com.auth0"               % "java-jwt"                    % "4.2.2"
+    "io.jsonwebtoken"         % "jjwt-api"                    % "0.11.5",
+    "commons-codec"          %  "commons-codec"            % "1.15"
+
   )
 
   val akkaVersion = "2.6.20"

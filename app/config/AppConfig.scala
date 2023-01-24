@@ -28,6 +28,8 @@ class AppConfig @Inject()
     config: Configuration, servicesConfig: ServicesConfig
   )
 {
+
+  // TODO do I need to put api URLs in 'ServicesConfig'? how does that get in to the application?
   val nuanceAuthUrl: String = servicesConfig.baseUrl("nuance-api") + "/j_spring_security_check"
   val nuanceAuthName: String = config.get[String]("nuance.auth-name")
   val nuanceAuthPassword: String = config.get[String]("nuance.auth-password")

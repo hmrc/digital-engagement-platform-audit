@@ -17,46 +17,59 @@
 package connectors
 
 import config.AppConfig
-
-import javax.inject.Inject
-import models.NuanceAuthResponse
-import uk.gov.hmrc.http.HeaderCarrier
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import com.auth0.jwt.exceptions.JWTCreationException
+import io.jsonwebtoken.{Jwts, SignatureAlgorithm}
+import models.NuanceAuthResponse.httpReads
+import models.{NuanceAccessTokenResponse, NuanceAuthResponse}
+import org.apache.commons.codec.binary.Base64
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.time.Instant
-import java.time.temporal.{ChronoUnit, TemporalUnit}
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
-import scala.util.Try
-
 
 class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
-  def createJwt(): Unit = {
+  def createJwtString(): String = {
+    val dateFormat = new SimpleDateFormat("YMMdHMS")
 
-    Try {
-      val dateFormat = new SimpleDateFormat("YMMdHMS")
+    val claims: Map[String, AnyRef] = Map(
+      "iss" -> config.OAuthIssuer,
+      "sub" -> config.OAuthSubject,
+      "aud" -> config.OAuthAudience,
+      "iat" -> dateFormat.format(Instant.now()),
+      "exp" -> dateFormat.format(Instant.now().plus(5, ChronoUnit.MINUTES))
+    )
 
-      val payload: Map[String, String] = Map(
-        "iss" -> config.OAuthIssuer,
-        "sub" -> config.OAuthSubject,
-        "aud" -> config.OAuthAudience,
-        "iat" -> dateFormat.format(Instant.now()),
-        "exp" -> dateFormat.format(Instant.now().plus(5, ChronoUnit.MINUTES))
-      )
+    val header: Map[String, AnyRef] = Map(
+      "kid" -> config.OAuthKeyId
+    )
 
-      val token = JWT
-        .create
-        .withPayload(payload.asJava)
-      
-    }
-
-    ???
+    Jwts.builder()
+      .setHeader(header.asJava)
+      .setClaims(claims.asJava)
+      .signWith(SignatureAlgorithm.RS256, config.OAuthPrivateKey)
+      .compact()
   }
+
+  def getAccessToken: Unit = {
+
+    val encodedAuthHeader =
+      Base64.encodeBase64String(s"${config.OAuthClientId}:${config.OAuthClientSecret}".getBytes("UTF-8"))
+
+    implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Basic $encodedAuthHeader")))
+
+    http.POSTForm[NuanceAccessTokenResponse](
+      config.nuanceAuthUrl,
+      Map(
+        "grant_type" -> Seq("urn:ietf:params:oauth:grant-type:token-exchange"),
+        "subject_token" -> Seq(createJwtString())
+      )
+    )
+  }
+
 
   def authenticate(): Future[NuanceAuthResponse] = {
 
