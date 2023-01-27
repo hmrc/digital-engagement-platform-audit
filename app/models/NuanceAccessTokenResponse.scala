@@ -3,7 +3,7 @@ package models
 
 import play.api.Logging
 import play.api.http.Status
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, Json, Reads}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 import scala.util.{Failure, Success, Try}
@@ -22,7 +22,7 @@ case class TokenExchangeResponse(access_token: String,
                                  jti: String) extends NuanceAccessTokenResponse
 
 object TokenExchangeResponse {
-  implicit val format: Format[TokenExchangeResponse] = Json.format[TokenExchangeResponse]
+  implicit val reads: Reads[TokenExchangeResponse] = Json.format[TokenExchangeResponse]
 }
 
 object NuanceAccessTokenResponse extends Logging {

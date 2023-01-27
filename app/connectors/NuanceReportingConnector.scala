@@ -51,4 +51,10 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
       Seq()
     )
   }
+
+  def getHistoricDataV3Api(bearerToken: String, authInfo: String, request: String) {
+
+
+    ???
+  }
 }
