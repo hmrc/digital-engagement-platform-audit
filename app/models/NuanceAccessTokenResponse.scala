@@ -3,7 +3,7 @@ package models
 
 import play.api.Logging
 import play.api.http.Status
-import play.api.libs.json.{Format, Json, Reads}
+import play.api.libs.json.{Json, Reads}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 import scala.util.{Failure, Success, Try}
@@ -13,6 +13,8 @@ trait NuanceAccessTokenResponse
 object NuanceAccessTokenBadRequest extends NuanceAccessTokenResponse
 object NuanceAccessTokenUnauthorised extends NuanceAccessTokenResponse
 object NuanceAccessTokenServerError extends NuanceAccessTokenResponse
+
+// TODO case class NuanceAuthFailure(authResponse: String) extends NuanceAccessTokenResponse
 
 case class TokenExchangeResponse(access_token: String,
                                  token_type: String,

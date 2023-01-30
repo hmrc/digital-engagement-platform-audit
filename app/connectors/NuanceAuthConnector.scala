@@ -36,8 +36,8 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
 
     val dateFormat = DateTimeFormatter
       .ofPattern("YMMdHms")
-      .withLocale( Locale.UK )
-      .withZone( ZoneId.of("GMT"))
+      .withLocale(Locale.UK)
+      .withZone(ZoneId.of("GMT"))
 
     val fiveMinutesInSeconds = 300
 
@@ -61,13 +61,14 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
       )
      */
 
-    val header2 = s"""
-      |{
-      | "alg": "RS256",
-      | "typ": "JWT",
-      | "kid": "${config.OAuthKeyId}"
-      |}
-      |""".stripMargin
+    val header2 =
+      s"""
+         |{
+         | "alg": "RS256",
+         | "typ": "JWT",
+         | "kid": "${config.OAuthKeyId}"
+         |}
+         |""".stripMargin
 
     val claims =
       s"""
@@ -101,7 +102,7 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
 
     http.POST[AccessTokenRequest, NuanceAccessTokenResponse](
       url = config.nuanceTokenAuthUrl,
-      AccessTokenRequest("urn:ietf:params:oauth:grant-type:token-exchange", jwtString )
+      AccessTokenRequest("urn:ietf:params:oauth:grant-type:token-exchange", jwtString)
     )
   }
 

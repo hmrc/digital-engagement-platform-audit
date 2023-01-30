@@ -52,9 +52,14 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
     )
   }
 
-  def getHistoricDataV3Api(bearerToken: String, authInfo: String, request: String) {
+  // arguments subject to change
+  def getHistoricDataV3Api(bearerToken: String, authInfo: String, request: String) : Unit = {
 
-
+    /* TODO
+        * call the api with the bearer token
+        * build in a mechanism that checks when the token expires and requests a new one
+        * if the api call fails, request a new token, then call the api again
+     */
     ???
   }
 }
