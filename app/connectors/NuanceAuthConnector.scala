@@ -17,12 +17,10 @@
 package connectors
 
 import config.AppConfig
-import models.NuanceAuthResponse.httpReads
-import models.{NuanceAccessTokenResponse, NuanceAuthResponse}
+import models.NuanceAccessTokenResponse
 import org.apache.commons.codec.binary.Base64
 import pdi.jwt.{Jwt, JwtAlgorithm}
-import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, StringContextOps}
 
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
@@ -53,19 +51,11 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
           issuedAt = Some(dateFormat.format(now).toLong),
           expiration = Some(dateFormat.format(nowPlusFiveMinutes).toLong).toLong)
       )
+  */
 
-      val header = JwtHeader(
-        algorithm = Some(JwtAlgorithm.RS256),
-        typ = Some("JWT"),
-        keyId = Some(config.OAuthKeyId)
-      )
-     */
-
-    val header2 =
+    val header =
       s"""
          |{
-         | "alg": "RS256",
-         | "typ": "JWT",
          | "kid": "${config.OAuthKeyId}"
          |}
          |""".stripMargin
@@ -81,14 +71,7 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
          |}
          |""".stripMargin
 
-    Jwt.encode(header = header2, claim = claims, config.OAuthPrivateKey, JwtAlgorithm.HS256)
-  }
-
-  case class AccessTokenRequest(grant_type: String,
-                                subject_token: String)
-
-  object AccessTokenRequest {
-    implicit val format: Writes[AccessTokenRequest] = Json.format[AccessTokenRequest]
+    Jwt.encode(header = header, claim = claims, key = config.OAuthPrivateKey, JwtAlgorithm.RS256)
   }
 
   def requestAccessToken(): Future[NuanceAccessTokenResponse] = {
@@ -100,24 +83,15 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
 
     implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Basic $encodedAuthHeader")))
 
-    http.POST[AccessTokenRequest, NuanceAccessTokenResponse](
-      url = config.nuanceTokenAuthUrl,
-      AccessTokenRequest("urn:ietf:params:oauth:grant-type:token-exchange", jwtString)
+    val body = Map(
+      "grant_type" -> "urn:ietf:params:oauth:grant-type:token-exchange",
+      "subject_token" -> jwtString
     )
-  }
 
-  def authenticate(): Future[NuanceAuthResponse] = {
-
-    implicit val hc: HeaderCarrier = new HeaderCarrier
-
-    http.POSTForm[NuanceAuthResponse](
-      config.nuanceAuthUrl,
-      Map(
-        "j_username" -> Seq(config.nuanceAuthName),
-        "j_password" -> Seq(config.nuanceAuthPassword),
-        "submit" -> Seq("Login")
-      ),
-      Seq()
-    )
+    http.get()
+      .post(url"${config.nuanceTokenAuthUrl}")
+      .withBody(body)
+      .setHeader("authorization" -> s"Basic $encodedAuthHeader", "content-type" -> "application/x-www-form-urlencoded")
+      .execute[NuanceAccessTokenResponse]
   }
 }
