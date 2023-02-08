@@ -19,7 +19,7 @@ package services
 import connectors.{NuanceAuthConnector, NuanceReportingConnector, NuanceReportingRequest}
 
 import javax.inject.Inject
-import models.{NuanceAuthFailure, NuanceAuthInformation, NuanceReportingResponse, TokenExchangeResponse}
+import models.{NuanceAccessTokenFailure, NuanceAccessTokenResponse, NuanceAuthFailure, NuanceAuthInformation, NuanceAuthResponse, NuanceReportingResponse, TokenExchangeResponse}
 import play.api.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,30 +28,27 @@ class NuanceReportingService @Inject()(
                                         authConnector: NuanceAuthConnector,
                                         reportingConnector: NuanceReportingConnector)
                                       (implicit ec: ExecutionContext) extends Logging {
-  def getHistoricData(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
-    authConnector.authenticate() flatMap {
-      case authInfo: NuanceAuthInformation => {
+
+  def getHistoricDataV3(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
+    authConnector.requestAccessToken() flatMap {
+      case tokenExchangeResponse: TokenExchangeResponse =>
         logger.info(s"[getHistoricData] Authentication request success with: - $request")
-        reportingConnector.getHistoricData(authInfo, request)
-      }
-      case authError =>
+         reportingConnector.getHistoricDataV3Api(tokenExchangeResponse, request)
+
+      case authError: NuanceAccessTokenResponse =>
         logger.warn("[getHistoricData] Unable to authenticate with Nuance server.")
-        Future.successful(NuanceAuthFailure(authError))
+       Future.successful(NuanceAccessTokenFailure(authError))
     }
   }
 
-  def getHistoricDataV3Api(request : String) : Future[Unit] = {
-    authConnector.requestAccessToken() flatMap {
-      case tokenExchangeResponse : TokenExchangeResponse =>
-        Future.successful(Unit)
-      case authError =>
-        logger.warn("[getHistoricData] Unable to authenticate and get access token from Nuance server.")
+  def getHistoricData(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
+    authConnector.authenticate() flatMap {
+      case authInfo: NuanceAuthInformation =>
+        logger.info(s"[getHistoricData] Authentication request success with: - $request")
+        reportingConnector.getHistoricData(authInfo, request)
+      case authError: NuanceAuthResponse =>
+        logger.warn("[getHistoricData] Unable to authenticate with Nuance server.")
         Future.successful(NuanceAuthFailure(authError))
     }
-
-
-
-
-    ???
   }
 }

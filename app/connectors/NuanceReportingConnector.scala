@@ -17,12 +17,12 @@
 package connectors
 
 import java.time.LocalDateTime
-
 import config.AppConfig
+
 import javax.inject.Inject
-import models.{NuanceAuthInformation, NuanceReportingResponse}
+import models.{NuanceAuthInformation, NuanceReportingResponse, TokenExchangeResponse}
 import play.api.Logging
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,21 +45,28 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
 
     logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
 
-    http.GET[NuanceReportingResponse](
-      url = config.nuanceReportingUrl,
-      queryParams = queryParams,
-      Seq()
-    )
+    http.get()
+      .get(url"${config.nuanceReportingUrl}?$queryParams")
+      .execute[NuanceReportingResponse]
   }
 
   // arguments subject to change
-  def getHistoricDataV3Api(bearerToken: String, authInfo: String, request: String) : Unit = {
+  def getHistoricDataV3Api(tokenExchangeResponse: TokenExchangeResponse, request: NuanceReportingRequest) : Future[NuanceReportingResponse] = {
 
-    /* TODO
-        * call the api with the bearer token
-        * build in a mechanism that checks when the token expires and requests a new one
-        * if the api call fails, request a new token, then call the api again
-     */
-    ???
+    implicit val hc : HeaderCarrier = new HeaderCarrier()
+
+    val queryParams = Seq(
+      "site" -> config.hmrcSiteId,
+      "filter" -> s"""startDate>="${request.startDate}" and startDate<="${request.endDate}"""",
+      "returnFields" -> "ALL",
+      "start" -> request.start.toString,
+      "rows" -> request.rows.toString
+    )
+
+    // TODO change the URL to the v3 api
+    http.get()
+      .get(url"${config.nuanceReportingUrl}?$queryParams")
+      .setHeader("Authorization" -> s"Bearer ${tokenExchangeResponse.access_token}")
+      .execute[NuanceReportingResponse]
   }
 }

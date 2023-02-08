@@ -17,7 +17,7 @@
 package connectors
 
 import config.AppConfig
-import models.NuanceAccessTokenResponse
+import models.{NuanceAccessTokenResponse, NuanceAuthResponse, TokenExchangeResponse}
 import org.apache.commons.codec.binary.Base64
 import pdi.jwt.{Jwt, JwtAlgorithm}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, StringContextOps}
@@ -74,6 +74,7 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
     Jwt.encode(header = header, claim = claims, key = config.OAuthPrivateKey, JwtAlgorithm.RS256)
   }
 
+
   def requestAccessToken(): Future[NuanceAccessTokenResponse] = {
 
     val jwtString = createJwtString()
@@ -88,10 +89,28 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
       "subject_token" -> jwtString
     )
 
+    // TODO check if we need to set the auth header in the setHeader fn
     http.get()
       .post(url"${config.nuanceTokenAuthUrl}")
       .withBody(body)
       .setHeader("authorization" -> s"Basic $encodedAuthHeader", "content-type" -> "application/x-www-form-urlencoded")
       .execute[NuanceAccessTokenResponse]
   }
+
+  def authenticate(): Future[NuanceAuthResponse] = {
+
+    implicit val hc: HeaderCarrier = new HeaderCarrier
+
+    val body = Map(
+      "j_username" -> Seq(config.nuanceAuthName),
+      "j_password" -> Seq(config.nuanceAuthPassword),
+      "submit" -> Seq("Login")
+    )
+
+    http.get()
+      .post(url"${config.nuanceAuthUrl}")
+      .withBody(body)
+      .execute[NuanceAuthResponse]
+  }
+
 }

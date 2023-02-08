@@ -13,8 +13,9 @@ trait NuanceAccessTokenResponse
 object NuanceAccessTokenBadRequest extends NuanceAccessTokenResponse
 object NuanceAccessTokenUnauthorised extends NuanceAccessTokenResponse
 object NuanceAccessTokenServerError extends NuanceAccessTokenResponse
+object NuanceAccessTokenParseError extends NuanceAccessTokenResponse
 
-// TODO case class NuanceAuthFailure(authResponse: String) extends NuanceAccessTokenResponse
+case class NuanceAccessTokenFailure(authResponse: NuanceAccessTokenResponse) extends NuanceReportingResponse
 
 case class TokenExchangeResponse(access_token: String,
                                  token_type: String,
@@ -34,15 +35,13 @@ object NuanceAccessTokenResponse extends Logging {
       response.status match {
         case Status.OK | Status.FOUND =>
 
-          Try(response.json.as[TokenExchangeResponse]) match {
+           Try(response.json.as[TokenExchangeResponse]) match {
             case Success(tokenExchangeResponse) =>
               logger.info("[NuanceAuthResponse] Got a successful response from auth API and parsed response")
-
               tokenExchangeResponse
             case Failure(e) =>
               logger.info(s"[NuanceAuthResponse] Could not parse response from auth API: ${e.getMessage}")
-
-              throw new Exception("Unable to parse response")
+              NuanceAccessTokenParseError
           }
 
         case Status.BAD_REQUEST =>
