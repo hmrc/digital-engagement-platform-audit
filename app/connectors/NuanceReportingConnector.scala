@@ -16,14 +16,15 @@
 
 package connectors
 
-import java.time.LocalDateTime
 import config.AppConfig
-
-import javax.inject.Inject
 import models.{NuanceAuthInformation, NuanceReportingResponse, TokenExchangeResponse}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDateTime, ZoneId}
+import java.util.Locale
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime)
@@ -31,9 +32,9 @@ case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTim
 class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   def getHistoricData(authInfo: NuanceAuthInformation, request: NuanceReportingRequest):
-    Future[NuanceReportingResponse] = {
+  Future[NuanceReportingResponse] = {
 
-    implicit val hc : HeaderCarrier = new HeaderCarrier(extraHeaders = authInfo.toHeaders)
+    implicit val hc: HeaderCarrier = new HeaderCarrier(extraHeaders = authInfo.toHeaders)
 
     val queryParams = Seq(
       "site" -> config.hmrcSiteId,
@@ -50,22 +51,29 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
       .execute[NuanceReportingResponse]
   }
 
-  // arguments subject to change
-  def getHistoricDataV3Api(tokenExchangeResponse: TokenExchangeResponse, request: NuanceReportingRequest) : Future[NuanceReportingResponse] = {
+  def getHistoricDataV3Api(tokenExchangeResponse: TokenExchangeResponse, request: NuanceReportingRequest)
+  : Future[NuanceReportingResponse] = {
 
-    implicit val hc : HeaderCarrier = new HeaderCarrier()
+    implicit val hc: HeaderCarrier = new HeaderCarrier()
+
+    val dateTimeFormatter =
+      DateTimeFormatter.ofPattern("YYYY-MM-DD'T'hh:mm:ss")
+        .withLocale(Locale.UK)
+        .withZone(ZoneId.of("GMT"))
+
+    val formattedStartDate = request.startDate.format(dateTimeFormatter)
+    val formattedEndDate = request.endDate.format(dateTimeFormatter)
 
     val queryParams = Seq(
       "site" -> config.hmrcSiteId,
-      "filter" -> s"""startDate>="${request.startDate}" and startDate<="${request.endDate}"""",
+      "filter" -> s"""startDate>="$formattedStartDate" AND startDate<="$formattedEndDate"""",
       "returnFields" -> "ALL",
       "start" -> request.start.toString,
-      "rows" -> request.rows.toString
+      "rows" -> request.rows.toString,
     )
 
-    // TODO change the URL to the v3 api
     http.get()
-      .get(url"${config.nuanceReportingUrl}?$queryParams")
+      .get(url"${config.nuanceTokenApiUrl}/v3/transcript/historic?$queryParams")
       .setHeader("Authorization" -> s"Bearer ${tokenExchangeResponse.access_token}")
       .execute[NuanceReportingResponse]
   }
