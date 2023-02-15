@@ -19,7 +19,7 @@ package services
 import connectors.{NuanceAuthConnector, NuanceReportingConnector, NuanceReportingRequest}
 
 import javax.inject.Inject
-import models.{NuanceAccessTokenFailure, NuanceAccessTokenResponse, NuanceAuthFailure, NuanceAuthInformation, NuanceAuthResponse, NuanceReportingResponse, TokenExchangeResponse}
+import models._
 import play.api.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,11 +32,11 @@ class NuanceReportingService @Inject()(
   def getHistoricDataV3(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
     authConnector.requestAccessToken() flatMap {
       case tokenExchangeResponse: TokenExchangeResponse =>
-        logger.info(s"[getHistoricData] Authentication request success with: - $request")
+        logger.info(s"[getHistoricDataV3] Authentication request success with: - $request")
          reportingConnector.getHistoricDataV3Api(tokenExchangeResponse, request)
 
       case authError: NuanceAccessTokenResponse =>
-        logger.warn("[getHistoricData] Unable to authenticate with Nuance server.")
+        logger.warn("[getHistoricDataV3] Unable to authenticate with Nuance server.")
        Future.successful(NuanceAccessTokenFailure(authError))
     }
   }

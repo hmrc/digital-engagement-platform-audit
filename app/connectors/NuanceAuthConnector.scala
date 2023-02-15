@@ -20,7 +20,7 @@ import config.AppConfig
 import models.{NuanceAccessTokenResponse, NuanceAuthResponse}
 import org.apache.commons.codec.binary.Base64
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim, JwtHeader}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.{KeyFactory, PrivateKey, SecureRandom}
@@ -34,15 +34,15 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
 
   def requestAccessToken(): Future[NuanceAccessTokenResponse] = {
 
-    val encodedAuthHeader =
-      Base64.encodeBase64String(s"${config.OAuthClientId}:${config.OAuthClientSecret}".getBytes("UTF-8"))
+    implicit val hc: HeaderCarrier = new HeaderCarrier
 
     val body = Map(
       "grant_type" -> "urn:ietf:params:oauth:grant-type:token-exchange",
       "subject_token" -> createJwtString()
     )
 
-    implicit val hc: HeaderCarrier = new HeaderCarrier
+    val encodedAuthHeader =
+      Base64.encodeBase64String(s"${config.OAuthClientId}:${config.OAuthClientSecret}".getBytes("UTF-8"))
 
     http.get()
       .post(url"${config.nuanceTokenAuthUrl}")
