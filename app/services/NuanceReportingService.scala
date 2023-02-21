@@ -29,26 +29,15 @@ class NuanceReportingService @Inject()(
                                         reportingConnector: NuanceReportingConnector)
                                       (implicit ec: ExecutionContext) extends Logging {
 
-  def getHistoricDataV3(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
+  def getHistoricData(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
     authConnector.requestAccessToken() flatMap {
       case tokenExchangeResponse: TokenExchangeResponse =>
         logger.info(s"[getHistoricDataV3] Authentication request success with: - $request")
-         reportingConnector.getHistoricDataV3Api(tokenExchangeResponse, request)
+         reportingConnector.getHistoricData(tokenExchangeResponse.access_token, request)
 
       case authError: NuanceAccessTokenResponse =>
         logger.warn("[getHistoricDataV3] Unable to authenticate with Nuance server.")
        Future.successful(NuanceAccessTokenFailure(authError))
-    }
-  }
-
-  def getHistoricData(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
-    authConnector.authenticate() flatMap {
-      case authInfo: NuanceAuthInformation =>
-        logger.info(s"[getHistoricData] Authentication request success with: - $request")
-        reportingConnector.getHistoricData(authInfo, request)
-      case authError: NuanceAuthResponse =>
-        logger.warn("[getHistoricData] Unable to authenticate with Nuance server.")
-        Future.successful(NuanceAuthFailure(authError))
     }
   }
 }

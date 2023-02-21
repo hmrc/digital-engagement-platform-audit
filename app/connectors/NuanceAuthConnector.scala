@@ -17,7 +17,7 @@
 package connectors
 
 import config.AppConfig
-import models.{NuanceAccessTokenResponse, NuanceAuthResponse}
+import models.NuanceAccessTokenResponse
 import org.apache.commons.codec.binary.Base64
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim, JwtHeader}
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
@@ -51,7 +51,7 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
       .execute[NuanceAccessTokenResponse]
   }
 
-  private def createJwtString(): String = {
+  def createJwtString(): String = {
 
     val dateFormat = DateTimeFormatter
       .ofPattern("YMMdHms")
@@ -63,16 +63,13 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
     val nowPlusFiveMinutes = now.plusSeconds(fiveMinutesInSeconds)
     val nowAsLong = dateFormat.format(now).toLong
 
-    val jwtId = generateRandomBase64Token(16)
-
     val jwtClaims = JwtClaim(
       issuer = Some(config.OAuthIssuer),
       subject = Some(config.OAuthSubject),
       audience = Some(Set(config.OAuthAudience)),
       expiration = Some(dateFormat.format(nowPlusFiveMinutes).toLong),
-      notBefore = Some(nowAsLong),
       issuedAt = Some(nowAsLong),
-      jwtId = Some(jwtId),
+      jwtId = Some(generateRandomBase64Token()),
     )
 
     val jwtHeader = JwtHeader(algorithm = Some(JwtAlgorithm.RS256), typ = Some("JWT"), keyId = Some(config.OAuthKeyId))
@@ -88,28 +85,12 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(
     keyFactory.generatePrivate(keySpecPKCS8)
   }
 
-  private def generateRandomBase64Token(byteLength: Int): String = {
+  def generateRandomBase64Token(): String = {
     val secureRandom = new SecureRandom
-    val token = new Array[Byte](byteLength)
+    val token = new Array[Byte](16)
     secureRandom.nextBytes(token)
 
     Base64.encodeBase64String(token)
-  }
-
-  def authenticate(): Future[NuanceAuthResponse] = {
-
-    implicit val hc: HeaderCarrier = new HeaderCarrier
-
-    val body = Map(
-      "j_username" -> Seq(config.nuanceAuthName),
-      "j_password" -> Seq(config.nuanceAuthPassword),
-      "submit" -> Seq("Login")
-    )
-
-    http.get()
-      .post(url"${config.nuanceAuthUrl}")
-      .withBody(body)
-      .execute[NuanceAuthResponse]
   }
 
 }

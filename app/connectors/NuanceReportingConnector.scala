@@ -17,7 +17,7 @@
 package connectors
 
 import config.AppConfig
-import models.{NuanceAuthInformation, NuanceReportingResponse, TokenExchangeResponse}
+import models.{NuanceReportingResponse, TokenExchangeResponse}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
@@ -31,27 +31,7 @@ case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTim
 
 class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-  def getHistoricData(authInfo: NuanceAuthInformation, request: NuanceReportingRequest):
-  Future[NuanceReportingResponse] = {
-
-    implicit val hc: HeaderCarrier = new HeaderCarrier(extraHeaders = authInfo.toHeaders)
-
-    val queryParams = Seq(
-      "site" -> config.hmrcSiteId,
-      "filter" -> s"""startDate>="${request.startDate}" and startDate<="${request.endDate}"""",
-      "returnFields" -> "ALL",
-      "start" -> request.start.toString,
-      "rows" -> request.rows.toString
-    )
-
-    logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
-
-    http.get()
-      .get(url"${config.nuanceReportingUrl}?$queryParams")
-      .execute[NuanceReportingResponse]
-  }
-
-  def getHistoricDataV3Api(tokenExchangeResponse: TokenExchangeResponse, request: NuanceReportingRequest)
+  def getHistoricData(accessToken: String, request: NuanceReportingRequest)
   : Future[NuanceReportingResponse] = {
 
     implicit val hc: HeaderCarrier = new HeaderCarrier()
@@ -72,9 +52,11 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
       "rows" -> request.rows.toString,
     )
 
+    logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
+
     http.get()
       .get(url"${config.nuanceTokenApiUrl}/v3/transcript/historic?$queryParams")
-      .setHeader("Authorization" -> s"Bearer ${tokenExchangeResponse.access_token}")
+      .setHeader("Authorization" -> s"Bearer $accessToken")
       .execute[NuanceReportingResponse]
   }
 }
