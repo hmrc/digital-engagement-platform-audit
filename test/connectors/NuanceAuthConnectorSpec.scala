@@ -19,13 +19,13 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.TokenExchangeResponse
+import models._
 import org.apache.commons.codec.binary.Base64
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim}
+import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Reads}
-import play.api.http.Status
 
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
@@ -39,7 +39,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
       .configure(
         Seq(
           "microservice.services.nuance-api.port" -> server.port(),
-          "nuance.auth-base-url" ->  server.url(nuanceUrl),
+          "nuance.auth-base-url" -> server.url(nuanceUrl),
           "oauth.private-key" -> dummyPrivateKey,
           "oauth.client-secret" -> "super-secret-squirrel",
           "oauth.client-id" -> "test-client-id",
@@ -56,14 +56,14 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
   private def stubForPost(server: WireMockServer,
                           url: String,
-                          requestBody: String,
+                          requestBodyShouldContain: String,
                           returnStatus: Int,
                           responseBody: String,
                           delayResponse: Int = 0): StubMapping = {
 
     server.stubFor(
       post(urlEqualTo(url))
-        .withRequestBody(containing(requestBody))
+        .withRequestBody(containing(requestBodyShouldContain))
         .willReturn(
           aResponse()
             .withStatus(returnStatus)
@@ -73,9 +73,9 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
   }
 
   private def wiremock(returnStatus: Int, responseBody: String = ""): StubMapping = {
-    val requestBody = s"grant_type=urn:ietf:params:oauth:grant-type:token-exchange&subject_token=${connector.createJwtString()}"
+    val requestBodyShouldContain = "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&subject_token="
 
-    stubForPost(server, nuanceUrl, requestBody, returnStatus, responseBody)
+    stubForPost(server, nuanceUrl, requestBodyShouldContain, returnStatus, responseBody)
   }
 
   private lazy val connector = injector.instanceOf[NuanceAuthConnector]
@@ -120,6 +120,77 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
       decodedJwt.issuedAt.get shouldBe (nowAsLong +- secondsTolerance)
       decodedJwt.expiration.get shouldBe (nowPlusFiveMinutesAsLong +- secondsTolerance)
+    }
+
+    "return the expected TokenExchangeResponse, given a valid access token response from the server" in {
+
+      val responseBody =
+        """
+          |{
+          | "access_token":"lots-of-random-chars",
+          | "token_type":"bearer",
+          | "expires_in":100,
+          | "scope":"read write",
+          | "sites":["12345"],
+          | "jti":"a-few-random-chars"
+          |}
+          |""".stripMargin
+
+      wiremock(Status.OK, responseBody)
+
+      val futureResult = connector.requestAccessToken()
+
+      whenReady(futureResult) {
+        response =>
+          response mustBe TokenExchangeResponse(
+            access_token = "lots-of-random-chars",
+            token_type = "bearer",
+            expires_in = 100,
+            scope = "read write",
+            sites = List("12345"),
+            jti = "a-few-random-chars",
+          )
+      }
+    }
+
+    "return NuanceAccessTokenParseError, given an error in the JSON access token response from the Nuance server" in {
+
+      val invalidResponseBody =
+        """
+          |{
+          | "this_key_is_incorrect":"lots-of-random-chars",
+          | "token_type":"bearer",
+          | "expires_in":100,
+          | "scope":"read write",
+          | "sites":["12345"],
+          | "jti":"a-few-random-chars"
+          |}
+          |""".stripMargin
+
+      wiremock(Status.OK, invalidResponseBody)
+
+      val futureResult = connector.requestAccessToken()
+
+      whenReady(futureResult) { response => response mustBe NuanceAccessTokenParseError }
+    }
+
+
+    "return NuanceAccessTokenBadRequest given a BAD_REQUEST(400) status is returned from the Nuance server" in {
+      wiremock(Status.BAD_REQUEST)
+      val futureResult = connector.requestAccessToken()
+      whenReady(futureResult) { response => response mustBe NuanceAccessTokenBadRequest }
+    }
+
+    "return NuanceAccessTokenUnauthorised given an UNAUTHORIZED(401) status is returned from the Nuance server" in {
+      wiremock(Status.UNAUTHORIZED)
+      val futureResult = connector.requestAccessToken()
+      whenReady(futureResult) { response => response mustBe NuanceAccessTokenUnauthorised }
+    }
+
+    "return NuanceAccessTokenServerError given an INTERNAL_SERVER_ERROR(500) status is returned from the Nuance server" in {
+      wiremock(Status.INTERNAL_SERVER_ERROR)
+      val futureResult = connector.requestAccessToken()
+      whenReady(futureResult) { response => response mustBe NuanceAccessTokenServerError }
     }
 
   }
