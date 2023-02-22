@@ -16,34 +16,34 @@
 
 package connectors
 
-import java.time.LocalDateTime
-
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, get, urlPathEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{NuanceAuthInformation, NuanceBadRequest, NuanceServerError, NuanceUnauthorised, ValidNuanceReportingResponse}
+import models.{NuanceBadRequest, NuanceServerError, NuanceUnauthorised, ValidNuanceReportingResponse}
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
+import uk.gov.hmrc.http.StringContextOps
 
-import scala.jdk.CollectionConverters._
+import java.time.LocalDateTime
 
-class NuanceReportingConnectorSpec extends BaseConnectorSpec
-{
+class NuanceReportingConnectorSpec extends BaseConnectorSpec {
+
+  val nuanceUrl: String = "/v3/transcript/historic"
+
   override def applicationBuilder(): GuiceApplicationBuilder = {
     super.applicationBuilder()
       .configure(
         Seq(
           "microservice.services.nuance-api.port" -> server.port(),
-          "nuance.site-id" -> "1234567"
+          "nuance.site-id" -> "1234567",
+          "nuance.api-base-url" -> server.url(nuanceUrl)
         ): _*
       )
   }
 
-  def nuanceUrl: String = "/v3/transcript/historic"
   val testSessionId = "xxxSESSIONIDxxx"
-  val testServerId = "api130"
-  val testFilter = """startDate>="2020-04-20T00:00:10" and startDate<="2020-07-17T00:00:20""""
+  val testFilter = """startDate>="2020-04-20T00:00:10" AND startDate<="2020-07-17T00:00:20""""
   val testStart = 100
   val testRows = 1234
 
@@ -51,35 +51,42 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
   private val testEndDate = LocalDateTime.parse("2020-07-17T00:00:20")
 
   def stubForGet(server: WireMockServer,
-                 url: String, returnStatus: Int,
+                 url: String,
+                 returnStatus: Int,
                  responseBody: String,
                  delayResponse: Int = 0): StubMapping = {
-    server.stubFor(get(urlPathEqualTo(url))
-        .withQueryParams(Map(
-          "site" -> equalTo(appConfig.hmrcSiteId),
-          "filter" -> equalTo(testFilter),
-          "returnFields" -> equalTo("ALL"),
-          "start" -> equalTo(testStart.toString),
-          "rows" -> equalTo(testRows.toString)
-        ).asJava)
-      .withCookie("JSESSIONID", equalTo(testSessionId))
-      .withCookie("SERVERID", equalTo(testServerId))
-      .willReturn(
-        aResponse()
-          .withStatus(returnStatus)
-          .withBody(responseBody).withFixedDelay(delayResponse)))
+
+    val queryParams = Seq(
+      "site" -> appConfig.hmrcSiteId,
+      "filter" -> testFilter,
+      "returnFields" -> "ALL",
+      "start" ->testStart.toString,
+      "rows" -> testRows.toString
+    )
+
+    val fullUrl = url"$url?$queryParams"
+
+    val pathAndQueryParams = s"${fullUrl.getPath}?${fullUrl.getQuery}"
+
+    server
+      .stubFor(
+        get(urlEqualTo(pathAndQueryParams))
+          .willReturn(
+            aResponse()
+              .withStatus(returnStatus)
+              .withBody(responseBody)
+              .withFixedDelay(delayResponse)
+          )
+      )
   }
 
-  private def wiremock(returnStatus: Int, responseBody: String = ""): StubMapping = {
-    stubForGet(server,
-      nuanceUrl,
-      returnStatus,
-      responseBody )
-  }
+  private def wiremock(returnStatus: Int, responseBody: String = ""): StubMapping =
+    stubForGet(server, server.url(nuanceUrl), returnStatus, responseBody)
+
 
   private lazy val connector = injector.instanceOf[NuanceReportingConnector]
 
-  private val testAuthInfo = NuanceAuthInformation(s"JSESSIONID=$testSessionId; SERVERID=$testServerId")
+  private val testAccessToken = "12345-once-i-caught-a-fish-alive"
 
   "NuanceReportingConnector" must {
 
@@ -97,7 +104,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
 
-        val futureResult = connector.getHistoricData(testAuthInfo, request)
+        val futureResult = connector.getHistoricData(testAccessToken, request)
         whenReady(futureResult) {
           response => response mustBe ValidNuanceReportingResponse(500, testStart, JsArray())
         }
@@ -109,7 +116,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
 
-        val futureResult = connector.getHistoricData(testAuthInfo, request)
+        val futureResult = connector.getHistoricData(testAccessToken, request)
         whenReady(futureResult) {
           result => result mustBe NuanceBadRequest
         }
@@ -121,7 +128,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
 
-        val futureResult = connector.getHistoricData(testAuthInfo, request)
+        val futureResult = connector.getHistoricData(testAccessToken, request)
         whenReady(futureResult) {
           result => result mustBe NuanceUnauthorised
         }
@@ -133,7 +140,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec
 
         val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
 
-        val futureResult = connector.getHistoricData(testAuthInfo, request)
+        val futureResult = connector.getHistoricData(testAccessToken, request)
         whenReady(futureResult) {
           result => result mustBe NuanceServerError
         }

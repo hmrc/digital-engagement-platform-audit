@@ -27,7 +27,8 @@ object NuanceServerError extends NuanceReportingResponse
 object NuanceBadRequest extends NuanceReportingResponse
 object NuanceUnauthorised extends NuanceReportingResponse
 
-case class NuanceAuthFailure(authResponse: NuanceReportingResponse) extends NuanceReportingResponse
+case class NuanceAuthFailure(authResponse: NuanceAccessTokenResponse) extends NuanceReportingResponse
+
 
 case class ValidNuanceReportingResponse(numFound: Int, start: Int, engagements: JsArray) extends NuanceReportingResponse
 object ValidNuanceReportingResponse {

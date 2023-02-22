@@ -17,13 +17,11 @@
 package connectors
 
 import config.AppConfig
-import models.{NuanceReportingResponse, TokenExchangeResponse}
+import models.NuanceReportingResponse
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
-import java.util.Locale
+import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,17 +34,9 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
 
     implicit val hc: HeaderCarrier = new HeaderCarrier()
 
-    val dateTimeFormatter =
-      DateTimeFormatter.ofPattern("YYYY-MM-DD'T'hh:mm:ss")
-        .withLocale(Locale.UK)
-        .withZone(ZoneId.of("GMT"))
-
-    val formattedStartDate = request.startDate.format(dateTimeFormatter)
-    val formattedEndDate = request.endDate.format(dateTimeFormatter)
-
     val queryParams = Seq(
       "site" -> config.hmrcSiteId,
-      "filter" -> s"""startDate>="$formattedStartDate" AND startDate<="$formattedEndDate"""",
+      "filter" -> s"""startDate>="${request.startDate}" AND startDate<="${request.endDate}"""",
       "returnFields" -> "ALL",
       "start" -> request.start.toString,
       "rows" -> request.rows.toString,
@@ -55,7 +45,7 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
     logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
 
     http.get()
-      .get(url"${config.nuanceTokenApiUrl}/v3/transcript/historic?$queryParams")
+      .get(url"${config.nuanceTokenApiUrl}?$queryParams")
       .setHeader("Authorization" -> s"Bearer $accessToken")
       .execute[NuanceReportingResponse]
   }

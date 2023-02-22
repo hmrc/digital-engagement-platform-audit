@@ -16,16 +16,15 @@
 
 package services
 
-import java.time.LocalDateTime
-
 import connectors.{NuanceAuthConnector, NuanceReportingConnector, NuanceReportingRequest}
-import models.{NuanceAuthBadRequest, NuanceAuthFailure, NuanceAuthInformation, ValidNuanceReportingResponse}
+import models.{NuanceAccessTokenBadRequest, NuanceAuthFailure, TokenExchangeResponse, ValidNuanceReportingResponse}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.JsArray
 
+import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -38,13 +37,22 @@ class NuanceReportingServiceSpec extends AnyWordSpec with Matchers with MockitoS
   "NuanceReportingService" should {
     "be able to authenticate and read reporting data" in {
       val authConnector = mock[NuanceAuthConnector]
-      val authInformation = NuanceAuthInformation("somecookie")
-      when(authConnector.authenticate()).thenReturn(Future.successful(authInformation))
+
+      val tokenExchangeResponse = TokenExchangeResponse(
+        "lots-of-random-chars",
+        "bearer",
+        100,
+        "read write",
+        List("12345"),
+        "a-few-random-chars"
+      )
+
+      when(authConnector.requestAccessToken()).thenReturn(Future.successful(tokenExchangeResponse))
 
       val response = ValidNuanceReportingResponse(500, 123, JsArray())
 
       val reportingConnector = mock[NuanceReportingConnector]
-      when(reportingConnector.getHistoricData(authInformation, testRequest)).thenReturn(Future.successful(response))
+      when(reportingConnector.getHistoricData(tokenExchangeResponse.access_token, testRequest)).thenReturn(Future.successful(response))
 
       val service = new NuanceReportingService(authConnector, reportingConnector)
 
@@ -54,13 +62,13 @@ class NuanceReportingServiceSpec extends AnyWordSpec with Matchers with MockitoS
 
     "return auth failure if authentication fails" in {
       val authConnector = mock[NuanceAuthConnector]
-      when(authConnector.authenticate()).thenReturn(Future.successful(NuanceAuthBadRequest))
+      when(authConnector.requestAccessToken()).thenReturn(Future.successful(NuanceAccessTokenBadRequest))
 
       val reportingConnector = mock[NuanceReportingConnector]
       val service = new NuanceReportingService(authConnector, reportingConnector)
 
       val result = Await.result(service.getHistoricData(testRequest), Duration.Inf)
-      result mustBe NuanceAuthFailure(NuanceAuthBadRequest)
+      result mustBe NuanceAuthFailure(NuanceAccessTokenBadRequest)
     }
   }
 }

@@ -52,7 +52,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
       )
   }
 
-  def nuanceUrl: String = "/some-auth-url"
+  val nuanceUrl: String = "/some-auth-url"
 
   private def stubForPost(server: WireMockServer,
                           url: String,
@@ -80,7 +80,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
   private lazy val connector = injector.instanceOf[NuanceAuthConnector]
 
-  // case class to read decoded jwt content
+  // helper case class to read decoded jwt content
   case class JwtContent(iss: String, aud: String, jti: String)
   implicit val jwtContentReads: Reads[JwtContent] = Json.reads[JwtContent]
 
