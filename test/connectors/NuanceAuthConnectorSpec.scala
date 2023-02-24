@@ -39,14 +39,16 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
       .configure(
         Seq(
           "microservice.services.nuance-api.port" -> server.port(),
-          "nuance.auth-base-url" -> server.url(nuanceUrl),
-          "oauth.private-key" -> dummyPrivateKey,
-          "oauth.client-secret" -> "super-secret-squirrel",
-          "oauth.client-id" -> "test-client-id",
-          "oauth.issuer" -> "test-issuer",
-          "oauth.subject" -> "test-subject",
-          "oauth.audience" -> "test-audience",
-          "oauth.key-id" -> "test-key-id",
+          "microservice.services.nuance-auth.host" ->  "localhost",
+          "microservice.services.nuance-auth.port" -> server.port(),
+          "microservice.services.nuance-auth.path" -> nuanceUrl,
+          "nuance.oauth.private-key" -> dummyPrivateKey,
+          "nuance.oauth.client-secret" -> "super-secret-squirrel",
+          "nuance.oauth.client-id" -> "test-client-id",
+          "nuance.oauth.issuer" -> "test-issuer",
+          "nuance.oauth.subject" -> "test-subject",
+          "nuance.oauth.audience" -> "test-audience",
+          "nuance.oauth.key-id" -> "test-key-id",
           "nuance.site-id" -> "12345"
         ): _ *
       )

@@ -29,10 +29,7 @@ class AppConfig @Inject()
   )
 {
 
-  // TODO do I need to put api URLs in 'ServicesConfig'? how does that get in to the application?
-
-  val nuanceTokenAuthUrl: String = config.get[String]("nuance.auth-base-url")
-  val nuanceTokenApiUrl: String = config.get[String]("nuance.api-base-url")
+  val nuanceTokenAuthUrl: String = servicesConfig.baseUrl("nuance-auth") + servicesConfig.getConfString("nuance-auth.path", "")
 
   val nuanceAuthUrl: String = servicesConfig.baseUrl("nuance-api") + "/j_spring_security_check"
   val nuanceAuthName: String = config.get[String]("nuance.auth-name")
@@ -40,14 +37,14 @@ class AppConfig @Inject()
   val nuanceReportingUrl: String = servicesConfig.baseUrl("nuance-api") + "/v3/transcript/historic"
   val hmrcSiteId: String = config.get[String]("nuance.site-id")
 
-  val OAuthPrivateKey: String = config.get[String]("oauth.private-key")
-  val OAuthClientId: String = config.get[String]("oauth.client-id")
-  val OAuthClientSecret: String = config.get[String]("oauth.client-secret")
+  val OAuthPrivateKey: String = config.get[String]("nuance.oauth.private-key")
+  val OAuthClientId: String = config.get[String]("nuance.oauth.client-id")
+  val OAuthClientSecret: String = config.get[String]("nuance.oauth.client-secret")
 
-  val OAuthIssuer : String = config.get[String]("oauth.issuer")
-  val OAuthSubject : String = config.get[String]("oauth.subject")
-  val OAuthAudience : String = config.get[String]("oauth.audience")
-  val OAuthKeyId : String = config.get[String]("oauth.key-id")
+  val OAuthIssuer: String = config.get[String]("nuance.oauth.issuer")
+  val OAuthSubject: String = config.get[String]("nuance.oauth.subject")
+  val OAuthAudience: String = config.get[String]("nuance.oauth.audience")
+  val OAuthKeyId: String = config.get[String]("nuance.oauth.key-id")
 
   val auditingChunkSize: Int = config.get[Int]("nuance.auditing-chunk-size")
 

@@ -4,7 +4,7 @@
 
 This service periodically calls the Nuance Reporting API to retrieve customer engagement data, map the data to the required data structure and audit (CIP). The calls to the Nuance Reporting API are scheduled every 2 hours and retrieve data from 5 hours ago and 2 hours worth of data. The reason for going back 5 hours is to allow enough time for the real-time data to be populated on the Nuance side.
 
-Two calls are made to Nuance. The first being the authentication call to retrieve an OAuth2 access token. If this is successful a call to obtain engagement data is made.
+Two calls are made to Nuance. The first being the authentication call to retrieve an OAuth2 access token. If this is successful, a call to obtain engagement data is made.
 
 There are 2 Akka Actors in the service:
 
@@ -70,7 +70,7 @@ Example MongoDB job:
 
 ## Notes
 
-If testing the service locally, you must be on the HMRC VPN to receive responses from the Nuance API
+If testing the service locally, you must be on the HMRC VPN to receive responses from the Nuance API.
 
 ## License
 

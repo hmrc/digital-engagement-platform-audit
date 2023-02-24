@@ -51,7 +51,7 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
     logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
 
     http.get()
-      .get(url"${config.nuanceTokenApiUrl}?$queryParams")
+      .get(url"${config.nuanceReportingUrl}?$queryParams")
       .setHeader("Authorization" -> s"Bearer $accessToken")
       .execute[NuanceReportingResponse]
   }

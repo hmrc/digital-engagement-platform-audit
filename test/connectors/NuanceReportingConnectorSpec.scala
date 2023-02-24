@@ -36,10 +36,11 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec {
     super.applicationBuilder()
       .configure(
         Seq(
-          "microservice.services.nuance-api.port" -> server.port(),
           "nuance.site-id" -> "1234567",
-          "nuance.api-base-url" -> server.url(nuanceUrl)
-        ): _*
+          "microservice.services.nuance-auth.host" -> server.baseUrl(),
+          "microservice.services.nuance-auth.port" -> server.port(),
+          "microservice.services.nuance-api.port" -> server.port()
+    ): _*
       )
   }
 
