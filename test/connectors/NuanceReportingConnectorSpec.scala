@@ -19,13 +19,14 @@ package connectors
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{NuanceBadRequest, NuanceServerError, NuanceUnauthorised, ValidNuanceReportingResponse}
+import models._
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, Json}
 import uk.gov.hmrc.http.StringContextOps
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class NuanceReportingConnectorSpec extends BaseConnectorSpec {
 
@@ -42,13 +43,16 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec {
       )
   }
 
-  val testSessionId = "xxxSESSIONIDxxx"
-  val testFilter = """startDate>="2020-04-20T00:00:10" AND startDate<="2020-07-17T00:00:20""""
+  private val testStartDate = LocalDateTime.now().minusHours(5)
+  private val testEndDate = LocalDateTime.now().minusHours(3)
+
+  private val dateTimeFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd'T'hh:mm:ss")
+  private val formattedTestStartDate = dateTimeFormatter.format(testStartDate)
+  private val formattedTestEndDate = dateTimeFormatter.format(testEndDate)
+
+  val testFilter = s"""startDate>="$formattedTestStartDate" AND startDate<="$formattedTestEndDate""""
   val testStart = 100
   val testRows = 1234
-
-  private val testStartDate = LocalDateTime.parse("2020-04-20T00:00:10")
-  private val testEndDate = LocalDateTime.parse("2020-07-17T00:00:20")
 
   def stubForGet(server: WireMockServer,
                  url: String,
@@ -60,7 +64,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec {
       "site" -> appConfig.hmrcSiteId,
       "filter" -> testFilter,
       "returnFields" -> "ALL",
-      "start" ->testStart.toString,
+      "start" -> testStart.toString,
       "rows" -> testRows.toString
     )
 
@@ -106,7 +110,21 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec {
 
         val futureResult = connector.getHistoricData(testAccessToken, request)
         whenReady(futureResult) {
-          response => response mustBe ValidNuanceReportingResponse(500, testStart, JsArray())
+          result => result mustBe ValidNuanceReportingResponse(500, testStart, JsArray())
+        }
+      }
+
+      "returns 200 with invalid result, results in NuanceParseError" in {
+
+        val emptyResponseBody = Json.obj()
+
+        wiremock(Status.OK, emptyResponseBody.toString)
+
+        val request = NuanceReportingRequest(testStart, testRows, testStartDate, testEndDate)
+
+        val futureResult = connector.getHistoricData(testAccessToken, request)
+        whenReady(futureResult) {
+          result => result mustBe NuanceParseError
         }
       }
 

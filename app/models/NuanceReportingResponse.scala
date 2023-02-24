@@ -21,11 +21,14 @@ import play.api.http.Status
 import play.api.libs.json.{Format, JsArray, Json}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
+import scala.util.{Failure, Success, Try}
+
 trait NuanceReportingResponse
 
 object NuanceServerError extends NuanceReportingResponse
 object NuanceBadRequest extends NuanceReportingResponse
 object NuanceUnauthorised extends NuanceReportingResponse
+object NuanceParseError extends NuanceReportingResponse
 
 case class NuanceAuthFailure(authResponse: NuanceAccessTokenResponse) extends NuanceReportingResponse
 
@@ -40,7 +43,16 @@ object NuanceReportingResponse extends Logging {
     (_: String, _: String, response: HttpResponse) => {
       response.status match {
         case Status.OK =>
-          response.json.as[ValidNuanceReportingResponse]
+
+          Try(response.json.as[ValidNuanceReportingResponse]) match {
+            case Failure(e) =>
+              logger.warn(s"[NuanceReportingResponse] Error parsing response from reporting API: ${e.getMessage}")
+              NuanceParseError
+            case Success(response) =>
+              logger.info("[NuanceReportingResponse] Got a successful response from reporting API and parsed response")
+              response
+          }
+
         case Status.BAD_REQUEST =>
           logger.warn("[NuanceReportingResponse] Got 'bad request' response from reporting API")
           NuanceBadRequest

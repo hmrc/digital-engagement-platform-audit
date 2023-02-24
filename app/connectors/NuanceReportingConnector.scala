@@ -22,6 +22,7 @@ import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,9 +35,14 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
 
     implicit val hc: HeaderCarrier = new HeaderCarrier()
 
+    val dateTimeFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd'T'hh:mm:ss")
+
+    val formattedStartDate = request.startDate.format(dateTimeFormatter)
+    val formattedEndDate = request.endDate.format(dateTimeFormatter)
+
     val queryParams = Seq(
       "site" -> config.hmrcSiteId,
-      "filter" -> s"""startDate>="${request.startDate}" AND startDate<="${request.endDate}"""",
+      "filter" -> s"""startDate>="$formattedStartDate" AND startDate<="$formattedEndDate"""",
       "returnFields" -> "ALL",
       "start" -> request.start.toString,
       "rows" -> request.rows.toString,
