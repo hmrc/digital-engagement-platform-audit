@@ -68,9 +68,11 @@ Example MongoDB job:
 }
 ```
 
-## Notes
+## Testing Notes
 
-If testing the service locally, you must be on the HMRC VPN to receive responses from the Nuance API.
+* When running locally, you must have MongoDB installed and running for all tests to pass successfully.  
+
+* If testing local changes to the service, you must be on the HMRC VPN to receive responses from the Nuance API.
 
 ## License
 
