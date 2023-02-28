@@ -30,8 +30,8 @@ import java.util.Locale
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
-
+class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
+                                   (implicit ec: ExecutionContext) {
   def requestAccessToken(): Future[NuanceAccessTokenResponse] = {
 
     implicit val hc: HeaderCarrier = new HeaderCarrier
