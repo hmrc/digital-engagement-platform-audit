@@ -16,7 +16,7 @@
     <logger name="services" level="${logger.application:-INFO}"/>
     <logger name="workers" level="${logger.application:-INFO}"/>
 
-    <root level="${logger.application:-WARN}">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
 
