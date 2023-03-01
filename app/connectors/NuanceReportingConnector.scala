@@ -30,8 +30,7 @@ case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTim
 
 class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-  def getHistoricData(accessToken: String, request: NuanceReportingRequest)
-  : Future[NuanceReportingResponse] = {
+  def getHistoricData(accessToken: String, request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
 
     implicit val hc: HeaderCarrier = new HeaderCarrier()
 
@@ -45,7 +44,7 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
       "filter" -> s"""startDate>="$formattedStartDate" AND startDate<="$formattedEndDate"""",
       "returnFields" -> "ALL",
       "start" -> request.start.toString,
-      "rows" -> request.rows.toString,
+      "rows" -> request.rows.toString
     )
 
     logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")

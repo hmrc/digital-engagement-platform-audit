@@ -69,7 +69,7 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
       audience = Some(Set(config.OAuthAudience)),
       expiration = Some(dateFormat.format(nowPlusFiveMinutes).toLong),
       issuedAt = Some(nowAsLong),
-      jwtId = Some(generateRandomBase64Token()),
+      jwtId = Some(generateRandomBase64Token())
     )
 
     val jwtHeader = JwtHeader(algorithm = Some(JwtAlgorithm.RS256), typ = Some("JWT"), keyId = Some(config.OAuthKeyId))
