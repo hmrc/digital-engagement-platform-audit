@@ -22,16 +22,17 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.libs.ws.{WSClient, WSProxyServer}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 import uk.gov.hmrc.play.http.ws.WSProxy
 
 @Singleton
 class ProxiedHttpClient @Inject()(configuration: Configuration,
                                   httpAuditing: HttpAuditing,
-                                  wsClient: WSClient,
+                                  val wsClient: WSClient,
                                   actorSystem: ActorSystem,
                                   config: AppConfig)
-  extends DefaultHttpClient(configuration, httpAuditing, wsClient, actorSystem) with WSProxy {
+  extends HttpClientV2Provider(configuration, httpAuditing, wsClient, actorSystem) with WSProxy {
+
 
   override def wsProxyServer: Option[WSProxyServer] = config.wsProxyServer
 }

@@ -16,28 +16,32 @@
 
 package connectors
 
-import java.time.LocalDateTime
-
 import config.AppConfig
-import javax.inject.Inject
-import models.{NuanceAuthInformation, NuanceReportingResponse}
+import models.NuanceReportingResponse
 import play.api.Logging
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime)
 
 class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-  def getHistoricData(authInfo: NuanceAuthInformation, request: NuanceReportingRequest):
-    Future[NuanceReportingResponse] = {
+  def getHistoricData(accessToken: String, request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
 
-    implicit val hc : HeaderCarrier = new HeaderCarrier(extraHeaders = authInfo.toHeaders)
+    implicit val hc: HeaderCarrier = new HeaderCarrier()
+
+    val dateTimeFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd'T'hh:mm:ss")
+
+    val formattedStartDate = request.startDate.format(dateTimeFormatter)
+    val formattedEndDate = request.endDate.format(dateTimeFormatter)
 
     val queryParams = Seq(
       "site" -> config.hmrcSiteId,
-      "filter" -> s"""startDate>="${request.startDate}" and startDate<="${request.endDate}"""",
+      "filter" -> s"""startDate>="$formattedStartDate" AND startDate<="$formattedEndDate"""",
       "returnFields" -> "ALL",
       "start" -> request.start.toString,
       "rows" -> request.rows.toString
@@ -45,10 +49,9 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
 
     logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
 
-    http.GET[NuanceReportingResponse](
-      url = config.nuanceReportingUrl,
-      queryParams = queryParams,
-      Seq()
-    )
+    http.get()
+      .get(url"${config.nuanceReportingUrl}?$queryParams")
+      .setHeader("Authorization" -> s"Bearer $accessToken")
+      .execute[NuanceReportingResponse]
   }
 }
