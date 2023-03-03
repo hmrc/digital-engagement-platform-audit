@@ -23,10 +23,12 @@ import models._
 import org.apache.commons.codec.binary.Base64
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim}
+import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Reads}
 
+import java.security.spec.InvalidKeySpecException
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
 import java.util.Locale
@@ -34,25 +36,22 @@ import scala.util.Try
 
 class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
-  override def applicationBuilder(): GuiceApplicationBuilder = {
-    super.applicationBuilder()
-      .configure(
-        Seq(
-          "microservice.services.nuance-api.port" -> server.port(),
-          "microservice.services.nuance-auth.host" ->  "localhost",
-          "microservice.services.nuance-auth.port" -> server.port(),
-          "microservice.services.nuance-auth.path" -> nuanceUrl,
-          "nuance.oauth.private-key" -> dummyPrivateKey,
-          "nuance.oauth.client-secret" -> "super-secret-squirrel",
-          "nuance.oauth.client-id" -> "test-client-id",
-          "nuance.oauth.issuer" -> "test-issuer",
-          "nuance.oauth.subject" -> "test-subject",
-          "nuance.oauth.audience" -> "test-audience",
-          "nuance.oauth.key-id" -> "test-key-id",
-          "nuance.site-id" -> "12345"
-        ): _ *
-      )
-  }
+  private lazy val mainConfig = Map(
+    "microservice.services.nuance-api.port" -> server.port(),
+    "microservice.services.nuance-auth.host" -> "localhost",
+    "microservice.services.nuance-auth.port" -> server.port(),
+    "microservice.services.nuance-auth.path" -> nuanceUrl,
+    "nuance.oauth.private-key" -> dummyPrivateKey,
+    "nuance.oauth.client-secret" -> "super-secret-squirrel",
+    "nuance.oauth.client-id" -> "test-client-id",
+    "nuance.oauth.issuer" -> "test-issuer",
+    "nuance.oauth.subject" -> "test-subject",
+    "nuance.oauth.audience" -> "test-audience",
+    "nuance.oauth.key-id" -> "test-key-id",
+    "nuance.site-id" -> "12345"
+  )
+
+  override def applicationBuilder(): GuiceApplicationBuilder = super.applicationBuilder().configure(mainConfig)
 
   val nuanceUrl: String = "/some-auth-url"
 
@@ -122,6 +121,19 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
       decodedJwt.issuedAt.get shouldBe (nowAsLong +- secondsTolerance)
       decodedJwt.expiration.get shouldBe (nowPlusFiveMinutesAsLong +- secondsTolerance)
+    }
+
+    "throw an exception creating a JWT with an invalid private key" in {
+
+      lazy val appWithInvalidPrivateKey: Application = applicationBuilder()
+        .configure(mainConfig ++ Map("nuance.oauth.private-key" -> "invalidPrivateKey"))
+        .build()
+
+      lazy val connector = appWithInvalidPrivateKey.injector.instanceOf[NuanceAuthConnector]
+
+      assertThrows[InvalidKeySpecException] {
+        connector.createJwtString()
+      }
     }
 
     "return the expected TokenExchangeResponse, given a valid access token response from the server" in {

@@ -20,6 +20,7 @@ import config.AppConfig
 import models.NuanceAccessTokenResponse
 import org.apache.commons.codec.binary.Base64
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim, JwtHeader}
+import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.security.spec.PKCS8EncodedKeySpec
@@ -29,9 +30,10 @@ import java.time.{Instant, ZoneId}
 import java.util.Locale
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
-                                   (implicit ec: ExecutionContext) {
+                                   (implicit ec: ExecutionContext) extends Logging {
   def requestAccessToken(): Future[NuanceAccessTokenResponse] = {
 
     implicit val hc: HeaderCarrier = new HeaderCarrier
@@ -73,12 +75,17 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
     )
 
     val jwtHeader = JwtHeader(algorithm = Some(JwtAlgorithm.RS256), typ = Some("JWT"), keyId = Some(config.OAuthKeyId))
-    val privateKey = readPrivateKey()
 
-    Jwt.encode(jwtHeader, jwtClaims, privateKey)
+    readPrivateKey() match {
+      case Failure(exception) =>
+        logger.warn(s"Error loading private key", exception)
+        throw exception
+      case Success(privateKey) =>
+        Jwt.encode(jwtHeader, jwtClaims, privateKey)
+    }
   }
 
-  private def readPrivateKey(): PrivateKey = {
+  private def readPrivateKey(): Try[PrivateKey] = Try {
     val keyFactory = KeyFactory.getInstance("RSA")
     val keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.decodeBase64(config.OAuthPrivateKey))
 
