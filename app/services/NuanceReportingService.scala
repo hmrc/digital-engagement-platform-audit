@@ -32,11 +32,11 @@ class NuanceReportingService @Inject()(
   def getHistoricData(request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
     authConnector.requestAccessToken() flatMap {
       case tokenExchangeResponse: TokenExchangeResponse =>
-        logger.info(s"[getHistoricDataV3] Authentication request success with: - $request")
+        logger.info(s"[getHistoricData] Authentication request success with: - $request")
         reportingConnector.getHistoricData(tokenExchangeResponse.access_token, request)
 
       case authError: NuanceAccessTokenResponse =>
-        logger.warn("[getHistoricDataV3] Unable to authenticate with Nuance server.")
+        logger.warn("[getHistoricData] Unable to authenticate with Nuance server.")
         Future.successful(NuanceAuthFailure(authError))
     }
   }
