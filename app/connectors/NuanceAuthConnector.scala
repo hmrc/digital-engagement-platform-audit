@@ -36,24 +36,31 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
                                    (implicit ec: ExecutionContext) extends Logging {
   def requestAccessToken(): Future[NuanceAccessTokenResponse] = {
 
-    implicit val hc: HeaderCarrier = new HeaderCarrier
+    createJwt() match {
+      case Failure(exception) =>
+        logger.warn("Error creating JWT:", exception)
+        throw exception
+      case Success(jwt) =>
 
-    val body = Map(
-      "grant_type" -> "urn:ietf:params:oauth:grant-type:token-exchange",
-      "subject_token" -> createJwtString()
-    )
+        implicit val hc: HeaderCarrier = new HeaderCarrier
 
-    val encodedAuthHeader =
-      Base64.encodeBase64String(s"${config.OAuthClientId}:${config.OAuthClientSecret}".getBytes("UTF-8"))
+        val body = Map(
+          "grant_type" -> "urn:ietf:params:oauth:grant-type:token-exchange",
+          "subject_token" -> jwt
+        )
 
-    http.get()
-      .post(url"${config.nuanceTokenAuthUrl}")
-      .withBody(body)
-      .setHeader("authorization" -> s"Basic $encodedAuthHeader", "content-type" -> "application/x-www-form-urlencoded")
-      .execute[NuanceAccessTokenResponse]
+        val encodedAuthHeader =
+          Base64.encodeBase64String(s"${config.OAuthClientId}:${config.OAuthClientSecret}".getBytes("UTF-8"))
+
+        http.get()
+          .post(url"${config.nuanceTokenAuthUrl}")
+          .withBody(body)
+          .setHeader("authorization" -> s"Basic $encodedAuthHeader", "content-type" -> "application/x-www-form-urlencoded")
+          .execute[NuanceAccessTokenResponse]
+    }
   }
 
-  def createJwtString(): String = {
+  def createJwt(): Try[String] = {
 
     val dateFormat = DateTimeFormatter
       .ofPattern("YMMdHms")
@@ -76,13 +83,10 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
 
     val jwtHeader = JwtHeader(algorithm = Some(JwtAlgorithm.RS256), typ = Some("JWT"), keyId = Some(config.OAuthKeyId))
 
-    readPrivateKey() match {
-      case Failure(exception) =>
-        logger.warn(s"Error loading private key", exception)
-        throw exception
-      case Success(privateKey) =>
-        Jwt.encode(jwtHeader, jwtClaims, privateKey)
-    }
+    for {
+      privateKey <- readPrivateKey()
+      jwt <- Try(Jwt.encode(jwtHeader, jwtClaims, privateKey))
+    } yield jwt
   }
 
   private def readPrivateKey(): Try[PrivateKey] = Try {

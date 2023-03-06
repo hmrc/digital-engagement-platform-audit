@@ -28,15 +28,14 @@ import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Reads}
 
-import java.security.spec.InvalidKeySpecException
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
 import java.util.Locale
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
-  private lazy val mainConfig = Map(
+  private lazy val mainConfig: Map[String, Any] = Map(
     "microservice.services.nuance-api.port" -> server.port(),
     "microservice.services.nuance-auth.host" -> "localhost",
     "microservice.services.nuance-auth.port" -> server.port(),
@@ -87,7 +86,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
   "NuanceAuthConnector" must {
 
-    "create the expected JWT string" in {
+    "create the expected JWT" in {
 
       val dateFormat = DateTimeFormatter
         .ofPattern("YMMdHms")
@@ -99,9 +98,9 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
       val nowAsLong = dateFormat.format(now).toLong
       val nowPlusFiveMinutesAsLong = dateFormat.format(now.plusSeconds(fiveMinutesInSeconds)).toLong
 
-      val jwtString = connector.createJwtString()
+      val jwt = connector.createJwt().get
 
-      val decodedJwtTry: Try[JwtClaim] = Jwt.decode(jwtString, dummyPublicKey, Seq(JwtAlgorithm.RS256))
+      val decodedJwtTry: Try[JwtClaim] = Jwt.decode(jwt, dummyPublicKey, Seq(JwtAlgorithm.RS256))
 
       assert(decodedJwtTry.isSuccess)
 
@@ -123,7 +122,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
       decodedJwt.expiration.get shouldBe (nowPlusFiveMinutesAsLong +- secondsTolerance)
     }
 
-    "throw an exception creating a JWT with an invalid private key" in {
+    "return a failed future when requesting an access token with an invalid private key" in {
 
       lazy val appWithInvalidPrivateKey: Application = applicationBuilder()
         .configure(mainConfig ++ Map("nuance.oauth.private-key" -> "invalidPrivateKey"))
@@ -131,9 +130,7 @@ class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
       lazy val connector = appWithInvalidPrivateKey.injector.instanceOf[NuanceAuthConnector]
 
-      assertThrows[InvalidKeySpecException] {
-        connector.createJwtString()
-      }
+      Try(whenReady(connector.requestAccessToken())(x => x)) mustBe a[Failure[_]]
     }
 
     "return the expected TokenExchangeResponse, given a valid access token response from the server" in {
