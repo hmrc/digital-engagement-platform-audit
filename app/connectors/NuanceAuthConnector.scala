@@ -21,6 +21,7 @@ import models.NuanceAccessTokenResponse
 import org.apache.commons.codec.binary.Base64
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim, JwtHeader}
 import play.api.Logging
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.security.spec.PKCS8EncodedKeySpec
@@ -32,7 +33,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
+class NuanceAuthConnector @Inject()(http: HttpClientV2, config: AppConfig)
                                    (implicit ec: ExecutionContext) extends Logging {
   def requestAccessToken(): Future[NuanceAccessTokenResponse] = {
 
@@ -52,10 +53,11 @@ class NuanceAuthConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)
         val encodedAuthHeader =
           Base64.encodeBase64String(s"${config.OAuthClientId}:${config.OAuthClientSecret}".getBytes("UTF-8"))
 
-        http.get()
+        http
           .post(url"${config.nuanceTokenAuthUrl}")
           .withBody(body)
           .setHeader("authorization" -> s"Basic $encodedAuthHeader", "content-type" -> "application/x-www-form-urlencoded")
+          .withProxy
           .execute[NuanceAccessTokenResponse]
     }
   }

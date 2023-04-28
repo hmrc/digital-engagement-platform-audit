@@ -19,6 +19,7 @@ package connectors
 import config.AppConfig
 import models.NuanceReportingResponse
 import play.api.Logging
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.time.LocalDateTime
@@ -28,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class NuanceReportingRequest(start: Int, rows: Int, startDate: LocalDateTime, endDate: LocalDateTime)
 
-class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
+class NuanceReportingConnector @Inject()(http: HttpClientV2, config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   def getHistoricData(accessToken: String, request: NuanceReportingRequest): Future[NuanceReportingResponse] = {
 
@@ -49,9 +50,10 @@ class NuanceReportingConnector @Inject()(http: ProxiedHttpClient, config: AppCon
 
     logger.info(s"[getHistoricData] read from url ${config.nuanceReportingUrl} with params $queryParams")
 
-    http.get()
+    http
       .get(url"${config.nuanceReportingUrl}?$queryParams")
       .setHeader("Authorization" -> s"Bearer $accessToken")
+      .withProxy
       .execute[NuanceReportingResponse]
   }
 }
