@@ -5,6 +5,7 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-backend-play-29"  % "8.4.0",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "1.7.0",
     "io.jsonwebtoken"         % "jjwt-api"                    % "0.11.5",
     "commons-codec"           %  "commons-codec"              % "1.15",
     "com.github.jwt-scala"    %% "jwt-core"                   % "9.1.2"
