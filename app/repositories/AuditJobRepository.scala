@@ -19,10 +19,9 @@ package repositories
 import java.time.LocalDateTime
 
 import javax.inject.Inject
+import javax.inject.Singleton
 import models.AuditJob
-import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.model.Updates._
-import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
+import org.mongodb.scala.model._
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult}
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.MongoComponent
@@ -30,6 +29,7 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext
 ) extends PlayMongoRepository[AuditJob] (
   mongoComponent = mongo,
