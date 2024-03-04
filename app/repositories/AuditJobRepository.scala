@@ -21,6 +21,9 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 import models.AuditJob
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Updates._
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult}
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.MongoComponent
