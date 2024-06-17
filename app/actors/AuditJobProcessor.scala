@@ -16,7 +16,7 @@
 
 package actors
 
-import akka.actor.Actor
+import org.apache.pekko.actor.Actor
 import auditing.{HistoricAuditing, HistoricAuditingResult}
 import javax.inject.Inject
 import models.AuditJob

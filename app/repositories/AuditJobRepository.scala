@@ -56,7 +56,7 @@ class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
     collection.find(inProgressEquals(false)).headOption()
   }
 
-  def drop(): Future[Void] = {
+  def drop(): Future[Unit] = {
     collection.drop().toFuture()
   }
 
