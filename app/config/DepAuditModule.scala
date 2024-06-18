@@ -18,11 +18,11 @@ package config
 
 import actors.{AuditJobProcessor, NuanceScheduler}
 import com.google.inject.AbstractModule
-import play.api.libs.concurrent.AkkaGuiceSupport
+import play.api.libs.concurrent.PekkoGuiceSupport
 import workers.{AuditJobProcessorWorker, AuditJobProcessorWorkerImpl, NuanceSchedulerWorker, NuanceSchedulerWorkerImpl}
 
 
-class DepAuditModule extends AbstractModule with AkkaGuiceSupport {
+class DepAuditModule extends AbstractModule with PekkoGuiceSupport {
 
   override protected def configure(): Unit = {
     bindActor[AuditJobProcessor]("audit-job-processor")

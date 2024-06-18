@@ -17,8 +17,8 @@
 package workers
 
 import actors.AuditJobProcessor
-import akka.actor.{Actor, ActorRef, ActorSystem, Cancellable, Scheduler}
-import akka.testkit.{TestActorRef, TestKit}
+import org.apache.pekko.actor.{Actor, ActorRef, ActorSystem, Cancellable, Scheduler}
+import org.apache.pekko.testkit.{TestActorRef, TestKit}
 import com.typesafe.config.{Config, ConfigFactory}
 import config.AppConfig
 import org.mockito.ArgumentMatchers.{any, eq => meq}
