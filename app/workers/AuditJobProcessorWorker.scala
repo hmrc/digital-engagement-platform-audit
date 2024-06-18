@@ -17,7 +17,7 @@
 package workers
 
 import actors.AuditJobProcessor
-import akka.actor.{ActorRef, ActorSystem, Cancellable}
+import org.apache.pekko.actor.{ActorRef, ActorSystem, Cancellable}
 import com.google.inject.name.Named
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
