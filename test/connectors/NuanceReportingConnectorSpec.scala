@@ -47,7 +47,7 @@ class NuanceReportingConnectorSpec extends BaseConnectorSpec {
   private val testStartDate = LocalDateTime.now().minusHours(5)
   private val testEndDate = LocalDateTime.now().minusHours(3)
 
-  private val dateTimeFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd'T'hh:mm:ss")
+  private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss")
   private val formattedTestStartDate = dateTimeFormatter.format(testStartDate)
   private val formattedTestEndDate = dateTimeFormatter.format(testEndDate)
 
