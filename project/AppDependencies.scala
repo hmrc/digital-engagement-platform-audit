@@ -11,7 +11,6 @@ object AppDependencies {
     "com.github.jwt-scala"    %% "jwt-core"                   % "9.1.2"
   )
 
-  val akkaVersion = "2.6.21"
   val PekkoVersion = "1.0.2"
   val PekkoHttpVersion = "1.0.1"
 
