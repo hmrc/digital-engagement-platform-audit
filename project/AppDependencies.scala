@@ -11,7 +11,7 @@ object AppDependencies {
     "com.github.jwt-scala"    %% "jwt-core"                   % "9.1.2"
   )
 
-  val PekkoVersion = "1.0.2"
+  val PekkoVersion = "1.0.3"
   val PekkoHttpVersion = "1.0.1"
 
   val test: Seq[ModuleID] = Seq(
