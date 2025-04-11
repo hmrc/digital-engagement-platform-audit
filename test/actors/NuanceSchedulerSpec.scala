@@ -18,8 +18,8 @@ package actors
 
 import java.time.LocalDateTime
 
-import akka.actor.{ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestKit}
+import org.apache.pekko.actor.{ActorSystem, Props}
+import org.apache.pekko.testkit.{ImplicitSender, TestKit}
 import com.mongodb.client.result.InsertOneResult
 import models.AuditJob
 import org.mockito.ArgumentMatchers.any

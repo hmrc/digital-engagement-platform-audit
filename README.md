@@ -6,7 +6,7 @@ This service periodically calls the Nuance Reporting API to retrieve customer en
 
 Two calls are made to Nuance. The first being the authentication call to retrieve an OAuth2 access token. If this is successful, a call to obtain engagement data is made.
 
-There are 2 Akka Actors in the service:
+There are 2 Pekko Actors in the service:
 
 1) Nuance scheduler - Creates a scheduled job which adds a row in MongoDB with a startTime and endTime. These dates are calculated using the current datetime and app config values.
 2) Jobs processor - Creates a scheduled job which processes the next row in MongoDB at a fixed rate (currently set at every 15 seconds and is configurable through app config).
