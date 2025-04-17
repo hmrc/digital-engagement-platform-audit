@@ -53,6 +53,9 @@ class NuanceAuthConnector @Inject()(http: HttpClientV2, config: AppConfig)
         val encodedAuthHeader =
           Base64.encodeBase64String(s"${config.OAuthClientId}:${config.OAuthClientSecret}".getBytes("UTF-8"))
 
+        logger.info("body: " + body)
+        logger.info("encodedAuthHeader: " + encodedAuthHeader)
+
         http
           .post(url"${config.nuanceTokenAuthUrl}")
           .withBody(body)
