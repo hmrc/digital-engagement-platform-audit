@@ -35,7 +35,7 @@ class NuanceReportingConnector @Inject()(http: HttpClientV2, config: AppConfig)(
 
     implicit val hc: HeaderCarrier = new HeaderCarrier()
 
-    val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss")
+    val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
     val formattedStartDate = request.startDate.format(dateTimeFormatter)
     val formattedEndDate = request.endDate.format(dateTimeFormatter)
