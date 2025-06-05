@@ -17,7 +17,6 @@ object AppDependencies {
   val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % "9.11.0",
     "org.scalatest"           %% "scalatest"                  % "3.2.12",
-    "org.scalatestplus"       %% "scalatestplus-mockito"      % "1.0.0-M2",
     "org.mockito"             %  "mockito-core"               % "4.5.1",
     "org.apache.pekko"        %% "pekko-stream-testkit"       % PekkoVersion,
     "org.apache.pekko"        %% "pekko-http-testkit"         % PekkoHttpVersion,
