@@ -31,11 +31,11 @@ object TagsReads {
   }
 
   private def extractClientIP(engagement: JsValue) = {
-    extractValue(engagement, __ \ "visitorAttribute" \ "clientIp") { value: JsValue => value(0) }
+    extractValue(engagement, __ \ "visitorAttribute" \ "clientIp") { (value: JsValue) => value(0) }
   }
 
   private def extractPath(engagement: JsValue) = {
-    extractValue(engagement, __ \ "pages" \ "launchPageURL") { value: JsValue => value }
+    extractValue(engagement, __ \ "pages" \ "launchPageURL") { (value: JsValue) => value }
   }
 
   private def extractDeviceId(engagement: JsValue, decryptionService: NuanceIdDecryptionService): String = {

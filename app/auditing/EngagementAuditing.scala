@@ -30,7 +30,7 @@ class EngagementAuditing @Inject()(engagementMapper: EngagementMapper, auditConn
                                   (implicit ec: ExecutionContext) extends Logging {
   def processEngagement(engagement: JsValue): Future[Seq[AuditResult]] = {
     Future.sequence {
-      engagementMapper.mapEngagement(engagement).map { event: ExtendedDataEvent =>
+      engagementMapper.mapEngagement(engagement).map { (event: ExtendedDataEvent) =>
         logger.info(s"[eventData]: sending extended event ${event.auditType}")
         logger.info(s"[eventData]: extended eventId ${event.eventId}")
         val result = Await.result(auditConnector.sendExtendedEvent(event), Duration.Inf)
