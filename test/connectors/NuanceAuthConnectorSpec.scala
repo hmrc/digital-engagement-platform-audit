@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, p
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models._
 import org.apache.commons.codec.binary.Base64
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim}
 import play.api.Application
 import play.api.http.Status
@@ -32,6 +31,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
 import java.util.Locale
 import scala.util.{Failure, Try}
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class NuanceAuthConnectorSpec extends BaseConnectorSpec {
 
