@@ -4,7 +4,7 @@ import sbt._
 object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-backend-play-30"  % "9.11.0",
+    "uk.gov.hmrc"             %% "bootstrap-backend-play-30"  % "9.13.0",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-30"         % "2.6.0",
     "io.jsonwebtoken"         % "jjwt-api"                    % "0.11.5",
     "commons-codec"           %  "commons-codec"              % "1.15",
@@ -15,7 +15,7 @@ object AppDependencies {
   val PekkoHttpVersion = "1.0.1"
 
   val test: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % "9.11.0",
+    "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % "9.13.0",
     "org.scalatest"           %% "scalatest"                  % "3.2.12",
     "org.mockito"             %  "mockito-core"               % "4.5.1",
     "org.apache.pekko"        %% "pekko-stream-testkit"       % PekkoVersion,

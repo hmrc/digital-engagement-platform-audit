@@ -26,13 +26,13 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.playDefaultPort         := 9190,
     // ***************
     // Use the silencer plugin to suppress warnings
-    scalacOptions += "-Wconf:src=routes/.*:s"
+    scalacOptions += "-Wconf:src=routes/.*:s",
+    scalacOptions += "-Wconf:msg=Flag.*repeatedly:s"
     // ***************
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(scoverageSettings)
-  .settings(resolvers += Resolver.jcenterRepo)
 
 lazy val itSettings =
   Defaults.itSettings ++ Seq(
