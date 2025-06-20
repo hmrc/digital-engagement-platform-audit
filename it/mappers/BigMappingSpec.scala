@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   def answer[T](f: InvocationOnMock => T): Answer[T] = {
-    invocation: InvocationOnMock => f(invocation)
+    (invocation: InvocationOnMock) => f(invocation)
   }
 
   private val nuanceIdDecryptionService = mock[NuanceIdDecryptionService]
@@ -52,11 +52,11 @@ class BigMappingSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       val auditConnector = mock[AuditConnector]
       when(auditConnector.sendExtendedEvent(any())(any(), any())).thenAnswer(answer({ invocation =>
-				implicit val serializer: AuditSerialiser = new AuditSerialiser()
+          implicit val serializer: AuditSerialiser = new AuditSerialiser()
 
-        val event: ExtendedDataEvent = invocation.getArguments.head.asInstanceOf[ExtendedDataEvent]
-        events += serializer.serialise(event)
-        Future.successful(AuditResult.Success)
+          val event: ExtendedDataEvent = invocation.getArguments.head.asInstanceOf[ExtendedDataEvent]
+          events += serializer.serialise(event)
+          Future.successful(AuditResult.Success)
       }))
 
       val metadataMapper = new MetadataMapper(nuanceIdDecryptionService)

@@ -64,7 +64,7 @@ class AuditJobProcessor @Inject()(repository: AuditJobRepository, historicAuditi
 
   private def processJob(auditJob: AuditJob) = {
     historicAuditing.auditDateRange(auditJob.startDate, auditJob.endDate) map {
-      _: Seq[HistoricAuditingResult] => true
+      (_: Seq[HistoricAuditingResult]) => true
     }
   }
 }
