@@ -23,7 +23,7 @@ import javax.inject.Singleton
 import models.AuditJob
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Updates._
-import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes, Sorts}
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult}
 import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 import play.api.libs.json._
@@ -38,7 +38,10 @@ class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
   mongoComponent = mongo,
   collectionName = "jobs",
   domainFormat   = AuditJob.format,
-  indexes        = Seq(IndexModel(Indexes.ascending("submissionDate"), IndexOptions().name("submissionDateIdx").unique(true)))
+  indexes        = Seq(
+    IndexModel(Indexes.ascending("submissionDate"), IndexOptions().name("submissionDateIdx").unique(true)),
+    IndexModel(Indexes.ascending("inProgress", "submissionDate"), IndexOptions().name("inProgressSubmissionDateIdx"))
+  )
 ) {
 
   def addJob(job: AuditJob): Future[InsertOneResult] = {
@@ -54,7 +57,11 @@ class AuditJobRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
   }
 
   def findNextJobToProcess(): Future[Option[AuditJob]] = {
-    collection.find(inProgressEquals(false)).headOption()
+    nextJobToProcessQuery.headOption()
+  }
+
+  private[repositories] def nextJobToProcessQuery = {
+    collection.find(inProgressEquals(false)).sort(Sorts.ascending("submissionDate"))
   }
 
   def drop(): Future[Unit] = {

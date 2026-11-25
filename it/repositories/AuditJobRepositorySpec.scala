@@ -173,6 +173,39 @@ class AuditJobRepositorySpec extends BaseSpec {
       jobs._2 mustEqual Option(job2)
     }
 
+    "find the oldest job not in progress, whatever order the jobs were added in" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val submissionDate = LocalDateTime.now()
+      val older = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), submissionDate)
+      val newer = models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:16"), submissionDate.plusSeconds(1))
+
+      val results = for {
+        _ <- repository.drop()
+        _ <- repository.addJob(newer)
+        _ <- repository.addJob(older)
+        found <- repository.findNextJobToProcess()
+      } yield found
+
+      Await.result(results, Duration.Inf) mustEqual Option(older)
+    }
+
+    "use the inProgressSubmissionDateIdx index to find the next job to process" in {
+      val repository = app.injector.instanceOf[AuditJobRepository]
+
+      val results = for {
+        _ <- repository.drop()
+        _ <- repository.ensureIndexes()
+        _ <- repository.addJob(models.AuditJob(LocalDateTime.parse("2020-06-20T13:15"), LocalDateTime.parse("2021-07-05T09:15"), LocalDateTime.now()))
+        plan <- repository.nextJobToProcessQuery.explain().head()
+      } yield plan.toJson()
+
+      val plan = Await.result(results, Duration.Inf)
+
+      plan must include("inProgressSubmissionDateIdx")
+      plan must not include "COLLSCAN"
+    }
+
     "delete audit jobs from the database" in {
       val repository = app.injector.instanceOf[AuditJobRepository]
 
